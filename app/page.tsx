@@ -1,6 +1,5 @@
 "use client"
 import { Eye, RotateCw, Save } from "lucide-react";
-import Image from "next/image";
 import PersonalDetailsForm from "./components/PersonalDetailsForm";
 import { useEffect, useRef, useState } from "react";
 import { Education, Experience, Hobby, Language, PersonalDetails, Skill } from "@/type";
