@@ -38,21 +38,17 @@ const getStarRating = (proficiency: string) => {
             break;
         default:
             filledStars = 0;
-
     }
     return (
         <>
             {Array.from({ length: filledStars }, (_, index) => (
-                <Star key={index} className={`text-primary `} />
+                <Star key={index} className="text-primary fill-current" />
             ))}
             {Array.from({ length: maxStars - filledStars }, (_, index) => (
                 <Star key={index + filledStars} className="text-gray-300" />
             ))}
         </>
     );
-
-
-
 }
 
 

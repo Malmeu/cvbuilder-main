@@ -52,6 +52,6 @@ export const languagesPreset: Language[] = [
 ];
 
 export const hobbiesPreset: Hobby[] = [
-    { id: 'uuid-8', name: 'Voyager' },
-    { id: 'uuid-9', name: 'Lire des livres' }
+    { id: 'uuid-8', name: 'Voyages' },
+    { id: 'uuid-9', name: 'Lecture' }
 ];
