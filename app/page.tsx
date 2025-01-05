@@ -303,15 +303,15 @@ export default function Home() {
               <label tabIndex={0} className="btn btn-sm bg-orange-500 hover:bg-orange-600 text-white border-none">
                 Thème: {theme}
               </label>
-              <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 max-h-96 overflow-y-auto mt-1">
+              <ul tabIndex={0} className="dropdown-content z-[9999] menu p-2 shadow bg-base-100 rounded-box w-52 max-h-96 overflow-y-auto mt-1">
                 {themes.map((themeName) => (
                   <li key={themeName}>
-                    <button 
+                    <a 
                       onClick={() => setTheme(themeName)}
                       className={`${themeName === theme ? 'active' : ''}`}
                     >
                       {themeName}
-                    </button>
+                    </a>
                   </li>
                 ))}
               </ul>
@@ -381,15 +381,18 @@ export default function Home() {
               )}
             </button>
             <div className="dropdown dropdown-end">
-              <button className="btn btn-sm bg-orange-500 hover:bg-orange-600 text-white border-none">
-                Thème
-              </button>
-              <ul className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 max-h-96 overflow-y-auto mt-1">
+              <label tabIndex={0} className="btn btn-sm bg-orange-500 hover:bg-orange-600 text-white border-none">
+                Thème: {theme}
+              </label>
+              <ul tabIndex={0} className="dropdown-content z-[999] menu p-2 shadow bg-base-100 rounded-box w-52 max-h-96 overflow-y-auto mt-1">
                 {themes.map((themeName) => (
                   <li key={themeName}>
-                    <button onClick={() => setTheme(themeName)} className={`${themeName === theme ? 'active' : ''}`}>
+                    <a 
+                      onClick={() => setTheme(themeName)}
+                      className={`${themeName === theme ? 'active' : ''}`}
+                    >
                       {themeName}
-                    </button>
+                    </a>
                   </li>
                 ))}
               </ul>
