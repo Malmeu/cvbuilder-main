@@ -25,6 +25,19 @@ export default function Home() {
   const [skills, setSkills] = useState<Skill[]>(skillsPreset)
   const [hobbies, setHobbies] = useState<Hobby[]>(hobbiesPreset);
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
+  const [windowWidth, setWindowWidth] = useState<number>(0);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+    
+    // Initialiser la largeur
+    handleResize();
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const defaultImageUrl = '/profile.jpg'
@@ -478,7 +491,7 @@ export default function Home() {
             </div>
             <div className="flex-1 overflow-y-auto bg-base-200 rounded-lg">
               <div className="transform-gpu origin-top" style={{
-                transform: `scale(${window.innerWidth < 768 ? 0.45 : 0.6})`,
+                transform: `scale(${windowWidth < 768 ? 0.45 : 0.6})`,
                 transformOrigin: 'top center',
                 margin: '0 auto'
               }}>
