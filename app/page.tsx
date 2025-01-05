@@ -462,20 +462,26 @@ export default function Home() {
 
       {/* Modal d'aperçu pour mobile */}
       <dialog id="preview_modal" className="modal">
-        <div className="modal-box w-11/12 max-w-5xl h-[90vh] p-2">
-          <form method="dialog">
-            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-          </form>
+        <div className="modal-box w-11/12 max-w-5xl h-[90vh] p-4">
           <div className="flex flex-col h-full">
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex justify-between items-center mb-4 relative">
               <h2 className="text-lg font-semibold">Aperçu du CV</h2>
-              <button onClick={handleDownloadPdf} className="btn btn-primary btn-sm">
-                Télécharger
-                <Save className='w-4' />
-              </button>
+              <div className="flex gap-2">
+                <button onClick={handleDownloadPdf} className="btn btn-primary btn-sm">
+                  Télécharger
+                  <Save className='w-4' />
+                </button>
+                <form method="dialog">
+                  <button className="btn btn-sm btn-circle btn-ghost">✕</button>
+                </form>
+              </div>
             </div>
-            <div className="flex-1 overflow-y-auto">
-              <div className="scale-[0.6] origin-top">
+            <div className="flex-1 overflow-y-auto bg-base-200 rounded-lg">
+              <div className="transform-gpu origin-top" style={{
+                transform: `scale(${window.innerWidth < 768 ? 0.45 : 0.6})`,
+                transformOrigin: 'top center',
+                margin: '0 auto'
+              }}>
                 <CVPreview
                   personalDetails={personalDetails}
                   file={file}
