@@ -4,7 +4,7 @@ export const personalDetailsPreset: PersonalDetails = {
     fullName: 'John Doe',
     email: 'johndoe@example.com',
     phone: '+123456789',
-    address: '123, Avenue Example, Paris, France',
+    address: '123, Avenue Example, Alger, Algerie',
     photoUrl: '/profile.jpg',
     postSeeking:'Chargé de Communication',
     description:'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum'
@@ -42,8 +42,8 @@ export const educationsPreset: Education[] = [
 ];
 
 export const skillsPreset: Skill[] = [
-    { id: 'uuid-4', name: 'React.js' },
-    { id: 'uuid-5', name: 'Node.js' }
+    { id: 'uuid-4', name: 'word', level: 'Avancé' },
+    { id: 'uuid-5', name: 'excel', level: 'Intermédiaire' }
 ];
 
 export const languagesPreset: Language[] = [

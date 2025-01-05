@@ -7,6 +7,7 @@ export type PersonalDetails = {
     photoUrl?: string;
     description?: string;
     postSeeking?: string;
+    frameShape?: 'circle' | 'square' | 'rounded' | 'oval';
 };
 
 
@@ -31,6 +32,7 @@ export type Education = {
 export type Skill = {
     id?: string;
     name: string;
+    level: string;
 };
 
 export type Language = {

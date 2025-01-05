@@ -63,23 +63,34 @@ const CVPreview: React.FC<Props> = ({ personalDetails, file, theme, experiences,
         <div ref={ref} className={` flex p-16 w-[950px] h-[1200px] shadow-lg ${download ? 'mb-10' : ''}`} data-theme={theme}>
 
             <div className='flex flex-col w-1/3'>
-                <div className='h-80 rounded-full border-8 overflow-hidden border-primary hobbies'>
-                    {file && (
+                {file ? (
+                    <div className={`h-80 overflow-hidden border-8 border-primary ${
+                        personalDetails.frameShape === 'circle' ? 'rounded-full' :
+                        personalDetails.frameShape === 'square' ? '' :
+                        personalDetails.frameShape === 'oval' ? 'rounded-[45%]' :
+                        'rounded-2xl'
+                    }`}>
                         <Image
                             src={URL.createObjectURL(file)}
                             width={300}
                             height={300}
-                            className='w-full h-full rounded-lg object-cover'
-                            alt="Picture of the author"
+                            className={`w-full h-full object-cover ${
+                                personalDetails.frameShape === 'circle' ? 'rounded-full' :
+                                personalDetails.frameShape === 'square' ? '' :
+                                personalDetails.frameShape === 'oval' ? 'rounded-[45%]' :
+                                'rounded-xl'
+                            }`}
+                            alt="Photo de profil"
                             onLoadingComplete={() => {
                                 if (typeof file !== 'string') {
                                     URL.revokeObjectURL(URL.createObjectURL(file))
                                 }
                             }}
                         />
-                    )}
-                </div>
-
+                    </div>
+                ) : (
+                    <div className="h-20" /> /* Espace réduit quand il n'y a pas de photo */
+                )}
                 <div className='mt-4 flex-col w-full'>
                     <div>
                         <h1 className='uppercase font-bold my-2'>
