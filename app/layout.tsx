@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CV Builder",
+  title: "CV Diali",
   description: "Créez votre CV professionnel en quelques clics",
 };
 
