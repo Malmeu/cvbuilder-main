@@ -15,7 +15,7 @@ export default function AdBanner({ slot, format = 'auto', className = '' }: Prop
   useEffect(() => {
     if (advertRef.current && !isLoaded.current) {
       try {
-        // @ts-ignore
+        // @ts-expect-error - La variable adsbygoogle est injectée par le script Google
         (window.adsbygoogle = window.adsbygoogle || []).push({});
         isLoaded.current = true;
       } catch (error) {
