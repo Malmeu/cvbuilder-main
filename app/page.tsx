@@ -1,6 +1,7 @@
 "use client"
 import { Eye, RotateCw, Save } from "lucide-react";
 import PersonalDetailsForm from "./components/PersonalDetailsForm";
+import AdBanner from './components/AdBanner';
 import { useEffect, useRef, useState } from "react";
 import { Education, Experience, Hobby, Language, PersonalDetails, Skill } from "@/type";
 import { educationsPreset, experiencesPreset, hobbiesPreset, languagesPreset, personalDetailsPreset, skillsPreset } from "@/presets";
@@ -169,6 +170,12 @@ export default function Home() {
       {/* Version Desktop */}
       <section className="hidden lg:flex flex-1">
         <div className="w-1/3 bg-base-100 p-8 overflow-y-auto">
+          {/* Première publicité en haut du formulaire */}
+          <AdBanner 
+            slot="1234567890"
+            format="auto"
+            className="mb-8"
+          />
           <div className="mb-4 flex justify-between items-center">
             <h1 className="text-2xl font-bold italic">
               CV
@@ -278,9 +285,8 @@ export default function Home() {
 
         </div>
 
-        <div className="w-2/3 h-full bg-base-100 bg-[url('/file.svg')] bg-cover  bg-center scrollable-preview relative">
-
-
+        <div className="w-2/3 bg-base-100 bg-[url('/file.svg')] bg-cover bg-center scrollable-preview relative">
+          {/* Contrôles en haut */}
           <div className="flex items-center justify-center fixed z-[9999] top-5 right-5 gap-2">
             <button
               onClick={() => setIsDarkMode(!isDarkMode)}
@@ -335,25 +341,35 @@ export default function Home() {
             <p className="ml-4 text-sm text-primary">{zoom}%</p>
           </div>
 
+          {/* Aperçu du CV avec zoom */}
           <div
-            className="flex justify-center items-center"
+            className="flex justify-center items-center p-8"
             style={{
               transform: `scale(${zoom / 200})`
             }}
           >
-            <CVPreview
-              personalDetails={personalDetails}
-              file={file}
-              theme={theme}
-              experiences={experiences}
-              educations={educations}
-              languages={languages}
-              hobbies={hobbies}
-              skills={skills}
-
-            />
+            <div id="cv-preview">
+              <CVPreview
+                personalDetails={personalDetails}
+                experiences={experiences}
+                educations={educations}
+                languages={languages}
+                skills={skills}
+                hobbies={hobbies}
+                theme={theme}
+                file={file}
+              />
+            </div>
           </div>
 
+          {/* Publicité en bas de l'aperçu */}
+          <div className="p-8">
+            <AdBanner 
+              slot="9876543210"
+              format="horizontal"
+              className="mt-8"
+            />
+          </div>
         </div>
 
       </section>
@@ -379,12 +395,14 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
                 </svg>
               )}
+              <span className="ml-2">{isDarkMode ? "Mode clair" : "Mode sombre"}</span>
             </button>
+
             <div className="dropdown dropdown-end">
               <label tabIndex={0} className="btn btn-sm bg-orange-500 hover:bg-orange-600 text-white border-none">
                 Thème: {theme}
               </label>
-              <ul tabIndex={0} className="dropdown-content z-[999] menu p-2 shadow bg-base-100 rounded-box w-52 max-h-96 overflow-y-auto mt-1">
+              <ul tabIndex={0} className="dropdown-content z-[9999] menu p-2 shadow bg-base-100 rounded-box w-52 max-h-96 overflow-y-auto mt-1">
                 {themes.map((themeName) => (
                   <li key={themeName}>
                     <a 
