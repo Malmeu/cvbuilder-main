@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { CanadianCV } from '../types/canadian-cv'
-import { Eye, Save, Languages, FileText } from 'lucide-react'
-import AdBanner from '../components/AdBanner'
+import { FileText, Save, Languages, MapPin } from 'lucide-react'
 import PersonalDetailsForm from '../components/canadian/PersonalDetailsForm'
 import ExperienceForm from '../components/canadian/ExperienceForm'
 import EducationForm from '../components/canadian/EducationForm'
@@ -55,13 +54,6 @@ export default function CanadianBuilder() {
     window.addEventListener('resize', () => setWindowWidth(window.innerWidth))
     return () => window.removeEventListener('resize', () => setWindowWidth(window.innerWidth))
   }, [])
-
-  const handleLanguageToggle = () => {
-    setCV(prev => ({
-      ...prev,
-      language: prev.language === 'fr' ? 'en' : 'fr'
-    }))
-  }
 
   return (
     <main className="min-h-screen pt-16 bg-gradient-to-b from-base-100 via-base-200 to-base-100">

@@ -27,7 +27,6 @@ export default function ExperienceForm({ experiences, onChange, language }: Prop
 
   const labels = {
     fr: {
-      title: 'Expérience professionnelle',
       position: 'Poste',
       company: 'Entreprise',
       city: 'Ville',
@@ -36,12 +35,11 @@ export default function ExperienceForm({ experiences, onChange, language }: Prop
       endDate: 'Date de fin',
       current: 'Poste actuel',
       achievements: 'Réalisations',
-      addExperience: 'Ajouter une expérience',
       addAchievement: 'Ajouter une réalisation',
+      addExperience: 'Ajouter une expérience',
       dragToReorder: 'Glisser pour réorganiser'
     },
     en: {
-      title: 'Professional Experience',
       position: 'Position',
       company: 'Company',
       city: 'City',
@@ -50,8 +48,8 @@ export default function ExperienceForm({ experiences, onChange, language }: Prop
       endDate: 'End Date',
       current: 'Current Position',
       achievements: 'Achievements',
-      addExperience: 'Add Experience',
       addAchievement: 'Add Achievement',
+      addExperience: 'Add Experience',
       dragToReorder: 'Drag to reorder'
     }
   }
@@ -66,7 +64,7 @@ export default function ExperienceForm({ experiences, onChange, language }: Prop
     onChange(experiences.filter((_, i) => i !== index))
   }
 
-  const handleExperienceChange = (index: number, field: keyof CanadianExperience, value: any) => {
+  const handleExperienceChange = (index: number, field: keyof CanadianExperience, value: string | boolean) => {
     const newExperiences = [...experiences]
     newExperiences[index] = {
       ...newExperiences[index],
@@ -94,20 +92,29 @@ export default function ExperienceForm({ experiences, onChange, language }: Prop
     onChange(newExperiences)
   }
 
-  const handleDragStart = (index: number) => {
+  const handleDragStart = (e: React.DragEvent<HTMLDivElement>, index: number) => {
+    setDraggedIndex(index)
+    e.dataTransfer.effectAllowed = 'move'
+    e.currentTarget.classList.add('opacity-50')
+  }
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>, index: number) => {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = 'move'
+    
+    if (draggedIndex === null || draggedIndex === index) return
+
+    const items = [...experiences]
+    const draggedItem = items[draggedIndex]
+    items.splice(draggedIndex, 1)
+    items.splice(index, 0, draggedItem)
+    onChange(items)
     setDraggedIndex(index)
   }
 
-  const handleDragOver = (e: React.DragEvent, index: number) => {
-    e.preventDefault()
-    if (draggedIndex === null || draggedIndex === index) return
-
-    const newExperiences = [...experiences]
-    const draggedExperience = newExperiences[draggedIndex]
-    newExperiences.splice(draggedIndex, 1)
-    newExperiences.splice(index, 0, draggedExperience)
-    onChange(newExperiences)
-    setDraggedIndex(index)
+  const handleDragEnd = (e: React.DragEvent<HTMLDivElement>) => {
+    e.currentTarget.classList.remove('opacity-50')
+    setDraggedIndex(null)
   }
 
   return (
@@ -115,17 +122,18 @@ export default function ExperienceForm({ experiences, onChange, language }: Prop
       {experiences.map((experience, index) => (
         <div
           key={index}
-          className="card bg-base-200 shadow-sm"
+          className="card bg-base-200 shadow-sm transition-opacity duration-200"
           draggable
-          onDragStart={() => handleDragStart(index)}
+          onDragStart={(e) => handleDragStart(e, index)}
           onDragOver={(e) => handleDragOver(e, index)}
+          onDragEnd={handleDragEnd}
         >
           <div className="card-body">
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-2">
                 <GripVertical className="w-4 h-4 cursor-move text-base-content/50" />
                 <h3 className="card-title text-base">
-                  {experience.position || text.title} #{index + 1}
+                  {experience.position || text.position} #{index + 1}
                 </h3>
               </div>
               <button
@@ -136,7 +144,7 @@ export default function ExperienceForm({ experiences, onChange, language }: Prop
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid md:grid-cols-2 gap-4">
               <div className="form-control">
                 <label className="label">
                   <span className="label-text">{text.position}</span>
@@ -182,8 +190,9 @@ export default function ExperienceForm({ experiences, onChange, language }: Prop
                   value={experience.province}
                   onChange={(e) => handleExperienceChange(index, 'province', e.target.value)}
                 >
+                  <option value="">{language === 'fr' ? 'Sélectionner' : 'Select'}</option>
                   {provinces.map((province) => (
-                    <option key={province.code} value={province.name[language]}>
+                    <option key={province.code} value={province.code}>
                       {province.name[language]}
                     </option>
                   ))}
@@ -206,7 +215,7 @@ export default function ExperienceForm({ experiences, onChange, language }: Prop
                 <label className="label">
                   <span className="label-text">{text.endDate}</span>
                 </label>
-                <div className="flex items-center gap-4">
+                <div className="flex gap-2 items-center">
                   <input
                     type="month"
                     className="input input-bordered flex-1"
@@ -214,14 +223,14 @@ export default function ExperienceForm({ experiences, onChange, language }: Prop
                     onChange={(e) => handleExperienceChange(index, 'endDate', e.target.value)}
                     disabled={experience.current}
                   />
-                  <label className="cursor-pointer label">
+                  <label className="label cursor-pointer gap-2">
                     <input
                       type="checkbox"
-                      className="checkbox checkbox-primary"
+                      className="checkbox"
                       checked={experience.current}
                       onChange={(e) => handleExperienceChange(index, 'current', e.target.checked)}
                     />
-                    <span className="label-text ml-2">{text.current}</span>
+                    <span className="label-text">{text.current}</span>
                   </label>
                 </div>
               </div>

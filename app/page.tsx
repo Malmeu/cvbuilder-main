@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight, FileText, Sparkles, Target, MapPin, Languages } from 'lucide-react'
-import AdBanner from './components/AdBanner'
 import Navbar from './components/Navbar'
 
 export default function Home() {
