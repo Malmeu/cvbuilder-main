@@ -65,6 +65,15 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Premier emplacement publicitaire - Bannière horizontale */}
+        <div className="max-w-4xl mx-auto px-4 mb-16">
+          <div className="bg-gray-50 rounded-xl p-4 min-h-[90px] flex items-center justify-center">
+            <div id="accueil-banner-1" className="text-center text-gray-400">
+              Emplacement publicitaire
+            </div>
+          </div>
+        </div>
+
         {/* Section Builders avec effet de verre */}
         <section className="py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-base-200/50 to-base-100/50 backdrop-blur-xl" />
@@ -130,6 +139,15 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Deuxième emplacement publicitaire - Rectangle vertical */}
+        <div className="max-w-4xl mx-auto mb-12">
+          <div className="bg-white rounded-xl p-4 min-h-[250px] flex items-center justify-center">
+            <div id="accueil-rectangle-1" className="text-center text-gray-400">
+              Emplacement publicitaire
+            </div>
+          </div>
+        </div>
+
         {/* CTA Section avec effet de verre */}
         <section className="relative py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-secondary/20 to-primary/20" />
@@ -156,7 +174,23 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* Troisième emplacement publicitaire - Bannière horizontale */}
+        <div className="max-w-4xl mx-auto mb-12">
+          <div className="bg-gray-50 rounded-xl p-4 min-h-[90px] flex items-center justify-center">
+            <div id="accueil-banner-2" className="text-center text-gray-400">
+              Emplacement publicitaire
+            </div>
+          </div>
+        </div>
       </main>
+
+      {/* Script AdSense */}
+      <script 
+        async 
+        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4559991197605180"
+        crossOrigin="anonymous"
+      />
     </>
   )
 }
