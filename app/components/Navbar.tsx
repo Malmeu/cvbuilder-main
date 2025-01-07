@@ -1,129 +1,117 @@
-'use client';
+'use client'
 
-import Link from 'next/link';
-import { Menu, X, ChevronDown } from 'lucide-react';
-import { useState } from 'react';
+import Link from 'next/link'
+import { Menu, X } from 'lucide-react'
+import { useState, useEffect } from 'react'
 
 export default function Navbar() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 10)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   return (
-    <nav className="bg-base-100 shadow-lg fixed w-full z-50">
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      scrolled ? 'bg-base-100/80 backdrop-blur-lg shadow-lg' : 'bg-transparent'
+    }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          {/* Logo et Nom */}
-          <div className="flex items-center">
-            <Link href="/" className="flex items-center">
-              <span className="text-xl font-bold text-primary">CVBuilder</span>
-            </Link>
-          </div>
+        <div className="flex justify-between items-center h-16">
+          {/* Logo */}
+          <Link href="/" className="flex items-center">
+            <span className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              CV DIALI
+            </span>
+          </Link>
 
-          {/* Navigation Desktop */}
+          {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link href="/" className="text-base-content hover:text-primary">
-              Accueil
+            <Link 
+              href="/builder"
+              className="text-base-content/80 hover:text-primary transition-colors"
+            >
+              CV Standard
             </Link>
-            
-            {/* Dropdown Outils */}
-            <div className="dropdown dropdown-end">
-              <label tabIndex={0} className="flex items-center gap-1 cursor-pointer text-base-content hover:text-primary">
-                Outils
-                <ChevronDown className="w-4 h-4" />
-              </label>
-              <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow-lg bg-base-100 rounded-box w-52">
-                <li>
-                  <Link href="/builder" className="flex items-center gap-2">
-                    <span className="font-medium">Builder CV</span>
-                    <span className="badge badge-primary badge-sm">FR</span>
-                  </Link>
-                </li>
-                <li>
-                  <button className="flex items-center gap-2 opacity-50 cursor-not-allowed">
-                    <span className="font-medium">Builder CV Canadien</span>
-                    <span className="badge badge-secondary badge-sm">Bientôt</span>
-                  </button>
-                </li>
-              </ul>
-            </div>
-
-            <Link href="#templates" className="text-base-content hover:text-primary">
-              Templates
+            <Link 
+              href="/canadian-builder"
+              className="text-base-content/80 hover:text-primary transition-colors"
+            >
+              CV Canadien
             </Link>
-            <Link href="#contact" className="text-base-content hover:text-primary">
-              Contact
+            <Link 
+              href="/templates"
+              className="text-base-content/80 hover:text-primary transition-colors"
+            >
+              Modèles
+            </Link>
+            <Link 
+              href="/builder"
+              className="px-6 py-2 bg-primary/10 text-primary rounded-full hover:bg-primary/20 transition-all"
+            >
+              Créer mon CV
             </Link>
           </div>
 
-          {/* Bouton Menu Mobile */}
-          <div className="md:hidden flex items-center">
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-base-content hover:text-primary"
+          {/* Mobile Menu Button */}
+          <button
+            className="md:hidden p-2 rounded-full hover:bg-base-200/50 transition-colors"
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            {isOpen ? (
+              <X className="w-6 h-6" />
+            ) : (
+              <Menu className="w-6 h-6" />
+            )}
+          </button>
+        </div>
+
+        {/* Mobile Menu */}
+        <div className={`
+          md:hidden 
+          fixed inset-0 top-16 
+          bg-base-100/95 backdrop-blur-lg
+          transform transition-transform duration-300 ease-in-out
+          ${isOpen ? 'translate-x-0' : 'translate-x-full'}
+        `}>
+          <div className="p-4 space-y-6">
+            <Link 
+              href="/builder"
+              className="block text-lg font-medium text-base-content/80 hover:text-primary transition-colors"
+              onClick={() => setIsOpen(false)}
             >
-              {isMenuOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
-              )}
-            </button>
+              CV Standard
+            </Link>
+            <Link 
+              href="/canadian-builder"
+              className="block text-lg font-medium text-base-content/80 hover:text-primary transition-colors"
+              onClick={() => setIsOpen(false)}
+            >
+              CV Canadien
+            </Link>
+            <Link 
+              href="/templates"
+              className="block text-lg font-medium text-base-content/80 hover:text-primary transition-colors"
+              onClick={() => setIsOpen(false)}
+            >
+              Modèles
+            </Link>
+            <div className="pt-4">
+              <Link 
+                href="/builder"
+                className="block w-full px-6 py-3 bg-primary/10 text-primary text-center rounded-full hover:bg-primary/20 transition-all"
+                onClick={() => setIsOpen(false)}
+              >
+                Créer mon CV
+              </Link>
+            </div>
           </div>
         </div>
       </div>
-
-      {/* Menu Mobile */}
-      {isMenuOpen && (
-        <div className="md:hidden">
-          <div className="px-2 pt-2 pb-3 space-y-1 bg-base-100">
-            <Link
-              href="/"
-              className="block px-3 py-2 text-base-content hover:text-primary"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Accueil
-            </Link>
-            
-            {/* Outils Mobile */}
-            <div className="px-3 py-2">
-              <span className="block text-sm font-medium text-base-content/70 mb-2">
-                Outils
-              </span>
-              <ul className="space-y-2 pl-2">
-                <li>
-                  <Link
-                    href="/builder"
-                    className="flex items-center gap-2 text-base-content hover:text-primary"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Builder CV
-                    <span className="badge badge-primary badge-sm">FR</span>
-                  </Link>
-                </li>
-                <li>
-                  <button className="flex items-center gap-2 text-base-content opacity-50 cursor-not-allowed">
-                    Builder CV Canadien
-                    <span className="badge badge-secondary badge-sm">Bientôt</span>
-                  </button>
-                </li>
-              </ul>
-            </div>
-
-            <Link
-              href="#templates"
-              className="block px-3 py-2 text-base-content hover:text-primary"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Templates
-            </Link>
-            <Link
-              href="#contact"
-              className="block px-3 py-2 text-base-content hover:text-primary"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Contact
-            </Link>
-          </div>
-        </div>
-      )}
     </nav>
-  );
+  )
 }
