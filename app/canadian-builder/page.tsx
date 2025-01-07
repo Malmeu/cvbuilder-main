@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { CanadianCV } from '../types/canadian-cv'
-import { FileText, Save, Languages, Eye, Home } from 'lucide-react'
+import { FileText, Languages, Eye, Home } from 'lucide-react'
 import Link from 'next/link'
 import PersonalDetailsForm from '../components/canadian/PersonalDetailsForm'
 import ExperienceForm from '../components/canadian/ExperienceForm'
@@ -167,17 +167,62 @@ export default function CanadianBuilder() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold">
-          {cv.language === 'fr' ? 'Créateur de CV Canadien' : 'Canadian Resume Builder'}
-        </h1>
-        <Link 
-          href="/"
-          className="btn btn-ghost gap-2"
-        >
-          <Home className="w-4 h-4" />
-          {cv.language === 'fr' ? 'Retour à l\'accueil' : 'Back to Home'}
-        </Link>
+      <div className="flex justify-between items-center mb-12">
+        <div className="flex items-center gap-4">
+          <h1 className="text-2xl font-bold">
+            {cv.language === 'fr' ? 'Créateur de CV Canadien' : 'Canadian Resume Builder'}
+          </h1>
+          <button
+            className="btn btn-ghost btn-sm gap-2 hover:bg-base-200/50"
+            onClick={() => setCV(prev => ({
+              ...prev,
+              language: prev.language === 'fr' ? 'en' : 'fr'
+            }))}
+          >
+            <Languages className="w-4 h-4" />
+            {cv.language === 'fr' ? 'EN' : 'FR'}
+          </button>
+        </div>
+
+        <div className="flex items-center gap-6">
+          <select 
+            className="select select-bordered select-sm"
+            value={theme}
+            onChange={(e) => setTheme(e.target.value)}
+          >
+            {themes.map((t) => (
+              <option key={t} value={t}>{t}</option>
+            ))}
+          </select>
+
+          <button
+            onClick={() => {
+              const modal = document.getElementById('preview_modal') as HTMLDialogElement
+              if(modal) modal.showModal()
+            }}
+            className="btn btn-primary btn-sm gap-2"
+          >
+            <Eye className="w-4 h-4" />
+            {cv.language === 'fr' ? 'Prévisualiser' : 'Preview'}
+          </button>
+
+          <button
+            onClick={handleDownloadPdf}
+            disabled={isGenerating}
+            className="btn btn-primary btn-sm gap-2"
+          >
+            <FileText className="w-4 h-4" />
+            {cv.language === 'fr' ? 'Télécharger PDF' : 'Download PDF'}
+          </button>
+
+          <Link 
+            href="/"
+            className="btn btn-ghost btn-sm gap-2"
+          >
+            <Home className="w-4 h-4" />
+            {cv.language === 'fr' ? 'Accueil' : 'Home'}
+          </Link>
+        </div>
       </div>
 
       <div className="grid lg:grid-cols-[350px_1fr] gap-8">
@@ -186,28 +231,6 @@ export default function CanadianBuilder() {
             <h2 className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
               {cv.language === 'fr' ? 'Informations' : 'Information'}
             </h2>
-            <div className="flex gap-4 items-center">
-              <button
-                className="btn btn-ghost btn-sm gap-2 hover:bg-base-200/50"
-                onClick={() => setCV(prev => ({
-                  ...prev,
-                  language: prev.language === 'fr' ? 'en' : 'fr'
-                }))}
-              >
-                <Languages className="w-4 h-4" />
-                {cv.language === 'fr' ? 'EN' : 'FR'}
-              </button>
-
-              <button
-                className="px-6 py-2 bg-primary/10 text-primary rounded-full hover:bg-primary/20 transition-all inline-flex items-center gap-2"
-                onClick={() => {
-                  // TODO: Ajouter la fonction de sauvegarde
-                }}
-              >
-                <Save className="w-4 h-4" />
-                {cv.language === 'fr' ? 'Sauvegarder' : 'Save'}
-              </button>
-            </div>
           </div>
 
           {/* Tabs avec effet de verre */}
@@ -265,35 +288,6 @@ export default function CanadianBuilder() {
               <h2 className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                 {cv.language === 'fr' ? 'Prévisualisation' : 'Preview'}
               </h2>
-              <div className="flex gap-4 items-center">
-                <select 
-                  className="select select-bordered select-sm" 
-                  value={theme}
-                  onChange={(e) => setTheme(e.target.value)}
-                >
-                  {themes.map((t) => (
-                    <option key={t} value={t}>{t}</option>
-                  ))}
-                </select>
-                <button
-                  className="px-4 py-2 bg-primary/10 text-primary rounded-full hover:bg-primary/20 transition-all inline-flex items-center gap-2"
-                  onClick={() => (document.getElementById('preview_modal') as HTMLDialogElement).showModal()}
-                >
-                  <Eye className="w-4 h-4" />
-                  {cv.language === 'fr' ? 'Prévisualiser' : 'Preview'}
-                </button>
-                <button 
-                  className="px-4 py-2 bg-primary text-primary-content rounded-full hover:bg-primary/90 transition-all inline-flex items-center gap-2"
-                  onClick={handleDownloadPdf}
-                  disabled={isGenerating}
-                >
-                  <FileText className="w-4 h-4" />
-                  {isGenerating 
-                    ? (cv.language === 'fr' ? 'Génération...' : 'Generating...') 
-                    : (cv.language === 'fr' ? 'Télécharger PDF' : 'Download PDF')
-                  }
-                </button>
-              </div>
             </div>
             <div 
               ref={cvPreviewRef}
@@ -329,10 +323,7 @@ export default function CanadianBuilder() {
                 disabled={isGenerating}
               >
                 <FileText className="w-4 h-4" />
-                {isGenerating 
-                  ? (cv.language === 'fr' ? 'Génération...' : 'Generating...') 
-                  : (cv.language === 'fr' ? 'Télécharger PDF' : 'Download PDF')
-                }
+                {cv.language === 'fr' ? 'Télécharger PDF' : 'Download PDF'}
               </button>
             </form>
           </div>
