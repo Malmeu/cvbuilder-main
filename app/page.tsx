@@ -2,73 +2,57 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { ArrowRight, FileText, Sparkles, Target, MapPin, Languages } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import Image from 'next/image'
-import Navbar from './components/Navbar'
 
 export default function Home() {
   return (
     <>
-      <Navbar />
-      <main className="min-h-screen bg-gradient-to-b from-base-100 via-base-200 to-base-100">
-        {/* Hero Section avec effet de verre */}
-        <section className="relative py-32 px-4 sm:px-6 lg:px-8 overflow-hidden">
-          {/* Cercles décoratifs style Apple */}
-          <div className="absolute top-0 left-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
-          <div className="absolute top-0 right-0 w-96 h-96 bg-secondary/10 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2" />
-          
+      <main className="min-h-screen">
+        {/* Hero Section */}
+        <section className="relative py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-gray-50/50 to-white/50 backdrop-blur-xl" />
           <div className="max-w-7xl mx-auto relative">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <div className="relative z-10">
-                <h1 className="text-5xl md:text-7xl font-bold tracking-tight bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                  Créez votre CV
-                  <span className="block text-base-content mt-2">comme jamais avant</span>
-                </h1>
-                <p className="mt-8 text-xl leading-relaxed text-base-content/80 font-light">
-                  Une expérience unique et intuitive pour créer votre CV professionnel. 
-                  Design moderne, animations fluides, et une touche de magie.
+            <motion.h2 
+              className="text-4xl md:text-5xl font-bold text-center mb-16 bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              L&apos;importance d&apos;un CV bien structuré
+            </motion.h2>
+            <div className="grid md:grid-cols-2 gap-12">
+              <motion.div 
+                className="relative p-8 backdrop-blur-md bg-white/80 rounded-3xl border border-white/20 shadow-xl"
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+              >
+                <h3 className="text-2xl font-semibold mb-4 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                  Première impression décisive
+                </h3>
+                <p className="text-gray-600 leading-relaxed">
+                  Votre CV est la première image que les recruteurs ont de vous. En moyenne, ils passent moins de 30 secondes à examiner chaque candidature. Un CV professionnel, clair et bien structuré augmente significativement vos chances d&apos;obtenir un entretien.
                 </p>
-                <div className="mt-12 flex flex-wrap gap-4">
-                  <Link href="/builder" 
-                    className="relative group px-8 py-4 bg-primary text-primary-content rounded-full transition-all duration-300 hover:scale-105 hover:shadow-lg">
-                    <span className="relative z-10 flex items-center gap-2 text-lg">
-                      Créer mon CV
-                      <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-                    </span>
-                  </Link>
-                  <Link href="/canadian-builder"
-                    className="relative group px-8 py-4 bg-white/10 backdrop-blur-md rounded-full border border-white/20 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:bg-white/20">
-                    <span className="relative z-10 flex items-center gap-2 text-lg">
-                      Format Canadien
-                      <MapPin className="w-5 h-5" />
-                    </span>
-                  </Link>
-                </div>
-              </div>
-              
-              {/* Image avec effet de flottement amélioré */}
-              <div className="relative w-full h-[600px]">
-                <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 to-secondary/5 rounded-3xl" />
-                <div className="animate-float-slow transform-gpu">
-                  <div className="relative w-full h-[600px] rounded-3xl shadow-2xl overflow-hidden backdrop-blur-sm bg-white/5 border border-white/10">
-                    <Image
-                      src="/cv1.png"
-                      alt="Modèle de CV"
-                      fill
-                      className="object-contain p-8"
-                      priority
-                    />
-                    {/* Reflets style Apple */}
-                    <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/10 to-transparent" />
-                  </div>
-                </div>
-              </div>
+              </motion.div>
+              <motion.div 
+                className="relative p-8 backdrop-blur-md bg-white/80 rounded-3xl border border-white/20 shadow-xl"
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+              >
+                <h3 className="text-2xl font-semibold mb-4 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                  Adapté à votre marché cible
+                </h3>
+                <p className="text-gray-600 leading-relaxed">
+                  Que vous postuliez en France ou au Canada, notre créateur de CV s&apos;adapte aux spécificités locales. Formats, rubriques, terminologie : tout est optimisé pour maximiser l&apos;impact de votre candidature selon votre marché cible.
+                </p>
+              </motion.div>
             </div>
           </div>
         </section>
 
-        {/* Premier emplacement publicitaire - Bannière horizontale */}
+        {/* Premier emplacement publicitaire */}
         <div className="max-w-4xl mx-auto px-4 mb-16">
           <div className="bg-gray-50 rounded-xl p-4 min-h-[90px] flex items-center justify-center">
             <div id="accueil-banner-1" className="text-center text-gray-400">
@@ -87,7 +71,7 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              L'importance d'un CV bien structuré
+              L&apos;importance d&apos;un CV bien structuré
             </motion.h2>
             <div className="grid md:grid-cols-2 gap-12">
               <motion.div 
@@ -100,7 +84,7 @@ export default function Home() {
                   Première impression décisive
                 </h3>
                 <p className="text-gray-600 leading-relaxed">
-                  Votre CV est la première image que les recruteurs ont de vous. En moyenne, ils passent moins de 30 secondes à examiner chaque candidature. Un CV professionnel, clair et bien structuré augmente significativement vos chances d'obtenir un entretien.
+                  Votre CV est la première image que les recruteurs ont de vous. En moyenne, ils passent moins de 30 secondes à examiner chaque candidature. Un CV professionnel, clair et bien structuré augmente significativement vos chances d&apos;obtenir un entretien.
                 </p>
               </motion.div>
               <motion.div 
@@ -113,7 +97,7 @@ export default function Home() {
                   Adapté à votre marché cible
                 </h3>
                 <p className="text-gray-600 leading-relaxed">
-                  Que vous postuliez en France ou au Canada, notre créateur de CV s'adapte aux spécificités locales. Formats, rubriques, terminologie : tout est optimisé pour maximiser l'impact de votre candidature selon votre marché cible.
+                  Que vous postuliez en France ou au Canada, notre créateur de CV s&apos;adapte aux spécificités locales. Formats, rubriques, terminologie : tout est optimisé pour maximiser l&apos;impact de votre candidature selon votre marché cible.
                 </p>
               </motion.div>
             </div>
@@ -279,7 +263,7 @@ export default function Home() {
                     transition={{ duration: 0.4, delay: 0.3 }}
                   >
                     <span className="inline-block w-2 h-2 mt-2 mr-3 bg-gradient-to-r from-gray-900 to-gray-600 rounded-full" />
-                    Ne surchargez pas votre CV avec trop d'informations
+                    Ne surchargez pas votre CV avec trop d&apos;informations
                   </motion.li>
                   <motion.li 
                     className="flex items-start text-gray-600"
@@ -288,7 +272,7 @@ export default function Home() {
                     transition={{ duration: 0.4, delay: 0.4 }}
                   >
                     <span className="inline-block w-2 h-2 mt-2 mr-3 bg-gradient-to-r from-gray-900 to-gray-600 rounded-full" />
-                    Évitez les fautes d'orthographe et de grammaire
+                    Évitez les fautes d&apos;orthographe et de grammaire
                   </motion.li>
                   <motion.li 
                     className="flex items-start text-gray-600"
@@ -297,7 +281,7 @@ export default function Home() {
                     transition={{ duration: 0.4, delay: 0.5 }}
                   >
                     <span className="inline-block w-2 h-2 mt-2 mr-3 bg-gradient-to-r from-gray-900 to-gray-600 rounded-full" />
-                    Ne mentionnez pas d'informations personnelles sensibles
+                    Ne mentionnez pas d&apos;informations personnelles sensibles
                   </motion.li>
                 </ul>
               </motion.div>
@@ -377,7 +361,7 @@ export default function Home() {
               <h4 className="text-sm font-semibold mb-4">Légal</h4>
               <ul className="space-y-2">
                 <li><Link href="/privacy" className="text-sm text-gray-600 hover:text-gray-900">Confidentialité</Link></li>
-                <li><Link href="/terms" className="text-sm text-gray-600 hover:text-gray-900">Conditions d'utilisation</Link></li>
+                <li><Link href="/terms" className="text-sm text-gray-600 hover:text-gray-900">Conditions d&apos;utilisation</Link></li>
               </ul>
             </div>
           </div>
