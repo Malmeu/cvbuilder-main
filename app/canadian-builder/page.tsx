@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { CanadianCV } from '../types/canadian-cv'
-import { FileText, Save, Languages, MapPin } from 'lucide-react'
+import { FileText, Save, Languages } from 'lucide-react'
 import PersonalDetailsForm from '../components/canadian/PersonalDetailsForm'
 import ExperienceForm from '../components/canadian/ExperienceForm'
 import EducationForm from '../components/canadian/EducationForm'
@@ -51,9 +51,43 @@ export default function CanadianBuilder() {
 
   useEffect(() => {
     setWindowWidth(window.innerWidth)
-    window.addEventListener('resize', () => setWindowWidth(window.innerWidth))
-    return () => window.removeEventListener('resize', () => setWindowWidth(window.innerWidth))
+    const handleResize = () => setWindowWidth(window.innerWidth)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
   }, [])
+
+  useEffect(() => {
+    const style = document.createElement('style')
+    style.textContent = `
+      @media print {
+        @page {
+          margin: 0;
+        }
+        body * {
+          visibility: hidden;
+        }
+        .cv-preview-print {
+          visibility: visible !important;
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          padding: 20px;
+        }
+        .cv-preview-print * {
+          visibility: visible !important;
+        }
+      }
+    `
+    document.head.appendChild(style)
+    return () => {
+      document.head.removeChild(style)
+    }
+  }, [])
+
+  const handlePrint = () => {
+    window.print()
+  }
 
   return (
     <main className="min-h-screen pt-16 bg-gradient-to-b from-base-100 via-base-200 to-base-100">
@@ -161,15 +195,13 @@ export default function CanadianBuilder() {
                     </h2>
                     <button
                       className="px-4 py-2 bg-primary/10 text-primary rounded-full hover:bg-primary/20 transition-all inline-flex items-center gap-2"
-                      onClick={() => {
-                        // TODO: Ajouter la fonction d'export PDF
-                      }}
+                      onClick={handlePrint}
                     >
                       <FileText className="w-4 h-4" />
                       {cv.language === 'fr' ? 'Exporter PDF' : 'Export PDF'}
                     </button>
                   </div>
-                  <div className="overflow-auto bg-white rounded-2xl shadow-xl">
+                  <div className="cv-preview-print bg-white p-8">
                     <CVPreview cv={cv} />
                   </div>
                 </div>
