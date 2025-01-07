@@ -83,14 +83,14 @@ const themes = [
 export default function CanadianBuilder() {
   const [cv, setCV] = useState<CanadianCV>(defaultCV)
   const [activeTab, setActiveTab] = useState('personal')
-  const [windowWidth, setWindowWidth] = useState(0)
   const cvPreviewRef = useRef<HTMLDivElement>(null)
   const [isGenerating, setIsGenerating] = useState(false)
   const [theme, setTheme] = useState('light')
 
   useEffect(() => {
-    setWindowWidth(window.innerWidth)
-    const handleResize = () => setWindowWidth(window.innerWidth)
+    const handleResize = () => {
+      // Garde la fonction handleResize pour de futures utilisations si nécessaire
+    }
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
   }, [])
