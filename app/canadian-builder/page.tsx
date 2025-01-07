@@ -2,12 +2,15 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { CanadianCV } from '../types/canadian-cv'
-import { FileText, Save, Languages } from 'lucide-react'
+import { FileText, Save, Languages, Eye } from 'lucide-react'
 import PersonalDetailsForm from '../components/canadian/PersonalDetailsForm'
 import ExperienceForm from '../components/canadian/ExperienceForm'
 import EducationForm from '../components/canadian/EducationForm'
 import SkillsForm from '../components/canadian/SkillsForm'
 import CVPreview from '../components/canadian/CVPreview'
+import html2canvas from 'html2canvas-pro'
+import jsPDF from 'jspdf'
+import confetti from 'canvas-confetti'
 
 const defaultCV: CanadianCV = {
   personalDetails: {
@@ -44,10 +47,45 @@ const tabs = [
   { id: 'skills', labelFr: 'Compétences', labelEn: 'Skills' },
 ]
 
+const themes = [
+  "light",
+  "dark",
+  "cupcake",
+  "bumblebee",
+  "emerald",
+  "corporate",
+  "synthwave",
+  "retro",
+  "cyberpunk",
+  "valentine",
+  "halloween",
+  "garden",
+  "forest",
+  "aqua",
+  "lofi",
+  "pastel",
+  "fantasy",
+  "wireframe",
+  "black",
+  "luxury",
+  "dracula",
+  "cmyk",
+  "autumn",
+  "business",
+  "acid",
+  "lemonade",
+  "night",
+  "coffee",
+  "winter",
+]
+
 export default function CanadianBuilder() {
   const [cv, setCV] = useState<CanadianCV>(defaultCV)
   const [activeTab, setActiveTab] = useState('personal')
   const [windowWidth, setWindowWidth] = useState(0)
+  const cvPreviewRef = useRef<HTMLDivElement>(null)
+  const [isGenerating, setIsGenerating] = useState(false)
+  const [theme, setTheme] = useState('light')
 
   useEffect(() => {
     setWindowWidth(window.innerWidth)
@@ -56,37 +94,74 @@ export default function CanadianBuilder() {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  useEffect(() => {
-    const style = document.createElement('style')
-    style.textContent = `
-      @media print {
-        @page {
-          margin: 0;
-        }
-        body * {
-          visibility: hidden;
-        }
-        .cv-preview-print {
-          visibility: visible !important;
-          position: absolute;
-          left: 0;
-          top: 0;
-          width: 100%;
-          padding: 20px;
-        }
-        .cv-preview-print * {
-          visibility: visible !important;
-        }
-      }
-    `
-    document.head.appendChild(style)
-    return () => {
-      document.head.removeChild(style)
-    }
-  }, [])
+  const handleDownloadPdf = async () => {
+    const element = cvPreviewRef.current
+    if(element && !isGenerating){
+      setIsGenerating(true)
+      try {
+        // Créer un conteneur temporaire avec le thème appliqué
+        const container = document.createElement('div')
+        container.setAttribute('data-theme', theme)
+        container.style.width = '210mm'
+        container.style.margin = '0'
+        container.style.background = 'white'
+        
+        // Cloner l'élément du CV
+        const clone = element.cloneNode(true) as HTMLElement
+        container.appendChild(clone)
+        document.body.appendChild(container)
 
-  const handlePrint = () => {
-    window.print()
+        const canvas = await html2canvas(container, {
+          scale: 3,
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: null,
+          onclone: (clonedDoc) => {
+            const clonedElement = clonedDoc.querySelector('[data-cv-preview]') as HTMLElement
+            if (clonedElement) {
+              // Appliquer les styles calculés
+              const computedStyle = window.getComputedStyle(element)
+              clonedElement.style.cssText = computedStyle.cssText
+            }
+          }
+        })
+
+        // Nettoyer le conteneur temporaire
+        document.body.removeChild(container)
+
+        const imgData = canvas.toDataURL('image/png')
+
+        const pdf = new jsPDF({
+          orientation: "portrait",
+          unit: 'mm',
+          format: "a4",
+          compress: true
+        })
+        
+        const pdfWidth = pdf.internal.pageSize.getWidth()
+        const pdfHeight = (canvas.height * pdfWidth) / canvas.width 
+
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST')
+        pdf.save(`CV_${cv.personalDetails.firstName}_${cv.personalDetails.lastName}.pdf`)
+
+        const modal = document.getElementById('preview_modal') as HTMLDialogElement
+        if(modal){
+          modal.close()
+        }
+
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: {y: 0.6},
+          zIndex: 9999
+        })
+
+      } catch (error) {
+        console.error('Erreur lors de la génération du PDF:', error)
+      } finally {
+        setIsGenerating(false)
+      }
+    }
   }
 
   return (
@@ -95,7 +170,7 @@ export default function CanadianBuilder() {
       <div className="sticky top-0 z-40 bg-base-100/80 backdrop-blur-lg border-b border-base-200 mb-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-wrap items-center justify-between gap-4">
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            <h1 className="text-2xl font-bold text-primary">
               {cv.language === 'fr' ? 'CV Canadien' : 'Canadian Resume'}
             </h1>
             
@@ -193,17 +268,65 @@ export default function CanadianBuilder() {
                     <h2 className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                       {cv.language === 'fr' ? 'Prévisualisation' : 'Preview'}
                     </h2>
-                    <button
-                      className="px-4 py-2 bg-primary/10 text-primary rounded-full hover:bg-primary/20 transition-all inline-flex items-center gap-2"
-                      onClick={handlePrint}
-                    >
-                      <FileText className="w-4 h-4" />
-                      {cv.language === 'fr' ? 'Exporter PDF' : 'Export PDF'}
-                    </button>
+                    <div className="flex gap-4 items-center">
+                      <select 
+                        className="select select-bordered select-sm" 
+                        value={theme}
+                        onChange={(e) => setTheme(e.target.value)}
+                      >
+                        {themes.map((t) => (
+                          <option key={t} value={t}>{t}</option>
+                        ))}
+                      </select>
+                      <button
+                        className="px-4 py-2 bg-primary/10 text-primary rounded-full hover:bg-primary/20 transition-all inline-flex items-center gap-2"
+                        onClick={() => (document.getElementById('preview_modal') as HTMLDialogElement).showModal()}
+                      >
+                        <Eye className="w-4 h-4" />
+                        {cv.language === 'fr' ? 'Prévisualiser' : 'Preview'}
+                      </button>
+                    </div>
                   </div>
-                  <div className="cv-preview-print bg-white p-8">
-                    <CVPreview cv={cv} />
+                  <div 
+                    ref={cvPreviewRef}
+                    data-cv-preview 
+                    data-theme={theme}
+                    className="bg-base-100 w-[210mm] mx-auto"
+                  >
+                    <CVPreview cv={cv} theme={theme} />
                   </div>
+
+                  <dialog id="preview_modal" className="modal">
+                    <div className="modal-box w-11/12 max-w-5xl">
+                      <h3 className="font-bold text-lg mb-4">
+                        {cv.language === 'fr' ? 'Prévisualisation de votre CV' : 'Preview your Resume'}
+                      </h3>
+                      <div 
+                        className="bg-base-100 w-[210mm] mx-auto"
+                        data-theme={theme}
+                      >
+                        <CVPreview cv={cv} theme={theme} />
+                      </div>
+                      <div className="modal-action">
+                        <form method="dialog" className="flex gap-2">
+                          <button className="btn">
+                            {cv.language === 'fr' ? 'Fermer' : 'Close'}
+                          </button>
+                          <button 
+                            className="btn btn-primary" 
+                            onClick={handleDownloadPdf}
+                            disabled={isGenerating}
+                          >
+                            <FileText className="w-4 h-4" />
+                            {isGenerating 
+                              ? (cv.language === 'fr' ? 'Génération...' : 'Generating...') 
+                              : (cv.language === 'fr' ? 'Télécharger PDF' : 'Download PDF')
+                            }
+                          </button>
+                        </form>
+                      </div>
+                    </div>
+                  </dialog>
                 </div>
               </div>
             </div>

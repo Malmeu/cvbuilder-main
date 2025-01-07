@@ -12,6 +12,7 @@
     "@types/lodash": "^4.17.14",
     "canvas-confetti": "^1.9.3",
     "html2canvas-pro": "^1.5.8",
+    "html2pdf.js": "^0.10.2",
     "jspdf": "^2.5.2",
     "lucide-react": "^0.468.0",
     "next": "15.1.0",
