@@ -1,6 +1,9 @@
+'use client'
+
 import Link from 'next/link'
-import Image from 'next/image'
+import { motion } from 'framer-motion'
 import { ArrowRight, FileText, Sparkles, Target, MapPin, Languages } from 'lucide-react'
+import Image from 'next/image'
 import Navbar from './components/Navbar'
 
 export default function Home() {
@@ -74,64 +77,85 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Section Builders avec effet de verre */}
-        <section className="py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-base-200/50 to-base-100/50 backdrop-blur-xl" />
+        {/* Section Importance du CV */}
+        <section className="relative py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-gray-50/50 to-white/50 backdrop-blur-xl" />
           <div className="max-w-7xl mx-auto relative">
-            <div className="grid md:grid-cols-2 gap-8">
-              {/* Builder Standard */}
-              <div className="group relative">
-                <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent rounded-3xl transform transition-transform duration-500 group-hover:scale-105" />
-                <div className="relative p-8 backdrop-blur-md bg-white/5 rounded-3xl border border-white/10">
-                  <h2 className="text-2xl font-semibold mb-6">CV Standard</h2>
-                  <ul className="space-y-4 mb-8">
-                    <li className="flex items-center gap-3">
-                      <FileText className="w-5 h-5 text-primary" />
-                      <span className="text-base-content/80">Design moderne et professionnel</span>
-                    </li>
-                    <li className="flex items-center gap-3">
-                      <Sparkles className="w-5 h-5 text-primary" />
-                      <span className="text-base-content/80">Personnalisation complète</span>
-                    </li>
-                    <li className="flex items-center gap-3">
-                      <Target className="w-5 h-5 text-primary" />
-                      <span className="text-base-content/80">Export PDF haute qualité</span>
-                    </li>
-                  </ul>
-                  <Link href="/builder" 
-                    className="inline-flex items-center gap-2 text-primary hover:text-primary-focus transition-colors">
+            <motion.h2 
+              className="text-4xl md:text-5xl font-bold text-center mb-16 bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              L'importance d'un CV bien structuré
+            </motion.h2>
+            <div className="grid md:grid-cols-2 gap-12">
+              <motion.div 
+                className="relative p-8 backdrop-blur-md bg-white/80 rounded-3xl border border-white/20 shadow-xl"
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+              >
+                <h3 className="text-2xl font-semibold mb-4 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                  Première impression décisive
+                </h3>
+                <p className="text-gray-600 leading-relaxed">
+                  Votre CV est la première image que les recruteurs ont de vous. En moyenne, ils passent moins de 30 secondes à examiner chaque candidature. Un CV professionnel, clair et bien structuré augmente significativement vos chances d'obtenir un entretien.
+                </p>
+              </motion.div>
+              <motion.div 
+                className="relative p-8 backdrop-blur-md bg-white/80 rounded-3xl border border-white/20 shadow-xl"
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+              >
+                <h3 className="text-2xl font-semibold mb-4 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                  Adapté à votre marché cible
+                </h3>
+                <p className="text-gray-600 leading-relaxed">
+                  Que vous postuliez en France ou au Canada, notre créateur de CV s'adapte aux spécificités locales. Formats, rubriques, terminologie : tout est optimisé pour maximiser l'impact de votre candidature selon votre marché cible.
+                </p>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+
+        {/* Section Modèles */}
+        <section className="py-16">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
+              Choisissez votre modèle
+            </h2>
+            
+            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+              <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+                <div className="aspect-w-4 aspect-h-3 bg-gray-100">
+                  {/* Image du CV classique */}
+                </div>
+                <div className="p-6">
+                  <h3 className="text-xl font-semibold mb-2">CV Classique</h3>
+                  <p className="text-gray-600 mb-4">Un modèle professionnel et polyvalent, parfait pour la plupart des secteurs.</p>
+                  <Link 
+                    href="/builder"
+                    className="inline-flex items-center justify-center w-full px-6 py-3 text-white bg-black rounded-lg hover:bg-gray-900 transition-colors"
+                  >
                     Commencer
-                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                   </Link>
                 </div>
               </div>
 
-              {/* Builder Canadien */}
-              <div className="group relative">
-                <div className="absolute inset-0 bg-gradient-to-tr from-secondary/10 to-transparent rounded-3xl transform transition-transform duration-500 group-hover:scale-105" />
-                <div className="relative p-8 backdrop-blur-md bg-white/5 rounded-3xl border border-white/10">
-                  <div className="flex items-center gap-3 mb-6">
-                    <h2 className="text-2xl font-semibold">CV Canadien</h2>
-                    <span className="px-3 py-1 text-xs font-medium bg-primary/10 text-primary rounded-full">Nouveau</span>
-                  </div>
-                  <ul className="space-y-4 mb-8">
-                    <li className="flex items-center gap-3">
-                      <MapPin className="w-5 h-5 text-secondary" />
-                      <span className="text-base-content/80">Format adapté au marché canadien</span>
-                    </li>
-                    <li className="flex items-center gap-3">
-                      <Languages className="w-5 h-5 text-secondary" />
-                      <span className="text-base-content/80">Support bilingue FR/EN</span>
-                    </li>
-                    <li className="flex items-center gap-3">
-                      <FileText className="w-5 h-5 text-secondary" />
-                      <span className="text-base-content/80">Sections spécifiques au Canada</span>
-                    </li>
-                  </ul>
-                  <Link href="/canadian-builder" 
-                    className="inline-flex items-center gap-2 text-secondary hover:text-secondary-focus transition-colors">
-                    Créer mon CV Canadien
-                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+              <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+                <div className="aspect-w-4 aspect-h-3 bg-gray-100">
+                  {/* Image du CV canadien */}
+                </div>
+                <div className="p-6">
+                  <h3 className="text-xl font-semibold mb-2">CV Canadien</h3>
+                  <p className="text-gray-600 mb-4">Optimisé pour le marché canadien, avec les spécificités locales.</p>
+                  <Link 
+                    href="/canadian-builder"
+                    className="inline-flex items-center justify-center w-full px-6 py-3 text-white bg-black rounded-lg hover:bg-gray-900 transition-colors"
+                  >
+                    Commencer
                   </Link>
                 </div>
               </div>
@@ -139,58 +163,231 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Deuxième emplacement publicitaire - Rectangle vertical */}
-        <div className="max-w-4xl mx-auto mb-12">
-          <div className="bg-white rounded-xl p-4 min-h-[250px] flex items-center justify-center">
+        {/* Deuxième emplacement publicitaire */}
+        <div className="max-w-4xl mx-auto px-4 mb-16">
+          <div className="bg-gray-50 rounded-xl p-4 min-h-[250px] flex items-center justify-center">
             <div id="accueil-rectangle-1" className="text-center text-gray-400">
               Emplacement publicitaire
             </div>
           </div>
         </div>
 
-        {/* CTA Section avec effet de verre */}
-        <section className="relative py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-secondary/20 to-primary/20" />
-          <div className="absolute inset-0 backdrop-blur-xl" />
-          <div className="max-w-3xl mx-auto text-center relative">
-            <h2 className="text-4xl font-bold mb-8 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              Prêt à créer votre CV professionnel ?
+        {/* Section Avantages */}
+        <section className="py-16 bg-gray-50">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
+              Pourquoi utiliser notre créateur de CV
             </h2>
-            <div className="flex flex-wrap justify-center gap-4">
-              <Link href="/builder" 
-                className="group px-8 py-4 bg-white/10 backdrop-blur-md rounded-full border border-white/20 transition-all duration-300 hover:scale-105 hover:bg-white/20">
-                <span className="flex items-center gap-2 text-lg">
-                  CV Standard
-                  <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-                </span>
-              </Link>
-              <Link href="/canadian-builder" 
-                className="group px-8 py-4 bg-white/10 backdrop-blur-md rounded-full border border-white/20 transition-all duration-300 hover:scale-105 hover:bg-white/20">
-                <span className="flex items-center gap-2 text-lg">
-                  CV Canadien
-                  <MapPin className="w-5 h-5" />
-                </span>
-              </Link>
+            <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-semibold mb-2">Gain de temps</h3>
+                <p className="text-gray-600">Créez votre CV professionnel en moins de 15 minutes grâce à nos modèles optimisés</p>
+              </div>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-semibold mb-2">Formats optimisés</h3>
+                <p className="text-gray-600">Export PDF haute qualité, compatible avec tous les systèmes de recrutement ATS</p>
+              </div>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-semibold mb-2">100% Gratuit</h3>
+                <p className="text-gray-600">Accès gratuit à toutes les fonctionnalités, sans limitation ni frais cachés</p>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Troisième emplacement publicitaire - Bannière horizontale */}
-        <div className="max-w-4xl mx-auto mb-12">
+        {/* Section Conseils CV */}
+        <section className="relative py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-white/50 to-gray-50/50 backdrop-blur-xl" />
+          <div className="max-w-7xl mx-auto relative">
+            <motion.h2 
+              className="text-4xl md:text-5xl font-bold text-center mb-16 bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              Conseils pour un CV parfait
+            </motion.h2>
+            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+              <motion.div 
+                className="relative p-8 backdrop-blur-md bg-white/80 rounded-3xl border border-white/20 shadow-xl"
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+              >
+                <h3 className="text-2xl font-semibold mb-4 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                  Structure efficace
+                </h3>
+                <ul className="space-y-4">
+                  <motion.li 
+                    className="flex items-start text-gray-600"
+                    initial={{ opacity: 0, x: -10 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.4, delay: 0.3 }}
+                  >
+                    <span className="inline-block w-2 h-2 mt-2 mr-3 bg-gradient-to-r from-gray-900 to-gray-600 rounded-full" />
+                    Commencez par un résumé professionnel percutant
+                  </motion.li>
+                  <motion.li 
+                    className="flex items-start text-gray-600"
+                    initial={{ opacity: 0, x: -10 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.4, delay: 0.4 }}
+                  >
+                    <span className="inline-block w-2 h-2 mt-2 mr-3 bg-gradient-to-r from-gray-900 to-gray-600 rounded-full" />
+                    Mettez en avant vos réalisations plutôt que vos responsabilités
+                  </motion.li>
+                  <motion.li 
+                    className="flex items-start text-gray-600"
+                    initial={{ opacity: 0, x: -10 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.4, delay: 0.5 }}
+                  >
+                    <span className="inline-block w-2 h-2 mt-2 mr-3 bg-gradient-to-r from-gray-900 to-gray-600 rounded-full" />
+                    Utilisez des mots-clés pertinents pour votre secteur
+                  </motion.li>
+                </ul>
+              </motion.div>
+              <motion.div 
+                className="relative p-8 backdrop-blur-md bg-white/80 rounded-3xl border border-white/20 shadow-xl"
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+              >
+                <h3 className="text-2xl font-semibold mb-4 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                  Erreurs à éviter
+                </h3>
+                <ul className="space-y-4">
+                  <motion.li 
+                    className="flex items-start text-gray-600"
+                    initial={{ opacity: 0, x: 10 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.4, delay: 0.3 }}
+                  >
+                    <span className="inline-block w-2 h-2 mt-2 mr-3 bg-gradient-to-r from-gray-900 to-gray-600 rounded-full" />
+                    Ne surchargez pas votre CV avec trop d'informations
+                  </motion.li>
+                  <motion.li 
+                    className="flex items-start text-gray-600"
+                    initial={{ opacity: 0, x: 10 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.4, delay: 0.4 }}
+                  >
+                    <span className="inline-block w-2 h-2 mt-2 mr-3 bg-gradient-to-r from-gray-900 to-gray-600 rounded-full" />
+                    Évitez les fautes d'orthographe et de grammaire
+                  </motion.li>
+                  <motion.li 
+                    className="flex items-start text-gray-600"
+                    initial={{ opacity: 0, x: 10 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.4, delay: 0.5 }}
+                  >
+                    <span className="inline-block w-2 h-2 mt-2 mr-3 bg-gradient-to-r from-gray-900 to-gray-600 rounded-full" />
+                    Ne mentionnez pas d'informations personnelles sensibles
+                  </motion.li>
+                </ul>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+
+        {/* Troisième emplacement publicitaire */}
+        <div className="max-w-4xl mx-auto px-4 mb-16">
           <div className="bg-gray-50 rounded-xl p-4 min-h-[90px] flex items-center justify-center">
             <div id="accueil-banner-2" className="text-center text-gray-400">
               Emplacement publicitaire
             </div>
           </div>
         </div>
+
+        {/* Section CTA finale */}
+        <section className="py-16 bg-gray-50">
+          <div className="container mx-auto px-4 text-center">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">
+              Prêt à créer votre CV ?
+            </h2>
+            <p className="text-xl text-gray-600 mb-8">
+              Commencez gratuitement et obtenez un CV professionnel en quelques minutes
+            </p>
+            <div className="flex justify-center gap-4">
+              <Link 
+                href="/builder"
+                className="px-8 py-4 bg-black text-white rounded-lg hover:bg-gray-900 transition-colors"
+              >
+                Créer mon CV classique
+              </Link>
+              <Link 
+                href="/canadian-builder"
+                className="px-8 py-4 bg-black text-white rounded-lg hover:bg-gray-900 transition-colors"
+              >
+                Créer mon CV canadien
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Script AdSense */}
+        <script 
+          async 
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4559991197605180"
+          crossOrigin="anonymous"
+        />
       </main>
 
-      {/* Script AdSense */}
-      <script 
-        async 
-        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4559991197605180"
-        crossOrigin="anonymous"
-      />
+      {/* Footer minimaliste style Apple */}
+      <footer className="border-t border-gray-200 bg-white">
+        <div className="container mx-auto px-4 py-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+              <h4 className="text-sm font-semibold mb-4">Créateur de CV</h4>
+              <ul className="space-y-2">
+                <li><Link href="/builder" className="text-sm text-gray-600 hover:text-gray-900">CV Classique</Link></li>
+                <li><Link href="/canadian-builder" className="text-sm text-gray-600 hover:text-gray-900">CV Canadien</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-sm font-semibold mb-4">Ressources</h4>
+              <ul className="space-y-2">
+                <li><Link href="/blog" className="text-sm text-gray-600 hover:text-gray-900">Conseils CV</Link></li>
+                <li><Link href="/examples" className="text-sm text-gray-600 hover:text-gray-900">Exemples de CV</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-sm font-semibold mb-4">Support</h4>
+              <ul className="space-y-2">
+                <li><Link href="/contact" className="text-sm text-gray-600 hover:text-gray-900">Contact</Link></li>
+                <li><Link href="/faq" className="text-sm text-gray-600 hover:text-gray-900">FAQ</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-sm font-semibold mb-4">Légal</h4>
+              <ul className="space-y-2">
+                <li><Link href="/privacy" className="text-sm text-gray-600 hover:text-gray-900">Confidentialité</Link></li>
+                <li><Link href="/terms" className="text-sm text-gray-600 hover:text-gray-900">Conditions d'utilisation</Link></li>
+              </ul>
+            </div>
+          </div>
+          <div className="mt-8 pt-8 border-t border-gray-200">
+            <p className="text-center text-sm text-gray-600">
+              &copy; {new Date().getFullYear()} CV Builder. Tous droits réservés.
+            </p>
+          </div>
+        </div>
+      </footer>
     </>
   )
 }

@@ -145,98 +145,107 @@ export default function ExperienceForm({ experiences, onChange, language }: Prop
             </div>
 
             <div className="grid md:grid-cols-2 gap-4">
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">{text.position}</span>
-                </label>
-                <input
-                  type="text"
-                  className="input input-bordered"
-                  value={experience.position}
-                  onChange={(e) => handleExperienceChange(index, 'position', e.target.value)}
-                />
-              </div>
+              <div className="space-y-4">
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">{text.position}</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="input input-bordered w-full"
+                    value={experience.position}
+                    onChange={(e) => handleExperienceChange(index, 'position', e.target.value)}
+                  />
+                </div>
 
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">{text.company}</span>
-                </label>
-                <input
-                  type="text"
-                  className="input input-bordered"
-                  value={experience.company}
-                  onChange={(e) => handleExperienceChange(index, 'company', e.target.value)}
-                />
-              </div>
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">{text.city}</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="input input-bordered w-full"
+                    value={experience.city}
+                    onChange={(e) => handleExperienceChange(index, 'city', e.target.value)}
+                  />
+                </div>
 
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">{text.city}</span>
-                </label>
-                <input
-                  type="text"
-                  className="input input-bordered"
-                  value={experience.city}
-                  onChange={(e) => handleExperienceChange(index, 'city', e.target.value)}
-                />
-              </div>
-
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">{text.province}</span>
-                </label>
-                <select
-                  className="select select-bordered"
-                  value={experience.province}
-                  onChange={(e) => handleExperienceChange(index, 'province', e.target.value)}
-                >
-                  <option value="">{language === 'fr' ? 'Sélectionner' : 'Select'}</option>
-                  {provinces.map((province) => (
-                    <option key={province.code} value={province.code}>
-                      {province.name[language]}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">{text.startDate}</span>
-                </label>
-                <input
-                  type="month"
-                  className="input input-bordered"
-                  value={experience.startDate}
-                  onChange={(e) => handleExperienceChange(index, 'startDate', e.target.value)}
-                />
-              </div>
-
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">{text.endDate}</span>
-                </label>
-                <div className="flex gap-2 items-center">
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">{text.startDate}</span>
+                  </label>
                   <input
                     type="month"
-                    className="input input-bordered flex-1"
-                    value={experience.endDate}
-                    onChange={(e) => handleExperienceChange(index, 'endDate', e.target.value)}
-                    disabled={experience.current}
+                    className="input input-bordered w-full"
+                    value={experience.startDate}
+                    onChange={(e) => handleExperienceChange(index, 'startDate', e.target.value)}
                   />
-                  <label className="label cursor-pointer gap-2">
-                    <input
-                      type="checkbox"
-                      className="checkbox"
-                      checked={experience.current}
-                      onChange={(e) => handleExperienceChange(index, 'current', e.target.checked)}
-                    />
-                    <span className="label-text">{text.current}</span>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">{text.company}</span>
                   </label>
+                  <input
+                    type="text"
+                    className="input input-bordered w-full"
+                    value={experience.company}
+                    onChange={(e) => handleExperienceChange(index, 'company', e.target.value)}
+                  />
+                </div>
+
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">{text.province}</span>
+                  </label>
+                  <select
+                    className="select select-bordered w-full"
+                    value={experience.province}
+                    onChange={(e) => handleExperienceChange(index, 'province', e.target.value)}
+                  >
+                    <option value="">{language === 'fr' ? 'Sélectionner' : 'Select'}</option>
+                    {provinces.map((province) => (
+                      <option key={province.code} value={province.code}>
+                        {province.name[language]}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">{text.endDate}</span>
+                  </label>
+                  <div className="flex flex-col gap-2">
+                    <input
+                      type="month"
+                      className="input input-bordered w-full"
+                      value={experience.endDate}
+                      onChange={(e) => handleExperienceChange(index, 'endDate', e.target.value)}
+                      disabled={experience.current}
+                    />
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        className="checkbox checkbox-sm"
+                        checked={experience.current}
+                        onChange={(e) => {
+                          handleExperienceChange(index, 'current', e.target.checked)
+                          if (e.target.checked) {
+                            handleExperienceChange(index, 'endDate', '')
+                          }
+                        }}
+                      />
+                      <span className="label-text text-sm">{text.current}</span>
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div className="form-control">
+            <div className="form-control mt-4">
               <label className="label">
                 <span className="label-text">{text.achievements}</span>
               </label>
@@ -248,13 +257,16 @@ export default function ExperienceForm({ experiences, onChange, language }: Prop
                       className="input input-bordered flex-1"
                       value={achievement}
                       onChange={(e) => handleAchievementChange(index, achievementIndex, e.target.value)}
+                      placeholder={`${text.achievements} ${achievementIndex + 1}`}
                     />
-                    <button
-                      className="btn btn-ghost btn-sm"
-                      onClick={() => handleRemoveAchievement(index, achievementIndex)}
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
+                    {experience.achievements.length > 1 && (
+                      <button
+                        className="btn btn-ghost btn-sm"
+                        onClick={() => handleRemoveAchievement(index, achievementIndex)}
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    )}
                   </div>
                 ))}
                 <button
