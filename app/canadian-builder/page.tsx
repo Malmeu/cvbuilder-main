@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { CanadianCV } from '../types/canadian-cv'
-import { FileText, Save, Languages, Eye } from 'lucide-react'
+import { FileText, Save, Languages, Eye, Home } from 'lucide-react'
+import Link from 'next/link'
 import PersonalDetailsForm from '../components/canadian/PersonalDetailsForm'
 import ExperienceForm from '../components/canadian/ExperienceForm'
 import EducationForm from '../components/canadian/EducationForm'
@@ -165,16 +166,27 @@ export default function CanadianBuilder() {
   }
 
   return (
-    <main className="min-h-screen pt-16 bg-gradient-to-b from-base-100 via-base-200 to-base-100">
-      {/* Header avec effet de verre */}
-      <div className="sticky top-0 z-40 bg-base-100/80 backdrop-blur-lg border-b border-base-200 mb-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <h1 className="text-2xl font-bold text-primary">
-              {cv.language === 'fr' ? 'CV Canadien' : 'Canadian Resume'}
-            </h1>
-            
-            <div className="flex items-center gap-4">
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-2xl font-bold">
+          {cv.language === 'fr' ? 'Créateur de CV Canadien' : 'Canadian Resume Builder'}
+        </h1>
+        <Link 
+          href="/"
+          className="btn btn-ghost gap-2"
+        >
+          <Home className="w-4 h-4" />
+          {cv.language === 'fr' ? 'Retour à l\'accueil' : 'Back to Home'}
+        </Link>
+      </div>
+
+      <div className="grid lg:grid-cols-[350px_1fr] gap-8">
+        <div className="space-y-6">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              {cv.language === 'fr' ? 'Informations' : 'Information'}
+            </h2>
+            <div className="flex gap-4 items-center">
               <button
                 className="btn btn-ghost btn-sm gap-2 hover:bg-base-200/50"
                 onClick={() => setCV(prev => ({
@@ -199,7 +211,7 @@ export default function CanadianBuilder() {
           </div>
 
           {/* Tabs avec effet de verre */}
-          <div className="flex gap-2 mt-6 overflow-x-auto pb-2">
+          <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
@@ -216,123 +228,116 @@ export default function CanadianBuilder() {
               </button>
             ))}
           </div>
-        </div>
-      </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-[1fr_auto] gap-8">
-          {/* Formulaire */}
-          <div>
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 to-secondary/5 rounded-3xl" />
-              <div className="relative bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 overflow-hidden">
-                {activeTab === 'personal' && (
-                  <PersonalDetailsForm
-                    data={cv.personalDetails}
-                    onChange={(data) => setCV({ ...cv, personalDetails: data })}
-                    language={cv.language}
-                  />
-                )}
-                {activeTab === 'experience' && (
-                  <ExperienceForm
-                    experiences={cv.experiences}
-                    onChange={(experiences) => setCV({ ...cv, experiences })}
-                    language={cv.language}
-                  />
-                )}
-                {activeTab === 'education' && (
-                  <EducationForm
-                    education={cv.education}
-                    onChange={(education) => setCV({ ...cv, education })}
-                    language={cv.language}
-                  />
-                )}
-                {activeTab === 'skills' && (
-                  <SkillsForm
-                    skills={cv.skills}
-                    onChange={(skills) => setCV({ ...cv, skills })}
-                    language={cv.language}
-                  />
-                )}
+          {activeTab === 'personal' && (
+            <PersonalDetailsForm
+              data={cv.personalDetails}
+              onChange={(data) => setCV({ ...cv, personalDetails: data })}
+              language={cv.language}
+            />
+          )}
+          {activeTab === 'experience' && (
+            <ExperienceForm
+              experiences={cv.experiences}
+              onChange={(experiences) => setCV({ ...cv, experiences })}
+              language={cv.language}
+            />
+          )}
+          {activeTab === 'education' && (
+            <EducationForm
+              education={cv.education}
+              onChange={(education) => setCV({ ...cv, education })}
+              language={cv.language}
+            />
+          )}
+          {activeTab === 'skills' && (
+            <SkillsForm
+              skills={cv.skills}
+              onChange={(skills) => setCV({ ...cv, skills })}
+              language={cv.language}
+            />
+          )}
+        </div>
+
+        <div className="relative">
+          <div className="sticky top-4">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                {cv.language === 'fr' ? 'Prévisualisation' : 'Preview'}
+              </h2>
+              <div className="flex gap-4 items-center">
+                <select 
+                  className="select select-bordered select-sm" 
+                  value={theme}
+                  onChange={(e) => setTheme(e.target.value)}
+                >
+                  {themes.map((t) => (
+                    <option key={t} value={t}>{t}</option>
+                  ))}
+                </select>
+                <button
+                  className="px-4 py-2 bg-primary/10 text-primary rounded-full hover:bg-primary/20 transition-all inline-flex items-center gap-2"
+                  onClick={() => (document.getElementById('preview_modal') as HTMLDialogElement).showModal()}
+                >
+                  <Eye className="w-4 h-4" />
+                  {cv.language === 'fr' ? 'Prévisualiser' : 'Preview'}
+                </button>
+                <button 
+                  className="px-4 py-2 bg-primary text-primary-content rounded-full hover:bg-primary/90 transition-all inline-flex items-center gap-2"
+                  onClick={handleDownloadPdf}
+                  disabled={isGenerating}
+                >
+                  <FileText className="w-4 h-4" />
+                  {isGenerating 
+                    ? (cv.language === 'fr' ? 'Génération...' : 'Generating...') 
+                    : (cv.language === 'fr' ? 'Télécharger PDF' : 'Download PDF')
+                  }
+                </button>
               </div>
             </div>
-          </div>
-
-          {/* Prévisualisation */}
-          <div className={`${windowWidth < 1024 ? 'hidden' : 'w-[800px]'}`}>
-            <div className="sticky top-32">
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 to-secondary/5 rounded-3xl" />
-                <div className="relative bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 p-4 overflow-hidden">
-                  <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                      {cv.language === 'fr' ? 'Prévisualisation' : 'Preview'}
-                    </h2>
-                    <div className="flex gap-4 items-center">
-                      <select 
-                        className="select select-bordered select-sm" 
-                        value={theme}
-                        onChange={(e) => setTheme(e.target.value)}
-                      >
-                        {themes.map((t) => (
-                          <option key={t} value={t}>{t}</option>
-                        ))}
-                      </select>
-                      <button
-                        className="px-4 py-2 bg-primary/10 text-primary rounded-full hover:bg-primary/20 transition-all inline-flex items-center gap-2"
-                        onClick={() => (document.getElementById('preview_modal') as HTMLDialogElement).showModal()}
-                      >
-                        <Eye className="w-4 h-4" />
-                        {cv.language === 'fr' ? 'Prévisualiser' : 'Preview'}
-                      </button>
-                    </div>
-                  </div>
-                  <div 
-                    ref={cvPreviewRef}
-                    data-cv-preview 
-                    data-theme={theme}
-                    className="bg-base-100 w-[210mm] mx-auto"
-                  >
-                    <CVPreview cv={cv} theme={theme} />
-                  </div>
-
-                  <dialog id="preview_modal" className="modal">
-                    <div className="modal-box w-11/12 max-w-5xl">
-                      <h3 className="font-bold text-lg mb-4">
-                        {cv.language === 'fr' ? 'Prévisualisation de votre CV' : 'Preview your Resume'}
-                      </h3>
-                      <div 
-                        className="bg-base-100 w-[210mm] mx-auto"
-                        data-theme={theme}
-                      >
-                        <CVPreview cv={cv} theme={theme} />
-                      </div>
-                      <div className="modal-action">
-                        <form method="dialog" className="flex gap-2">
-                          <button className="btn">
-                            {cv.language === 'fr' ? 'Fermer' : 'Close'}
-                          </button>
-                          <button 
-                            className="btn btn-primary" 
-                            onClick={handleDownloadPdf}
-                            disabled={isGenerating}
-                          >
-                            <FileText className="w-4 h-4" />
-                            {isGenerating 
-                              ? (cv.language === 'fr' ? 'Génération...' : 'Generating...') 
-                              : (cv.language === 'fr' ? 'Télécharger PDF' : 'Download PDF')
-                            }
-                          </button>
-                        </form>
-                      </div>
-                    </div>
-                  </dialog>
-                </div>
-              </div>
+            <div 
+              ref={cvPreviewRef}
+              data-cv-preview 
+              data-theme={theme}
+              className="bg-base-100 w-[210mm] mx-auto hidden lg:block"
+            >
+              <CVPreview cv={cv} theme={theme} />
             </div>
           </div>
         </div>
       </div>
-    </main>
+
+      <dialog id="preview_modal" className="modal">
+        <div className="modal-box w-11/12 max-w-5xl">
+          <h3 className="font-bold text-lg mb-4">
+            {cv.language === 'fr' ? 'Prévisualisation de votre CV' : 'Preview your Resume'}
+          </h3>
+          <div 
+            className="bg-base-100 w-full lg:w-[210mm] mx-auto overflow-x-auto"
+            data-theme={theme}
+          >
+            <CVPreview cv={cv} theme={theme} />
+          </div>
+          <div className="modal-action">
+            <form method="dialog" className="flex gap-2">
+              <button className="btn">
+                {cv.language === 'fr' ? 'Fermer' : 'Close'}
+              </button>
+              <button 
+                className="btn btn-primary" 
+                onClick={handleDownloadPdf}
+                disabled={isGenerating}
+              >
+                <FileText className="w-4 h-4" />
+                {isGenerating 
+                  ? (cv.language === 'fr' ? 'Génération...' : 'Generating...') 
+                  : (cv.language === 'fr' ? 'Télécharger PDF' : 'Download PDF')
+                }
+              </button>
+            </form>
+          </div>
+        </div>
+      </dialog>
+    </div>
   )
 }

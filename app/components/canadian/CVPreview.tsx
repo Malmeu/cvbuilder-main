@@ -43,7 +43,7 @@ export default function CVPreview({ cv, theme }: CVPreviewProps) {
   }
 
   return (
-    <div className="p-8 max-w-[210mm] mx-auto" style={{ minHeight: '297mm' }}>
+    <div className="p-8 max-w-[210mm] mx-auto" style={{ minHeight: '297mm' }} data-theme={theme}>
       <div className="space-y-8">
         {/* En-tête */}
         <header className="relative bg-primary text-primary-content -mx-6 md:-mx-12 -mt-6 md:-mt-12 p-4 md:p-8 mb-6 md:mb-8">
