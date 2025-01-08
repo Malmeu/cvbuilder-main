@@ -9,8 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@hookform/resolvers": "^3.10.0",
+    "@supabase/auth-helpers-nextjs": "^0.10.0",
+    "@supabase/supabase-js": "^2.47.11",
+    "@tinymce/tinymce-react": "^5.1.1",
     "@types/lodash": "^4.17.14",
     "canvas-confetti": "^1.9.3",
+    "date-fns": "^4.1.0",
     "framer-motion": "^11.16.0",
     "html2canvas-pro": "^1.5.8",
     "html2pdf.js": "^0.10.2",
@@ -19,7 +24,9 @@
     "next": "15.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-to-print": "^3.0.4"
+    "react-hook-form": "^7.54.2",
+    "react-to-print": "^3.0.4",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

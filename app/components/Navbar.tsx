@@ -35,13 +35,19 @@ export default function Navbar() {
               href="/builder"
               className="text-base-content/80 hover:text-primary transition-colors"
             >
-              CV Standard
+              Créer un CV
             </Link>
             <Link 
               href="/canadian-builder"
               className="text-base-content/80 hover:text-primary transition-colors"
             >
-              CV Canadien
+              Format Canadien
+            </Link>
+            <Link 
+              href="/blog"
+              className="text-base-content/80 hover:text-primary transition-colors"
+            >
+              Blog
             </Link>
             <Link 
               href="/templates"
@@ -86,20 +92,28 @@ export default function Navbar() {
             >
               CV Standard
             </Link>
+           
             <Link 
-              href="/canadian-builder"
-              className="block text-lg font-medium text-base-content/80 hover:text-primary transition-colors"
-              onClick={() => setIsOpen(false)}
-            >
-              CV Canadien
-            </Link>
-            <Link 
-              href="/templates"
-              className="block text-lg font-medium text-base-content/80 hover:text-primary transition-colors"
-              onClick={() => setIsOpen(false)}
-            >
-              Modèles
-            </Link>
+             href="/canadian-builder"
+  className="block text-lg font-medium text-base-content/80 hover:text-primary transition-colors"
+  onClick={() => setIsOpen(false)}
+>
+  CV Canadien
+</Link>
+<Link 
+  href="/blog"
+  className="block text-lg font-medium text-base-content/80 hover:text-primary transition-colors"
+  onClick={() => setIsOpen(false)}
+>
+  Blog
+</Link>
+<Link 
+  href="/templates"
+  className="block text-lg font-medium text-base-content/80 hover:text-primary transition-colors"
+  onClick={() => setIsOpen(false)}
+>
+  Modèles
+</Link>
             <div className="pt-4">
               <Link 
                 href="/builder"

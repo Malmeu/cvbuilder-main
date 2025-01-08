@@ -14,8 +14,15 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CV Diali",
-  description: "Créez votre CV professionnel en quelques clics",
+  title: "CV Diali - Créez votre CV professionnel",
+  description: "Créez votre CV professionnel en quelques clics. Découvrez nos conseils et astuces pour réussir votre recherche d'emploi sur notre blog.",
+  keywords: "cv, curriculum vitae, création cv, modèle cv, cv professionnel, cv en ligne, cv canadien, conseils cv, blog emploi",
+  authors: [{ name: "CV Diali" }],
+  openGraph: {
+    title: "CV Diali - Créez votre CV professionnel",
+    description: "Créez votre CV professionnel en quelques clics. Découvrez nos conseils et astuces pour réussir votre recherche d'emploi sur notre blog.",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
@@ -30,6 +37,7 @@ export default function RootLayout({
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4559991197605180"
           crossOrigin="anonymous"
+          strategy="afterInteractive"
         />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
