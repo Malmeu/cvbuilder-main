@@ -121,55 +121,48 @@ export default function Builder() {
     setZoom(163);
   }
 
-  const cvPreviewRef = useRef(null)
+  const cvPreviewRef = useRef<HTMLDivElement>(null);
 
   const handleDownloadPdf = async () => {
-    const element = cvPreviewRef.current
-    if(element){
+    const element = cvPreviewRef.current;
+    if (element) {
       try {
-        // Créer une copie temporaire pour le téléchargement
-        const tempDiv = element.cloneNode(true) as HTMLElement;
-        document.body.appendChild(tempDiv);
-        
-        const canvas = await html2canvas(tempDiv, {
+        const canvas = await html2canvas(element, {
           scale: 3,
           useCORS: true,
           logging: true,
           allowTaint: true,
           backgroundColor: null,
-        })
+        });
         
-        // Supprimer la copie temporaire
-        document.body.removeChild(tempDiv);
-        
-        const imgData = canvas.toDataURL('image/png')
+        const imgData = canvas.toDataURL('image/png');
 
         const pdf = new jsPDF({
           orientation: "portrait",
           unit: 'mm',
           format: "A4"
-        })
+        });
         
-        const pdfWidth = pdf.internal.pageSize.getWidth()
-        const pdfHeight = (canvas.height * pdfWidth) / canvas.width 
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
-        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight)
-        pdf.save(`cv.pdf`)
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        pdf.save(`cv.pdf`);
 
-        const modal = document.getElementById('my_modal_3') as HTMLDialogElement
-        if(modal){
-          modal.close()
+        const modal = document.getElementById('my_modal_3') as HTMLDialogElement;
+        if (modal) {
+          modal.close();
         }
 
         confetti({
           particleCount: 100,
           spread: 70,
-          origin: {y:0.6},
-          zIndex:9999
-        })
+          origin: { y: 0.6 },
+          zIndex: 9999
+        });
 
       } catch (error) {
-        console.error('Erreur lors de la génération du PDF :', error)
+        console.error('Erreur lors de la génération du PDF :', error);
       }
     }
   }
