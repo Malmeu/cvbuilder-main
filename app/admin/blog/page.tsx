@@ -8,7 +8,12 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 const Editor = dynamic(
-  () => import('@tinymce/tinymce-react').then(mod => mod.Editor),
+  () => import('@tinymce/tinymce-react').then((mod) => {
+    const { Editor } = mod;
+    return function EditorWithNoSSR(props: any) {
+      return <Editor {...props} />;
+    };
+  }),
   { ssr: false }
 )
 
@@ -97,7 +102,7 @@ export default function AdminBlog() {
           {/* Formulaire */}
           <div className="bg-base-200/50 backdrop-blur-xl p-6 rounded-2xl border border-base-300">
             <h2 className="text-2xl font-semibold mb-6">
-              {isEditing ? 'Modifier l\'article' : 'Nouvel article'}
+              {isEditing ? 'Modifier l&apos;article' : 'Nouvel article'}
             </h2>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -106,7 +111,7 @@ export default function AdminBlog() {
                 <input
                   {...register('title')}
                   className="input input-bordered w-full"
-                  placeholder="Titre de l'article"
+                  placeholder="Titre de l&apos;article"
                 />
                 {errors.title && (
                   <span className="text-error text-sm">{errors.title.message}</span>
@@ -150,7 +155,7 @@ export default function AdminBlog() {
               </div>
 
               <div>
-                <label className="label">URL de l'image</label>
+                <label className="label">L&apos;URL de l&apos;image</label>
                 <input
                   {...register('image_url')}
                   className="input input-bordered w-full"
@@ -162,11 +167,11 @@ export default function AdminBlog() {
               </div>
 
               <div>
-                <label className="label">Auteur</label>
+                <label className="label">L&apos;auteur</label>
                 <input
                   {...register('author')}
                   className="input input-bordered w-full"
-                  placeholder="Nom de l'auteur"
+                  placeholder="Nom de l&apos;auteur"
                 />
                 {errors.author && (
                   <span className="text-error text-sm">{errors.author.message}</span>
@@ -202,7 +207,7 @@ export default function AdminBlog() {
                 <Editor
                   apiKey="s7lvizn9waqfyn4fabavdbftotdss1ih9bmu1a4lt18e9033"
                   value={content}
-                  onEditorChange={(content) => setContent(content)}
+                  onEditorChange={(content: string) => setContent(content)}
                   init={{
                     height: 500,
                     menubar: true,
