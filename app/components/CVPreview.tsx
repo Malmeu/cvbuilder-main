@@ -290,6 +290,9 @@ const CVPreview = React.forwardRef<HTMLDivElement, Props>(({ personalDetails, fi
             </div>
         </div>
     )
-})
+});
 
-export default CVPreview
+// Ajout du displayName pour satisfaire ESLint
+CVPreview.displayName = 'CVPreview';
+
+export default CVPreview;
