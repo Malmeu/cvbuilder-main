@@ -1,283 +1,170 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
-import dynamic from 'next/dynamic'
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
-
-const Editor = dynamic(
-  () => import('@tinymce/tinymce-react').then((mod) => {
-    const { Editor } = mod;
-    return function EditorWithNoSSR(props: any) {
-      return <Editor {...props} />;
-    };
-  }),
-  { ssr: false }
-)
+import { useRouter } from 'next/navigation'
+import { motion } from 'framer-motion'
 
 interface Article {
   id: string
   title: string
-  description: string
   slug: string
-  meta_description: string
-  image_url: string
-  author: string
-  content: string
+  description: string
   created_at: string
-  category: string
-  tags: string[]
+  published: boolean
 }
 
-const articleSchema = z.object({
-  title: z.string().min(1, 'Le titre est requis'),
-  slug: z.string().min(1, 'Le slug est requis'),
-  description: z.string().min(1, 'La description est requise'),
-  meta_description: z.string().min(1, 'La meta description est requise'),
-  image_url: z.string().url('URL d\'image invalide'),
-  author: z.string().min(1, 'L\'auteur est requis'),
-  category: z.string().min(1, 'La catégorie est requise'),
-  tags: z.string().transform(str => str.split(',').map(tag => tag.trim()).filter(Boolean))
-})
-
-type ArticleFormData = z.infer<typeof articleSchema>
-
-export default function AdminBlog() {
-  const [content, setContent] = useState('')
+export default function AdminBlogPage() {
   const [articles, setArticles] = useState<Article[]>([])
-  const [isEditing, setIsEditing] = useState(false)
-  const [currentArticleId, setCurrentArticleId] = useState<string | null>(null)
-
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<ArticleFormData>({
-    resolver: zodResolver(articleSchema)
-  })
+  const [loading, setLoading] = useState(true)
+  const router = useRouter()
 
   useEffect(() => {
     fetchArticles()
   }, [])
 
   async function fetchArticles() {
-    const { data } = await supabase
-      .from('articles')
-      .select('*')
-      .order('created_at', { ascending: false })
-    
-    if (data) setArticles(data)
+    try {
+      const { data, error } = await supabase
+        .from('articles')
+        .select('*')
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+      setArticles(data || [])
+    } catch (error) {
+      console.error('Erreur lors de la récupération des articles:', error)
+    } finally {
+      setLoading(false)
+    }
   }
 
-  async function onSubmit(data: ArticleFormData) {
-    const articleData = {
-      ...data,
-      content,
+  async function handleLogout() {
+    try {
+      await supabase.auth.signOut()
+      router.push('/admin/login')
+    } catch (error) {
+      console.error('Erreur lors de la déconnexion:', error)
     }
+  }
 
-    if (isEditing) {
-      await supabase
+  async function handlePublishToggle(id: string, currentStatus: boolean) {
+    try {
+      const { error } = await supabase
         .from('articles')
-        .update(articleData)
-        .eq('id', currentArticleId)
-    } else {
-      await supabase
-        .from('articles')
-        .insert([articleData])
+        .update({ published: !currentStatus })
+        .eq('id', id)
+
+      if (error) throw error
+      fetchArticles()
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour du statut:', error)
     }
+  }
 
-    reset()
-    setContent('')
-    setIsEditing(false)
-    setCurrentArticleId(null)
-    fetchArticles()
+  async function handleDelete(id: string) {
+    if (!confirm('Êtes-vous sûr de vouloir supprimer cet article ?')) return
+
+    try {
+      const { error } = await supabase
+        .from('articles')
+        .delete()
+        .eq('id', id)
+
+      if (error) throw error
+      fetchArticles()
+    } catch (error) {
+      console.error('Erreur lors de la suppression:', error)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <span className="loading loading-spinner loading-lg text-primary"></span>
+      </div>
+    )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-base-100 via-base-200 to-base-100 p-8">
+    <div className="min-h-screen bg-gradient-to-b from-base-100 via-base-200 to-base-100 p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold mb-8 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-          Administration du Blog
-        </h1>
-
-        <div className="grid lg:grid-cols-2 gap-8">
-          {/* Formulaire */}
-          <div className="bg-base-200/50 backdrop-blur-xl p-6 rounded-2xl border border-base-300">
-            <h2 className="text-2xl font-semibold mb-6">
-              {isEditing ? 'Modifier l&apos;article' : 'Nouvel article'}
-            </h2>
-
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              <div>
-                <label className="label">Titre</label>
-                <input
-                  {...register('title')}
-                  className="input input-bordered w-full"
-                  placeholder="Titre de l&apos;article"
-                />
-                {errors.title && (
-                  <span className="text-error text-sm">{errors.title.message}</span>
-                )}
-              </div>
-
-              <div>
-                <label className="label">Slug</label>
-                <input
-                  {...register('slug')}
-                  className="input input-bordered w-full"
-                  placeholder="mon-article"
-                />
-                {errors.slug && (
-                  <span className="text-error text-sm">{errors.slug.message}</span>
-                )}
-              </div>
-
-              <div>
-                <label className="label">Description</label>
-                <textarea
-                  {...register('description')}
-                  className="textarea textarea-bordered w-full"
-                  rows={3}
-                />
-                {errors.description && (
-                  <span className="text-error text-sm">{errors.description.message}</span>
-                )}
-              </div>
-
-              <div>
-                <label className="label">Meta Description (SEO)</label>
-                <textarea
-                  {...register('meta_description')}
-                  className="textarea textarea-bordered w-full"
-                  rows={2}
-                />
-                {errors.meta_description && (
-                  <span className="text-error text-sm">{errors.meta_description.message}</span>
-                )}
-              </div>
-
-              <div>
-                <label className="label">L&apos;URL de l&apos;image</label>
-                <input
-                  {...register('image_url')}
-                  className="input input-bordered w-full"
-                  placeholder="https://..."
-                />
-                {errors.image_url && (
-                  <span className="text-error text-sm">{errors.image_url.message}</span>
-                )}
-              </div>
-
-              <div>
-                <label className="label">L&apos;auteur</label>
-                <input
-                  {...register('author')}
-                  className="input input-bordered w-full"
-                  placeholder="Nom de l&apos;auteur"
-                />
-                {errors.author && (
-                  <span className="text-error text-sm">{errors.author.message}</span>
-                )}
-              </div>
-
-              <div>
-                <label className="label">Catégorie</label>
-                <input
-                  {...register('category')}
-                  className="input input-bordered w-full"
-                  placeholder="Ex: Conseils CV"
-                />
-                {errors.category && (
-                  <span className="text-error text-sm">{errors.category.message}</span>
-                )}
-              </div>
-
-              <div>
-                <label className="label">Tags (séparés par des virgules)</label>
-                <input
-                  {...register('tags')}
-                  className="input input-bordered w-full"
-                  placeholder="cv, emploi, carrière"
-                />
-                {errors.tags && (
-                  <span className="text-error text-sm">{errors.tags.message}</span>
-                )}
-              </div>
-
-              <div>
-                <label className="label">Contenu</label>
-                <Editor
-                  apiKey="s7lvizn9waqfyn4fabavdbftotdss1ih9bmu1a4lt18e9033"
-                  value={content}
-                  onEditorChange={(content: string) => setContent(content)}
-                  init={{
-                    height: 500,
-                    menubar: true,
-                    plugins: [
-                      'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-                      'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-                      'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
-                    ],
-                    toolbar: 'undo redo | blocks | ' +
-                      'bold italic forecolor | alignleft aligncenter ' +
-                      'alignright alignjustify | bullist numlist outdent indent | ' +
-                      'removeformat | help',
-                    language: 'fr_FR',
-                    skin: 'oxide-dark',
-                    content_css: 'dark'
-                  }}
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="btn btn-primary w-full"
-              >
-                {isEditing ? 'Mettre à jour' : 'Publier'}
-              </button>
-            </form>
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            Gestion des Articles
+          </h1>
+          <div className="flex gap-4">
+            <button
+              onClick={() => router.push('/admin/blog/new')}
+              className="btn btn-primary"
+            >
+              Nouvel Article
+            </button>
+            <button
+              onClick={handleLogout}
+              className="btn btn-outline btn-error"
+            >
+              Déconnexion
+            </button>
           </div>
+        </div>
 
-          {/* Liste des articles */}
-          <div className="bg-base-200/50 backdrop-blur-xl p-6 rounded-2xl border border-base-300">
-            <h2 className="text-2xl font-semibold mb-6">Articles publiés</h2>
-            <div className="space-y-4">
-              {articles.map((article: Article) => (
-                <div
-                  key={article.id}
-                  className="p-4 bg-base-100 rounded-xl border border-base-300"
-                >
-                  <h3 className="font-semibold">{article.title}</h3>
-                  <p className="text-sm text-base-content/70 mt-1">{article.description}</p>
-                  <div className="flex gap-2 mt-4">
-                    <button
-                      onClick={() => {
-                        setIsEditing(true)
-                        setCurrentArticleId(article.id)
-                        reset(article)
-                        setContent(article.content)
-                      }}
-                      className="btn btn-sm btn-outline"
-                    >
-                      Modifier
-                    </button>
-                    <button
-                      onClick={async () => {
-                        if (confirm('Êtes-vous sûr de vouloir supprimer cet article ?')) {
-                          await supabase
-                            .from('articles')
-                            .delete()
-                            .eq('id', article.id)
-                          fetchArticles()
-                        }
-                      }}
-                      className="btn btn-sm btn-error btn-outline"
-                    >
-                      Supprimer
-                    </button>
+        <div className="grid gap-4">
+          {articles.map((article) => (
+            <motion.div
+              key={article.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-base-100 rounded-lg shadow-lg p-6"
+            >
+              <div className="flex items-start justify-between">
+                <div>
+                  <h2 className="text-xl font-semibold mb-2">{article.title}</h2>
+                  <p className="text-base-content/70 mb-4">{article.description}</p>
+                  <div className="flex gap-2 items-center">
+                    <span className={`badge ${article.published ? 'badge-success' : 'badge-warning'}`}>
+                      {article.published ? 'Publié' : 'Brouillon'}
+                    </span>
+                    <span className="text-sm text-base-content/50">
+                      {new Date(article.created_at).toLocaleDateString('fr-FR')}
+                    </span>
                   </div>
                 </div>
-              ))}
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => router.push(`/admin/blog/edit/${article.id}`)}
+                    className="btn btn-sm btn-primary"
+                  >
+                    Modifier
+                  </button>
+                  <button
+                    onClick={() => handlePublishToggle(article.id, article.published)}
+                    className={`btn btn-sm ${article.published ? 'btn-warning' : 'btn-success'}`}
+                  >
+                    {article.published ? 'Dépublier' : 'Publier'}
+                  </button>
+                  <button
+                    onClick={() => handleDelete(article.id)}
+                    className="btn btn-sm btn-error"
+                  >
+                    Supprimer
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+
+          {articles.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-base-content/70">Aucun article trouvé</p>
+              <button
+                onClick={() => router.push('/admin/blog/new')}
+                className="btn btn-primary mt-4"
+              >
+                Créer votre premier article
+              </button>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
