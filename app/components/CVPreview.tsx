@@ -51,9 +51,9 @@ const getStarRating = (proficiency: string) => {
     );
 }
 
-const CVPreview: React.FC<Props> = ({ personalDetails, file, theme, experiences, educations, languages, skills, hobbies, download, ref }) => {
+const CVPreview = React.forwardRef<HTMLDivElement, Props>(({ personalDetails, file, theme, experiences, educations, languages, skills, hobbies, download }, ref) => {
     return (
-        <div className={`relative flex p-16 w-[950px] h-[1200px] shadow-lg ${download ? 'mb-10' : ''}`}>
+        <div ref={ref} className={`relative flex p-16 w-[950px] h-[1200px] shadow-lg ${download ? 'mb-10' : ''}`}>
             {/* Container avec le thème isolé */}
             <div data-theme={theme} className="absolute inset-0 bg-base-100">
                 {/* Contenu du CV */}
@@ -290,6 +290,6 @@ const CVPreview: React.FC<Props> = ({ personalDetails, file, theme, experiences,
             </div>
         </div>
     )
-}
+})
 
 export default CVPreview
