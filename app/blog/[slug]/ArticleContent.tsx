@@ -1,10 +1,8 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
-import { supabase } from '@/lib/supabase'
 
 interface Article {
   id: string
@@ -19,24 +17,17 @@ interface Article {
   tags: string[]
 }
 
-export default function ArticleContent({ slug }: { slug: string }) {
-  const [article, setArticle] = useState<Article | null>(null)
-
-  useEffect(() => {
-    fetchArticle()
-  }, [slug])
-
-  async function fetchArticle() {
-    const { data, error } = await supabase
-      .from('articles')
-      .select('*')
-      .eq('slug', slug)
-      .single()
-
-    if (data) setArticle(data)
+export default function ArticleContent({ article }: { article: Article | null }) {
+  if (!article) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-base-100 via-base-200 to-base-100 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold mb-4">Article non trouvé</h1>
+          <p className="text-gray-600">L&apos;article que vous recherchez n&apos;existe pas.</p>
+        </div>
+      </div>
+    )
   }
-
-  if (!article) return null
 
   return (
     <article className="relative py-16 px-4 sm:px-6 lg:px-8">
