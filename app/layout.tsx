@@ -3,6 +3,7 @@ import { Inter as FontSans } from "next/font/google";
 import { JetBrains_Mono as FontMono } from "next/font/google";
 import "./globals.css";
 import Script from 'next/script';
+import { Analytics } from "@vercel/analytics/react";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -33,7 +34,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" data-theme="light">
+    <html lang="fr" suppressHydrationWarning>
       <head>
         <Script
           async
@@ -44,6 +45,7 @@ export default function RootLayout({
       </head>
       <body className={`${fontSans.variable} ${fontMono.variable} antialiased`}>
         {children}
+        <Analytics />
       </body>
     </html>
   );
