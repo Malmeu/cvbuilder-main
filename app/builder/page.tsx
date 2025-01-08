@@ -52,10 +52,10 @@ export default function Builder() {
       })
   }, [])
 
-  useEffect(() => {
-    // Appliquer le thème initial
-    document.documentElement.setAttribute('data-theme', isDarkMode ? 'night' : 'light');
-  }, [isDarkMode]);
+  const handleThemeChange = (newTheme: string) => {
+    setTheme(newTheme);
+    setIsDarkMode(['dark', 'night', 'black', 'luxury', 'dracula', 'business', 'coffee'].includes(newTheme));
+  };
 
   const themes = [
     "light",
@@ -305,23 +305,15 @@ export default function Builder() {
               <span className="ml-2">{isDarkMode ? "Mode clair" : "Mode sombre"}</span>
             </button>
 
-            <div className="dropdown dropdown-end">
-              <label tabIndex={0} className="btn btn-sm bg-orange-500 hover:bg-orange-600 text-white border-none">
-                Thème: {theme}
-              </label>
-              <ul tabIndex={0} className="dropdown-content z-[9999] menu p-2 shadow bg-base-100 rounded-box w-52 max-h-96 overflow-y-auto mt-1">
-                {themes.map((themeName) => (
-                  <li key={themeName}>
-                    <a 
-                      onClick={() => setTheme(themeName)}
-                      className={`${themeName === theme ? 'active' : ''}`}
-                    >
-                      {themeName}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <select
+              value={theme}
+              onChange={(e) => handleThemeChange(e.target.value)}
+              className="select select-bordered select-sm"
+            >
+              {themes.map((t) => (
+                <option key={t} value={t}>{t}</option>
+              ))}
+            </select>
 
             <button
               onClick={handleResetAll}
@@ -398,23 +390,15 @@ export default function Builder() {
               <span className="ml-2">{isDarkMode ? "Mode clair" : "Mode sombre"}</span>
             </button>
 
-            <div className="dropdown dropdown-end">
-              <label tabIndex={0} className="btn btn-sm bg-orange-500 hover:bg-orange-600 text-white border-none">
-                Thème: {theme}
-              </label>
-              <ul tabIndex={0} className="dropdown-content z-[9999] menu p-2 shadow bg-base-100 rounded-box w-52 max-h-96 overflow-y-auto mt-1">
-                {themes.map((themeName) => (
-                  <li key={themeName}>
-                    <a 
-                      onClick={() => setTheme(themeName)}
-                      className={`${themeName === theme ? 'active' : ''}`}
-                    >
-                      {themeName}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <select
+              value={theme}
+              onChange={(e) => handleThemeChange(e.target.value)}
+              className="select select-bordered select-sm"
+            >
+              {themes.map((t) => (
+                <option key={t} value={t}>{t}</option>
+              ))}
+            </select>
             <button
               onClick={handleResetAll}
               className="btn btn-sm bg-orange-500 hover:bg-orange-600 text-white border-none"
