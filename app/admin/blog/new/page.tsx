@@ -26,10 +26,17 @@ const articleSchema = z.object({
   image_url: z.string().url('URL d\'image invalide'),
   author: z.string().min(1, 'L\'auteur est requis'),
   category: z.string().min(1, 'La catégorie est requise'),
-  tags: z.string().transform(str => str.split(',').map(tag => tag.trim()).filter(Boolean))
+  tags: z.string()
 })
 
-type ArticleFormData = z.infer<typeof articleSchema>
+type FormData = z.infer<typeof articleSchema>
+
+interface ArticleFormData extends Omit<FormData, 'tags'> {
+  tags: string[];
+  content: string;
+  published: boolean;
+  created_at: string;
+}
 
 export default function NewArticlePage() {
   const [content, setContent] = useState('')
@@ -37,7 +44,7 @@ export default function NewArticlePage() {
   const [error, setError] = useState('')
   const router = useRouter()
 
-  const { register, handleSubmit, formState: { errors } } = useForm<ArticleFormData>({
+  const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(articleSchema),
     defaultValues: {
       author: 'CV Diali',
@@ -46,7 +53,7 @@ export default function NewArticlePage() {
     }
   })
 
-  async function onSubmit(data: ArticleFormData) {
+  async function onSubmit(data: FormData) {
     setLoading(true)
     setError('')
     
@@ -63,7 +70,9 @@ export default function NewArticlePage() {
         return
       }
 
-      const articleData = {
+      const tags = data.tags.split(',').map(tag => tag.trim()).filter(Boolean)
+
+      const articleData: ArticleFormData = {
         title: data.title,
         slug: data.slug.toLowerCase().replace(/\s+/g, '-'),
         description: data.description,
@@ -71,7 +80,7 @@ export default function NewArticlePage() {
         image_url: data.image_url,
         author: data.author,
         category: data.category,
-        tags: data.tags,
+        tags: tags,
         content: content,
         published: false,
         created_at: new Date().toISOString()
