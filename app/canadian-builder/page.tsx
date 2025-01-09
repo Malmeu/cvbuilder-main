@@ -20,8 +20,7 @@ const defaultCV: CanadianCV = {
     currentPosition: '',
     email: '',
     phone: '',
-    city: 'Montréal',
-    province: 'Québec',
+    address: 'Montréal, Québec',
     linkedIn: '',
     summary: ''
   },
