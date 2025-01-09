@@ -3,7 +3,6 @@
 import { CanadianEducation } from '@/app/types/canadian-cv'
 import { useState } from 'react'
 import { Plus, X, GripVertical } from 'lucide-react'
-import { provinces } from '@/app/data/canadian-provinces'
 
 interface Props {
   education: CanadianEducation[]
@@ -14,8 +13,7 @@ interface Props {
 const emptyEducation: CanadianEducation = {
   diploma: '',
   institution: '',
-  city: '',
-  province: '',
+  address: '',
   startYear: '',
   endYear: '',
   equivalence: ''
@@ -29,8 +27,7 @@ export default function EducationForm({ education, onChange, language }: Props) 
       title: 'Formation',
       diploma: 'Diplôme',
       institution: 'Institution',
-      city: 'Ville',
-      province: 'Province',
+      address: 'Adresse',
       startYear: 'Année de début',
       endYear: 'Année de fin',
       equivalence: 'Équivalence (optionnel)',
@@ -42,8 +39,7 @@ export default function EducationForm({ education, onChange, language }: Props) 
       title: 'Education',
       diploma: 'Degree',
       institution: 'Institution',
-      city: 'City',
-      province: 'Province',
+      address: 'Address',
       startYear: 'Start Year',
       endYear: 'End Year',
       equivalence: 'Equivalence (optional)',
@@ -139,33 +135,17 @@ export default function EducationForm({ education, onChange, language }: Props) 
                 />
               </div>
 
-              <div className="form-control">
+              <div className="form-control md:col-span-2">
                 <label className="label">
-                  <span className="label-text">{text.city}</span>
+                  <span className="label-text">{text.address}</span>
                 </label>
                 <input
                   type="text"
                   className="input input-bordered"
-                  value={edu.city}
-                  onChange={(e) => handleEducationChange(index, 'city', e.target.value)}
+                  value={edu.address}
+                  onChange={(e) => handleEducationChange(index, 'address', e.target.value)}
+                  placeholder={language === 'fr' ? 'Ex: Montréal, Canada' : 'Ex: Montreal, Canada'}
                 />
-              </div>
-
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">{text.province}</span>
-                </label>
-                <select
-                  className="select select-bordered"
-                  value={edu.province}
-                  onChange={(e) => handleEducationChange(index, 'province', e.target.value)}
-                >
-                  {provinces.map((province) => (
-                    <option key={province.code} value={province.name[language]}>
-                      {province.name[language]}
-                    </option>
-                  ))}
-                </select>
               </div>
 
               <div className="form-control">
@@ -203,7 +183,7 @@ export default function EducationForm({ education, onChange, language }: Props) 
                 <input
                   type="text"
                   className="input input-bordered"
-                  value={edu.equivalence}
+                  value={edu.equivalence || ''}
                   onChange={(e) => handleEducationChange(index, 'equivalence', e.target.value)}
                   placeholder={text.equivalencePlaceholder}
                 />

@@ -4,8 +4,7 @@ export interface CanadianPersonalDetails {
   currentPosition: string;
   email: string;
   phone: string;
-  city: string;
-  province: string;
+  address: string;
   linkedIn?: string;
   summary: string;
 }
@@ -13,8 +12,7 @@ export interface CanadianPersonalDetails {
 export interface CanadianExperience {
   position: string;
   company: string;
-  city: string;
-  province: string;
+  address: string;
   startDate: string;
   endDate: string;
   current: boolean;
@@ -24,8 +22,7 @@ export interface CanadianExperience {
 export interface CanadianEducation {
   diploma: string;
   institution: string;
-  city: string;
-  province: string;
+  address: string;
   startYear: string;
   endYear: string;
   equivalence?: string; // Pour les diplômes étrangers

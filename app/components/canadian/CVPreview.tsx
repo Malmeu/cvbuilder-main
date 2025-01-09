@@ -9,7 +9,7 @@ interface CVPreviewProps {
 }
 
 export default function CVPreview({ cv, theme }: CVPreviewProps) {
-  const text = {
+  const labels = {
     fr: {
       experience: 'Expérience professionnelle',
       education: 'Formation',
@@ -17,7 +17,11 @@ export default function CVPreview({ cv, theme }: CVPreviewProps) {
       contact: 'Contact',
       interests: "Centres d'intérêt",
       references: 'Références',
-      present: 'Présent'
+      present: 'Présent',
+      email: 'Courriel',
+      phone: 'Téléphone',
+      address: 'Adresse',
+      linkedIn: 'LinkedIn'
     },
     en: {
       experience: 'Professional Experience',
@@ -26,11 +30,15 @@ export default function CVPreview({ cv, theme }: CVPreviewProps) {
       contact: 'Contact',
       interests: 'Interests',
       references: 'References',
-      present: 'Present'
+      present: 'Present',
+      email: 'Email',
+      phone: 'Phone',
+      address: 'Address',
+      linkedIn: 'LinkedIn'
     }
   }
 
-  const labels = cv.language === 'fr' ? text.fr : text.en
+  const selectedLabels = cv.language === 'fr' ? labels.fr : labels.en
 
   const formatDate = (date: string) => {
     if (!date) return ''
@@ -47,38 +55,110 @@ export default function CVPreview({ cv, theme }: CVPreviewProps) {
       <div className="space-y-8">
         {/* En-tête */}
         <header className="relative bg-primary text-primary-content -mx-6 md:-mx-12 -mt-6 md:-mt-12 p-4 md:p-8 mb-6 md:mb-8">
-          <h1 className="text-2xl md:text-4xl font-bold mb-2">
-            {cv.personalDetails.firstName} {cv.personalDetails.lastName}
-          </h1>
-          <h2 className="text-lg md:text-xl mb-3 md:mb-4">{cv.personalDetails.currentPosition}</h2>
-          <p className="text-xs md:text-sm max-w-2xl mb-4 md:mb-6">
-            {cv.personalDetails.summary}
-          </p>
+          <div className="text-center">
+            <h1 className="text-3xl font-bold mb-2">{cv.personalDetails.firstName} {cv.personalDetails.lastName}</h1>
+            <p className="text-xl mb-4">{cv.personalDetails.currentPosition}</p>
+            <p className="text-sm max-w-2xl mx-auto">
+              {cv.personalDetails.summary}
+            </p>
+          </div>
         </header>
 
         <div className="grid grid-cols-3 gap-8">
+          {/* Colonne de gauche */}
+          <div className="col-span-1 space-y-8">
+            {/* Contact */}
+            <section>
+              <h2 className="text-base md:text-lg font-bold border-b-2 border-primary mb-3 md:mb-4">
+                {selectedLabels.contact}
+              </h2>
+              <div className="space-y-2 text-sm">
+                <p>
+                  <span className="font-medium">{selectedLabels.email}:</span> {cv.personalDetails.email}
+                </p>
+                <p>
+                  <span className="font-medium">{selectedLabels.phone}:</span> {cv.personalDetails.phone}
+                </p>
+                {cv.personalDetails.address && (
+                  <p>
+                    <span className="font-medium">{selectedLabels.address}:</span> {cv.personalDetails.address}
+                  </p>
+                )}
+                {cv.personalDetails.linkedIn && (
+                  <p>
+                    <span className="font-medium">{selectedLabels.linkedIn}:</span>{' '}
+                    <a href={cv.personalDetails.linkedIn} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                      {cv.personalDetails.linkedIn.replace('https://linkedin.com/in/', '')}
+                    </a>
+                  </p>
+                )}
+              </div>
+            </section>
+
+            {/* Compétences */}
+            <section>
+              <h2 className="text-base md:text-lg font-bold border-b-2 border-primary mb-3 md:mb-4">
+                {selectedLabels.skills}
+              </h2>
+              <div className="space-y-4">
+                {cv.skills.map((category, index) => (
+                  <div key={index}>
+                    <h3 className="font-medium text-sm mb-2">{category.category}</h3>
+                    <ul className="list-disc list-inside text-sm space-y-1">
+                      {category.skills.map((skill, i) => (
+                        <li key={i}>{skill}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Intérêts */}
+            {cv.interests.length > 0 && (
+              <section>
+                <h2 className="text-base md:text-lg font-bold border-b-2 border-primary mb-3 md:mb-4">
+                  {selectedLabels.interests}
+                </h2>
+                <ul className="list-disc list-inside text-sm space-y-1">
+                  {cv.interests.map((interest, index) => (
+                    <li key={index}>
+                      {interest.name}
+                      {interest.description && (
+                        <span className="text-base-content/60"> - {interest.description}</span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+          </div>
+
           <main className="col-span-2">
             {/* Expérience */}
             <section className="mb-6 md:mb-8">
               <h2 className="text-base md:text-lg font-bold border-b-2 border-primary mb-3 md:mb-4">
-                {labels.experience}
+                {selectedLabels.experience}
               </h2>
               {cv.experiences.map((exp, index) => (
                 <div key={index} className="mb-4 md:mb-6">
-                  <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-1 md:mb-2">
+                  <div className="flex justify-between items-start mb-1 md:mb-2">
                     <h3 className="font-bold text-sm md:text-base">{exp.position}</h3>
                     <div className="text-xs md:text-sm text-base-content/60">
-                      {formatDate(exp.startDate)} - {exp.current ? labels.present : formatDate(exp.endDate)}
+                      {formatDate(exp.startDate)} - {exp.current ? selectedLabels.present : formatDate(exp.endDate)}
                     </div>
                   </div>
                   <div className="text-xs md:text-sm mb-1 md:mb-2">
-                    <span className="font-semibold">{exp.company}</span> | {exp.city}, {exp.province}
+                    <span className="font-medium">{exp.company}</span>
+                    {exp.address && <span className="text-base-content/60">, {exp.address}</span>}
                   </div>
-                  <ul className="list-disc list-inside text-xs md:text-sm space-y-0.5 md:space-y-1">
-                    {exp.achievements.map((achievement, i) => (
-                      <li key={i}>{achievement}</li>
-                    ))}
-                  </ul>
+                  {exp.achievements.length > 0 && (
+                    <ul className="list-disc list-inside text-xs md:text-sm space-y-0.5 md:space-y-1">
+                      {exp.achievements.map((achievement, i) => (
+                        <li key={i} className="text-base-content/80">{achievement}</li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
               ))}
             </section>
@@ -86,98 +166,36 @@ export default function CVPreview({ cv, theme }: CVPreviewProps) {
             {/* Formation */}
             <section className="mb-6 md:mb-8">
               <h2 className="text-base md:text-lg font-bold border-b-2 border-primary mb-3 md:mb-4">
-                {labels.education}
+                {selectedLabels.education}
               </h2>
               {cv.education.map((edu, index) => (
                 <div key={index} className="mb-3 md:mb-4">
-                  <div className="flex flex-col md:flex-row md:justify-between md:items-start">
-                    <div>
-                      <h3 className="font-bold text-sm md:text-base">{edu.diploma}</h3>
-                      <div className="text-xs md:text-sm">
-                        <span className="font-semibold">{edu.institution}</span> | {edu.city}, {edu.province}
-                      </div>
-                      {edu.equivalence && (
-                        <div className="text-xs md:text-sm text-base-content/60 italic">
-                          {edu.equivalence}
-                        </div>
-                      )}
-                    </div>
+                  <div className="flex justify-between items-start mb-1">
+                    <h3 className="font-bold text-sm md:text-base">{edu.diploma}</h3>
                     <div className="text-xs md:text-sm text-base-content/60">
                       {edu.startYear} - {edu.endYear}
                     </div>
                   </div>
+                  <div className="text-xs md:text-sm">
+                    <span className="font-medium">{edu.institution}</span>
+                    {edu.address && <span className="text-base-content/60">, {edu.address}</span>}
+                  </div>
+                  {edu.equivalence && (
+                    <div className="text-xs md:text-sm text-base-content/60 italic mt-1">
+                      {edu.equivalence}
+                    </div>
+                  )}
                 </div>
               ))}
             </section>
           </main>
 
           <aside>
-            {/* Contact */}
-            <section className="mb-6 md:mb-8">
-              <h2 className="text-base md:text-lg font-bold border-b-2 border-primary mb-3 md:mb-4">
-                {labels.contact}
-              </h2>
-              <div className="space-y-2 md:space-y-3 text-xs md:text-sm">
-                <div className="flex items-center gap-2">
-                  <MapPin className="w-3 h-3 md:w-4 md:h-4 text-gray-600" />
-                  <span>{cv.personalDetails.city}, {cv.personalDetails.province}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Phone className="w-3 h-3 md:w-4 md:h-4 text-gray-600" />
-                  <span>{cv.personalDetails.phone}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Mail className="w-3 h-3 md:w-4 md:h-4 text-gray-600" />
-                  <span>{cv.personalDetails.email}</span>
-                </div>
-                {cv.personalDetails.linkedIn && (
-                  <div className="flex items-center gap-2">
-                    <Linkedin className="w-3 h-3 md:w-4 md:h-4 text-gray-600" />
-                    <span>{cv.personalDetails.linkedIn}</span>
-                  </div>
-                )}
-              </div>
-            </section>
-
-            {/* Compétences */}
-            <section className="mb-6 md:mb-8">
-              <h2 className="text-base md:text-lg font-bold border-b-2 border-primary mb-3 md:mb-4">
-                {labels.skills}
-              </h2>
-              {cv.skills.map((category, index) => (
-                <div key={index} className="mb-3 md:mb-4">
-                  <h3 className="font-semibold text-sm md:text-base mb-1 md:mb-2">{category.category}</h3>
-                  <ul className="list-disc list-inside text-xs md:text-sm space-y-0.5 md:space-y-1">
-                    {category.skills.map((skill, i) => (
-                      <li key={i}>{skill}</li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </section>
-
-            {/* Centres d'intérêt */}
-            {cv.interests.length > 0 && (
-              <section className="mb-6 md:mb-8">
-                <h2 className="text-base md:text-lg font-bold border-b-2 border-primary mb-3 md:mb-4">
-                  {labels.interests}
-                </h2>
-                <ul className="list-disc list-inside text-xs md:text-sm space-y-0.5 md:space-y-1">
-                  {cv.interests.map((interest, index) => (
-                    <li key={index}>
-                      <span className="font-semibold">{interest.name}</span>
-                      {interest.description && ` - ${interest.description}`}
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            )}
-
             {/* Références */}
             {cv.references.available && (
               <section>
                 <h2 className="text-base md:text-lg font-bold border-b-2 border-primary mb-3 md:mb-4">
-                  {labels.references}
+                  {selectedLabels.references}
                 </h2>
                 <p className="text-xs md:text-sm text-base-content/60 italic">
                   {cv.references.text}

@@ -14,8 +14,7 @@ interface Props {
 const emptyExperience: CanadianExperience = {
   position: '',
   company: '',
-  city: '',
-  province: '',
+  address: '',
   startDate: '',
   endDate: '',
   current: false,
@@ -29,8 +28,7 @@ export default function ExperienceForm({ experiences, onChange, language }: Prop
     fr: {
       position: 'Poste',
       company: 'Entreprise',
-      city: 'Ville',
-      province: 'Province',
+      address: 'Adresse',
       startDate: 'Date de début',
       endDate: 'Date de fin',
       current: 'Poste actuel',
@@ -42,8 +40,7 @@ export default function ExperienceForm({ experiences, onChange, language }: Prop
     en: {
       position: 'Position',
       company: 'Company',
-      city: 'City',
-      province: 'Province',
+      address: 'Address',
       startDate: 'Start Date',
       endDate: 'End Date',
       current: 'Current Position',
@@ -160,13 +157,14 @@ export default function ExperienceForm({ experiences, onChange, language }: Prop
 
                 <div className="form-control">
                   <label className="label">
-                    <span className="label-text">{text.city}</span>
+                    <span className="label-text">{text.address}</span>
                   </label>
                   <input
                     type="text"
                     className="input input-bordered w-full"
-                    value={experience.city}
-                    onChange={(e) => handleExperienceChange(index, 'city', e.target.value)}
+                    value={experience.address}
+                    onChange={(e) => handleExperienceChange(index, 'address', e.target.value)}
+                    placeholder={language === 'fr' ? 'Ex: Montréal, Canada' : 'Ex: Montreal, Canada'}
                   />
                 </div>
 
@@ -194,24 +192,6 @@ export default function ExperienceForm({ experiences, onChange, language }: Prop
                     value={experience.company}
                     onChange={(e) => handleExperienceChange(index, 'company', e.target.value)}
                   />
-                </div>
-
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">{text.province}</span>
-                  </label>
-                  <select
-                    className="select select-bordered w-full"
-                    value={experience.province}
-                    onChange={(e) => handleExperienceChange(index, 'province', e.target.value)}
-                  >
-                    <option value="">{language === 'fr' ? 'Sélectionner' : 'Select'}</option>
-                    {provinces.map((province) => (
-                      <option key={province.code} value={province.code}>
-                        {province.name[language]}
-                      </option>
-                    ))}
-                  </select>
                 </div>
 
                 <div className="form-control">
