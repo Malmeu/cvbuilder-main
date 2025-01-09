@@ -8,6 +8,15 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
 
+  const navigation = [
+    { name: 'Accueil', href: '/' },
+    { name: 'Créer un CV', href: '/builder' },
+    { name: 'Format Canadien', href: '/canadian-builder' },
+    { name: 'Blog', href: '/blog' },
+    { name: 'Boîte à outils', href: '/outils' },
+    { name: 'Modèles', href: '/templates' },
+  ];
+
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 10)
@@ -31,30 +40,15 @@ export default function Navbar() {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link 
-              href="/builder"
-              className="text-base-content/80 hover:text-primary transition-colors"
-            >
-              Créer un CV
-            </Link>
-            <Link 
-              href="/canadian-builder"
-              className="text-base-content/80 hover:text-primary transition-colors"
-            >
-              Format Canadien
-            </Link>
-            <Link 
-              href="/blog"
-              className="text-base-content/80 hover:text-primary transition-colors"
-            >
-              Blog
-            </Link>
-            <Link 
-              href="/templates"
-              className="text-base-content/80 hover:text-primary transition-colors"
-            >
-              Modèles
-            </Link>
+            {navigation.map((item) => (
+              <Link 
+                key={item.name}
+                href={item.href}
+                className="text-base-content/80 hover:text-primary transition-colors"
+              >
+                {item.name}
+              </Link>
+            ))}
             <Link 
               href="/builder"
               className="px-6 py-2 bg-primary/10 text-primary rounded-full hover:bg-primary/20 transition-all"
@@ -85,35 +79,16 @@ export default function Navbar() {
           ${isOpen ? 'translate-x-0' : 'translate-x-full'}
         `}>
           <div className="p-4 space-y-6">
-            <Link 
-              href="/builder"
-              className="block text-lg font-medium text-base-content/80 hover:text-primary transition-colors"
-              onClick={() => setIsOpen(false)}
-            >
-              CV Standard
-            </Link>
-           
-            <Link 
-             href="/canadian-builder"
-  className="block text-lg font-medium text-base-content/80 hover:text-primary transition-colors"
-  onClick={() => setIsOpen(false)}
->
-  CV Canadien
-</Link>
-<Link 
-  href="/blog"
-  className="block text-lg font-medium text-base-content/80 hover:text-primary transition-colors"
-  onClick={() => setIsOpen(false)}
->
-  Blog
-</Link>
-<Link 
-  href="/templates"
-  className="block text-lg font-medium text-base-content/80 hover:text-primary transition-colors"
-  onClick={() => setIsOpen(false)}
->
-  Modèles
-</Link>
+            {navigation.map((item) => (
+              <Link 
+                key={item.name}
+                href={item.href}
+                className="block text-lg font-medium text-base-content/80 hover:text-primary transition-colors"
+                onClick={() => setIsOpen(false)}
+              >
+                {item.name}
+              </Link>
+            ))}
             <div className="pt-4">
               <Link 
                 href="/builder"

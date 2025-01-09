@@ -16,11 +16,19 @@ const fontMono = FontMono({
 });
 
 export const metadata: Metadata = {
-  title: "CV Diali - Créez votre CV professionnel",
-  description: "Créez votre CV professionnel gratuitement avec CV Diali. Choisissez parmi nos modèles modernes et personnalisables.",
+  title: "CVDiali - Créateur de CV Professionnel",
+  description: "Créez votre CV professionnel en quelques minutes avec CVDiali. Outils gratuits pour la création de CV, lettres de motivation et préparation aux entretiens.",
+  keywords: "cv, création cv, lettre motivation, entretien, emploi, recrutement, carrière",
   metadataBase: new URL('https://cvdiali.com'),
-  keywords: "cv, curriculum vitae, création cv, modèle cv, cv professionnel, cv en ligne, cv canadien, conseils cv, blog emploi",
   authors: [{ name: "CV Diali" }],
+  verification: {
+    google: 'VOTRE_CODE_DE_VERIFICATION'
+  },
+  robots: {
+    index: true,
+    follow: true
+  },
+  viewport: "width=device-width, initial-scale=1",
   openGraph: {
     title: "CV Diali - Créez votre CV professionnel",
     description: "Créez votre CV professionnel en quelques clics. Découvrez nos conseils et astuces pour réussir votre recherche d'emploi sur notre blog.",
@@ -36,6 +44,10 @@ export default function RootLayout({
   return (
     <html lang="fr" data-theme="light" suppressHydrationWarning>
       <head>
+        <Script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"
+        />
         <Script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4559991197605180"
