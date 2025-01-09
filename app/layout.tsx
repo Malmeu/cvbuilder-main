@@ -4,6 +4,8 @@ import { JetBrains_Mono as FontMono } from "next/font/google";
 import "./globals.css";
 import Script from 'next/script';
 import { Analytics } from "@vercel/analytics/react";
+import Navbar from './components/Navbar'
+import CookieConsent from './components/CookieConsent'
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -56,7 +58,9 @@ export default function RootLayout({
         />
       </head>
       <body className={`${fontSans.variable} ${fontMono.variable} antialiased`}>
+        <Navbar />
         {children}
+        <CookieConsent language="fr" />
         <Analytics />
       </body>
     </html>

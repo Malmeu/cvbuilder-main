@@ -294,7 +294,7 @@ export default function Home() {
                 transition={{ duration: 0.6, delay: 0.2 }}
               >
                 <Image
-                  src="/tips.jpg"
+                  src="/tips.png"
                   alt="Conseils CV"
                   width={600}
                   height={400}
