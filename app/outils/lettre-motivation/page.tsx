@@ -3,8 +3,9 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Loader2 } from 'lucide-react';
 import Navbar from '@/app/components/Navbar';
+import { generateCoverLetter } from '@/app/lib/ai';
 
 export default function LettreMotivation() {
   const [secteur, setSecteur] = useState('');
@@ -12,13 +13,36 @@ export default function LettreMotivation() {
   const [entreprise, setEntreprise] = useState('');
   const [poste, setPoste] = useState('');
   const [lettre, setLettre] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const genererLettre = () => {
-    const introduction = `Je me permets de vous écrire concernant le poste de ${poste} au sein de ${entreprise}.`;
-    const corps = `Fort de mon expérience de ${experience} dans le secteur ${secteur}, je suis convaincu(e) de pouvoir apporter une réelle valeur ajoutée à votre entreprise.`;
-    const conclusion = "Je reste à votre disposition pour un entretien où je pourrai vous exposer plus en détail mes motivations.";
-    
-    setLettre(`${introduction}\n\n${corps}\n\n${conclusion}`);
+  const genererLettre = async () => {
+    if (!secteur || !experience || !entreprise || !poste) {
+      setError('Veuillez remplir tous les champs');
+      return;
+    }
+
+    setIsLoading(true);
+    setError('');
+
+    try {
+      const { content, error } = await generateCoverLetter(
+        secteur,
+        experience,
+        entreprise,
+        poste
+      );
+
+      if (error) {
+        setError(error);
+      } else {
+        setLettre(content);
+      }
+    } catch (err) {
+      setError('Une erreur est survenue. Veuillez réessayer.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -106,17 +130,28 @@ export default function LettreMotivation() {
               </motion.div>
             </div>
 
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={genererLettre}
-              className="w-full mt-8 bg-gradient-to-r from-blue-500 to-blue-600 text-white py-4 px-6 rounded-xl hover:from-blue-600 hover:to-blue-700 transition-all duration-300 font-medium text-lg flex items-center justify-center space-x-2 shadow-md"
-            >
-              <span>Générer la lettre</span>
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </motion.button>
+            <div className="flex justify-center mt-8">
+              <button
+                onClick={genererLettre}
+                disabled={isLoading}
+                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                    Génération en cours...
+                  </>
+                ) : (
+                  'Générer la lettre'
+                )}
+              </button>
+            </div>
+
+            {error && (
+              <div className="mt-4 p-4 bg-red-50 text-red-600 rounded-xl">
+                {error}
+              </div>
+            )}
 
             {lettre && (
               <motion.div

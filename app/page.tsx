@@ -348,6 +348,107 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Section Outils IA */}
+        <section className="relative py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-secondary/5 via-primary/5 to-secondary/5" />
+          <div className="max-w-7xl mx-auto relative">
+            <motion.h2 
+              className="text-4xl md:text-5xl font-bold text-center mb-16 bg-clip-text text-transparent bg-gradient-to-r from-secondary to-primary"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              Nos Outils Intelligents
+            </motion.h2>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              {/* Analyseur de CV */}
+              <motion.div 
+                className="group relative p-8 backdrop-blur-md bg-white/5 rounded-3xl border border-white/20 shadow-xl hover:shadow-primary/20 transition-all duration-300"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="mb-6 relative z-10">
+                  <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center">
+                    <Wand2 className="w-6 h-6 text-primary" />
+                  </div>
+                </div>
+                <h3 className="text-2xl font-semibold mb-4 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                  Analyseur de CV
+                </h3>
+                <p className="text-base-content/80 leading-relaxed mb-6 relative z-10">
+                  Notre IA analyse votre CV et fournit des recommandations personnalisées pour l&apos;améliorer. Optimisez votre CV pour les ATS et augmentez vos chances de succès.
+                </p>
+                <Link 
+                  href="/outils/analyseur-cv"
+                  className="inline-flex items-center text-primary hover:text-primary/80 transition-colors relative z-10"
+                >
+                  Analyser mon CV
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Link>
+              </motion.div>
+
+              {/* Préparation d'Entretien */}
+              <motion.div 
+                className="group relative p-8 backdrop-blur-md bg-white/5 rounded-3xl border border-white/20 shadow-xl hover:shadow-secondary/20 transition-all duration-300"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="mb-6 relative z-10">
+                  <div className="w-12 h-12 rounded-2xl bg-secondary/10 flex items-center justify-center">
+                    <Clock className="w-6 h-6 text-secondary" />
+                  </div>
+                </div>
+                <h3 className="text-2xl font-semibold mb-4 bg-gradient-to-r from-secondary to-secondary/70 bg-clip-text text-transparent">
+                  Préparation d&apos;Entretien
+                </h3>
+                <p className="text-base-content/80 leading-relaxed mb-6 relative z-10">
+                  Obtenez des questions personnalisées et des conseils sur mesure pour votre prochain entretien. Notre IA s&apos;adapte au poste et à l&apos;entreprise visés.
+                </p>
+                <Link 
+                  href="/outils/entretien"
+                  className="inline-flex items-center text-secondary hover:text-secondary/80 transition-colors relative z-10"
+                >
+                  Préparer mon entretien
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Link>
+              </motion.div>
+
+              {/* Simulateur de Lettre de Motivation */}
+              <motion.div 
+                className="group relative p-8 backdrop-blur-md bg-white/5 rounded-3xl border border-white/20 shadow-xl hover:shadow-accent/20 transition-all duration-300"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="mb-6 relative z-10">
+                  <div className="w-12 h-12 rounded-2xl bg-accent/10 flex items-center justify-center">
+                    <Check className="w-6 h-6 text-accent" />
+                  </div>
+                </div>
+                <h3 className="text-2xl font-semibold mb-4 bg-gradient-to-r from-accent to-accent/70 bg-clip-text text-transparent">
+                  Lettre de Motivation
+                </h3>
+                <p className="text-base-content/80 leading-relaxed mb-6 relative z-10">
+                  Générez une lettre de motivation percutante adaptée à votre profil et au poste visé. Notre IA personnalise le contenu pour maximiser votre impact.
+                </p>
+                <Link 
+                  href="/outils/lettre-motivation"
+                  className="inline-flex items-center text-accent hover:text-accent/80 transition-colors relative z-10"
+                >
+                  Créer ma lettre
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Link>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+
         {/* Section Call-to-Action */}
         <section className="relative py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20" />
