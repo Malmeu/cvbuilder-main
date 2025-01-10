@@ -1,6 +1,29 @@
 import { TCFMultipleChoiceQuestion } from './types';
 
-export const comprehensionOrale: TCFMultipleChoiceQuestion[] = [
+// Fonction pour mélanger un tableau et retourner un nouvel index pour la bonne réponse
+function shuffleOptionsAndUpdateCorrectAnswer(
+  options: string[],
+  correctAnswer: number
+): { shuffledOptions: string[]; newCorrectAnswer: number } {
+  const indexedOptions = options.map((option, index) => ({
+    option,
+    isCorrect: index === correctAnswer
+  }));
+  
+  // Fisher-Yates shuffle
+  for (let i = indexedOptions.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [indexedOptions[i], indexedOptions[j]] = [indexedOptions[j], indexedOptions[i]];
+  }
+  
+  return {
+    shuffledOptions: indexedOptions.map(item => item.option),
+    newCorrectAnswer: indexedOptions.findIndex(item => item.isCorrect)
+  };
+}
+
+// Questions de base
+const baseQuestions: TCFMultipleChoiceQuestion[] = [
   {
     id: 'co-1',
     type: 'comprehension-orale',
@@ -152,3 +175,17 @@ export const comprehensionOrale: TCFMultipleChoiceQuestion[] = [
     explanation: "L'expert souligne l'importance cruciale de la recherche scientifique pour le progrès de la société."
   }
 ];
+
+// Exporter les questions avec les options mélangées
+export const comprehensionOrale: TCFMultipleChoiceQuestion[] = baseQuestions.map(question => {
+  const { shuffledOptions, newCorrectAnswer } = shuffleOptionsAndUpdateCorrectAnswer(
+    question.options,
+    question.correctAnswer
+  );
+  
+  return {
+    ...question,
+    options: shuffledOptions,
+    correctAnswer: newCorrectAnswer
+  };
+});
