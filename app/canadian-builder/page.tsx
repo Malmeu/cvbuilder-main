@@ -165,62 +165,66 @@ export default function CanadianBuilder() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-12">
-        <div className="flex items-center gap-4">
-          <h1 className="text-2xl font-bold">
-            {cv.language === 'fr' ? 'Créateur de CV Canadien' : 'Canadian Resume Builder'}
-          </h1>
+    <div className="container mx-auto p-4 space-y-8">
+      <div className="flex flex-col space-y-4">
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+          {cv.language === 'fr' ? 'Créateur de CV Canadien' : 'Canadian Resume Builder'}
+        </h1>
+        
+        {/* Navigation et contrôles */}
+        <div className="flex flex-col space-y-4 md:flex-row md:justify-between md:items-center pt-4">
           <button
-            className="btn btn-ghost btn-sm gap-2 hover:bg-base-200/50"
+            className="btn btn-ghost gap-2 hover:bg-base-200/50"
             onClick={() => setCV(prev => ({
               ...prev,
               language: prev.language === 'fr' ? 'en' : 'fr'
             }))}
           >
             <Languages className="w-4 h-4" />
-            {cv.language === 'fr' ? 'EN' : 'FR'}
-          </button>
-        </div>
-
-        <div className="flex items-center gap-6">
-          <select 
-            className="select select-bordered select-sm"
-            value={theme}
-            onChange={(e) => setTheme(e.target.value)}
-          >
-            {themes.map((t) => (
-              <option key={t} value={t}>{t}</option>
-            ))}
-          </select>
-
-          <button
-            onClick={() => {
-              const modal = document.getElementById('preview_modal') as HTMLDialogElement
-              if(modal) modal.showModal()
-            }}
-            className="btn btn-primary btn-sm gap-2"
-          >
-            <Eye className="w-4 h-4" />
-            {cv.language === 'fr' ? 'Prévisualiser' : 'Preview'}
+            {cv.language === 'fr' ? 'English' : 'Français'}
           </button>
 
-          <button
-            onClick={handleDownloadPdf}
-            disabled={isGenerating}
-            className="btn btn-primary btn-sm gap-2"
-          >
-            <FileText className="w-4 h-4" />
-            {cv.language === 'fr' ? 'Télécharger PDF' : 'Download PDF'}
-          </button>
+          <div className="flex items-center gap-2 flex-wrap">
+            <select 
+              className="select select-bordered"
+              value={theme}
+              onChange={(e) => setTheme(e.target.value)}
+            >
+              {themes.map((t) => (
+                <option key={t} value={t}>
+                  {t}
+                </option>
+              ))}
+            </select>
 
-          <Link 
-            href="/"
-            className="btn btn-ghost btn-sm gap-2"
-          >
-            <Home className="w-4 h-4" />
-            {cv.language === 'fr' ? 'Accueil' : 'Home'}
-          </Link>
+            <button
+              onClick={() => {
+                const modal = document.getElementById('preview_modal') as HTMLDialogElement
+                modal?.showModal()
+              }}
+              className="btn btn-primary gap-2"
+            >
+              <Eye className="w-4 h-4" />
+              {cv.language === 'fr' ? 'Prévisualiser' : 'Preview'}
+            </button>
+
+            <button
+              onClick={handleDownloadPdf}
+              disabled={isGenerating}
+              className="btn btn-primary gap-2"
+            >
+              <FileText className="w-4 h-4" />
+              {cv.language === 'fr' ? 'Télécharger PDF' : 'Download PDF'}
+            </button>
+
+            <Link 
+              href="/"
+              className="btn btn-ghost gap-2"
+            >
+              <Home className="w-4 h-4" />
+              {cv.language === 'fr' ? 'Accueil' : 'Home'}
+            </Link>
+          </div>
         </div>
       </div>
 
