@@ -6,13 +6,13 @@ import ExerciseCard from './ExerciseCard';
 interface ExerciseSessionProps {
   type: string;
   onClose: () => void;
-  onComplete: (score: number, total: number) => void;
+  onComplete: (score: number, total: number, timeSpent: number) => void;
 }
 
 export default function ExerciseSession({ type, onClose, onComplete }: ExerciseSessionProps) {
   const [questions, setQuestions] = useState<any[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [score, setScore] = useState(0);
+  const [correctAnswers, setCorrectAnswers] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showFeedback, setShowFeedback] = useState(false);
@@ -20,6 +20,7 @@ export default function ExerciseSession({ type, onClose, onComplete }: ExerciseS
   const [isCorrect, setIsCorrect] = useState<boolean>(false);
   const [feedback, setFeedback] = useState<string>('');
   const [timeLeft, setTimeLeft] = useState<number>(300); // 5 minutes par défaut
+  const [startTime] = useState<number>(Date.now()); // Temps de début
 
   useEffect(() => {
     fetchQuestions();
@@ -80,7 +81,7 @@ export default function ExerciseSession({ type, onClose, onComplete }: ExerciseS
       setShowFeedback(true);
 
       if (data.correct) {
-        setScore(score + 1);
+        setCorrectAnswers(prev => prev + 1);
       }
     } catch (err) {
       setError('Erreur lors de la vérification de la réponse');
@@ -98,7 +99,11 @@ export default function ExerciseSession({ type, onClose, onComplete }: ExerciseS
   };
 
   const handleSessionComplete = () => {
-    onComplete(score, questions.length);
+    const timeSpent = Math.floor((Date.now() - startTime) / 1000);
+    const totalQuestions = questions.length;
+    const finalScore = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
+    console.log(`Score final: ${correctAnswers}/${totalQuestions} = ${finalScore}%`); // Pour le débogage
+    onComplete(finalScore, totalQuestions, timeSpent);
   };
 
   const formatTime = (seconds: number) => {

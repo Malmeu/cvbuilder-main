@@ -17,12 +17,20 @@ interface Props {
 export function MultipleChoiceQuestion({ question, onAnswer }: Props) {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showExplanation, setShowExplanation] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const isCorrect = selectedAnswer === question.correctAnswer;
 
   const handleSubmit = () => {
-    if (selectedAnswer !== null) {
+    if (selectedAnswer !== null && !isSubmitted) {
       setShowExplanation(true);
+      setIsSubmitted(true);
       onAnswer?.(isCorrect);
+    }
+  };
+
+  const handleAnswerChange = (value: string) => {
+    if (!isSubmitted) {
+      setSelectedAnswer(parseInt(value));
     }
   };
 
@@ -50,12 +58,27 @@ export function MultipleChoiceQuestion({ question, onAnswer }: Props) {
           <RadioGroup
             className="space-y-3"
             value={selectedAnswer?.toString()}
-            onValueChange={(value: string) => setSelectedAnswer(parseInt(value))}
+            onValueChange={handleAnswerChange}
           >
             {question.options.map((option, index) => (
-              <div key={index} className="flex items-center space-x-2">
-                <RadioGroupItem value={index.toString()} id={`option-${index}`} />
-                <Label htmlFor={`option-${index}`} className="text-base">
+              <div 
+                key={index} 
+                className={`flex items-center space-x-2 ${isSubmitted ? 'opacity-60 pointer-events-none' : ''}`}
+              >
+                <RadioGroupItem 
+                  value={index.toString()} 
+                  id={`option-${index}`}
+                  disabled={isSubmitted}
+                  className={isSubmitted && index === question.correctAnswer ? 'border-primary' : ''}
+                />
+                <Label 
+                  htmlFor={`option-${index}`} 
+                  className={`text-base ${
+                    isSubmitted && index === question.correctAnswer 
+                      ? 'text-primary font-semibold' 
+                      : ''
+                  }`}
+                >
                   {option}
                 </Label>
               </div>
@@ -66,9 +89,9 @@ export function MultipleChoiceQuestion({ question, onAnswer }: Props) {
           <Button
             className="w-full"
             onClick={handleSubmit}
-            disabled={selectedAnswer === null}
+            disabled={selectedAnswer === null || isSubmitted}
           >
-            Vérifier
+            {isSubmitted ? 'Réponse soumise' : 'Vérifier'}
           </Button>
 
           {/* Explanation */}

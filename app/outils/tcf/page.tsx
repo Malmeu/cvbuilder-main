@@ -11,7 +11,7 @@ import type { TCFQuestionType, TCFLevel } from '@/app/data/tcf/types';
 interface ExerciseSessionProps {
   type: TCFQuestionType;
   onClose: () => void;
-  onComplete: (score: number, total: number) => void;
+  onComplete: (score: number, total: number, timeSpent: number) => void;
 }
 
 const ExerciseSession = ({ type, onClose, onComplete }: ExerciseSessionProps) => {
@@ -63,7 +63,8 @@ const ExerciseSession = ({ type, onClose, onComplete }: ExerciseSessionProps) =>
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(prev => prev + 1);
     } else {
-      onComplete(score, questions.length);
+      const finalScore = Math.round((score / questions.length) * 100);
+      onComplete(finalScore, questions.length, timeSpent);
     }
   };
 
@@ -173,203 +174,287 @@ const ExerciseSession = ({ type, onClose, onComplete }: ExerciseSessionProps) =>
 };
 
 export default function TCFPage() {
-  const [selectedSection, setSelectedSection] = useState<TCFQuestionType | null>(null);
-  const [stats, setStats] = useState({
-    exercisesCompleted: 0,
-    currentLevel: 'a1' as TCFLevel,
-    successRate: 0,
-    totalTimeSpent: 0,
-    sectionProgress: {
+  const [activeSection, setActiveSection] = useState<TCFQuestionType | null>(null);
+  const [scores, setScores] = useState<Record<TCFQuestionType, number>>({
+    'comprehension-orale': 0,
+    'comprehension-ecrite': 0,
+    'expression-orale': 0,
+    'expression-ecrite': 0,
+    'grammaire': 0
+  });
+  const [completedExercises, setCompletedExercises] = useState<Record<TCFQuestionType, boolean>>({
+    'comprehension-orale': false,
+    'comprehension-ecrite': false,
+    'expression-orale': false,
+    'expression-ecrite': false,
+    'grammaire': false
+  });
+  const [times, setTimes] = useState<Record<TCFQuestionType, number>>({
+    'comprehension-orale': 0,
+    'comprehension-ecrite': 0,
+    'expression-orale': 0,
+    'expression-ecrite': 0,
+    'grammaire': 0
+  });
+
+  // Fonction de réinitialisation
+  const handleReset = () => {
+    const initialScores = {
       'comprehension-orale': 0,
       'comprehension-ecrite': 0,
       'expression-orale': 0,
       'expression-ecrite': 0,
       'grammaire': 0
-    } as Record<TCFQuestionType, number>
-  });
+    };
+    const initialCompleted = {
+      'comprehension-orale': false,
+      'comprehension-ecrite': false,
+      'expression-orale': false,
+      'expression-ecrite': false,
+      'grammaire': false
+    };
+    const initialTimes = {
+      'comprehension-orale': 0,
+      'comprehension-ecrite': 0,
+      'expression-orale': 0,
+      'expression-ecrite': 0,
+      'grammaire': 0
+    };
 
-  const handleSessionComplete = (score: number, total: number) => {
-    const newSuccessRate = Math.round(((stats.successRate * stats.exercisesCompleted) + (score / total * 100)) / (stats.exercisesCompleted + 1));
-    
-    // Mettre à jour le niveau en fonction du taux de réussite
-    let newLevel = stats.currentLevel;
-    if (newSuccessRate >= 80) {
-      newLevel = stats.currentLevel === 'a1' ? 'a2' : 
-                 stats.currentLevel === 'a2' ? 'b1' : 
-                 stats.currentLevel === 'b1' ? 'b2' : 
-                 stats.currentLevel === 'b2' ? 'c1' : 'c2';
+    // Mettre à jour les états
+    setScores(initialScores);
+    setCompletedExercises(initialCompleted);
+    setTimes(initialTimes);
+
+    // Effacer le localStorage
+    localStorage.removeItem('tcf-scores');
+    localStorage.removeItem('tcf-completed');
+    localStorage.removeItem('tcf-times');
+  };
+
+  // Sauvegarder les scores dans le localStorage
+  useEffect(() => {
+    const savedScores = localStorage.getItem('tcf-scores');
+    const savedCompleted = localStorage.getItem('tcf-completed');
+    const savedTimes = localStorage.getItem('tcf-times');
+
+    if (savedScores) {
+      setScores(JSON.parse(savedScores));
     }
+    if (savedCompleted) {
+      setCompletedExercises(JSON.parse(savedCompleted));
+    }
+    if (savedTimes) {
+      setTimes(JSON.parse(savedTimes));
+    }
+  }, []);
 
-    setStats(prev => ({
-      ...prev,
-      exercisesCompleted: prev.exercisesCompleted + 1,
-      currentLevel: newLevel as TCFLevel,
-      successRate: newSuccessRate,
-      sectionProgress: {
-        ...prev.sectionProgress,
-        [selectedSection!]: Math.min(100, prev.sectionProgress[selectedSection!] + 20)
-      }
-    }));
-    setSelectedSection(null);
+  // Calculer les statistiques globales
+  const totalExercisesCompleted = Object.values(completedExercises).filter(Boolean).length;
+  const completedScores = Object.entries(scores)
+    .filter(([type]) => completedExercises[type as TCFQuestionType])
+    .map(([_, score]) => score);
+  const averageScore = completedScores.length > 0
+    ? completedScores.reduce((acc, score) => acc + score, 0) / completedScores.length
+    : 0;
+  const totalTime = Object.values(times).reduce((acc, time) => acc + time, 0);
+
+  // Calculer le niveau en fonction du score moyen
+  const calculateLevel = (score: number): string => {
+    if (score >= 90) return 'C2';
+    if (score >= 80) return 'C1';
+    if (score >= 70) return 'B2';
+    if (score >= 60) return 'B1';
+    if (score >= 50) return 'A2';
+    return 'A1';
+  };
+
+  const currentLevel = calculateLevel(averageScore);
+
+  const handleExerciseComplete = (score: number, total: number, timeSpent: number) => {
+    if (!activeSection) return;
+    
+    const newScores = {
+      ...scores,
+      [activeSection]: score
+    };
+    
+    const newCompleted = {
+      ...completedExercises,
+      [activeSection]: true
+    };
+    
+    const newTimes = {
+      ...times,
+      [activeSection]: timeSpent
+    };
+
+    // Mettre à jour les états
+    setScores(newScores);
+    setCompletedExercises(newCompleted);
+    setTimes(newTimes);
+
+    // Sauvegarder dans le localStorage
+    localStorage.setItem('tcf-scores', JSON.stringify(newScores));
+    localStorage.setItem('tcf-completed', JSON.stringify(newCompleted));
+    localStorage.setItem('tcf-times', JSON.stringify(newTimes));
+
+    setActiveSection(null);
   };
 
   const sections = [
     {
-      id: 'comprehension-orale' as const,
-      name: 'Compréhension Orale',
-      icon: Headphones,
+      id: 'comprehension-orale' as TCFQuestionType,
+      title: 'Compréhension Orale',
       description: 'Entraînez-vous à comprendre le français parlé dans différentes situations.',
+      icon: Headphones,
       color: 'primary'
     },
     {
-      id: 'comprehension-ecrite' as const,
-      name: 'Compréhension Écrite',
-      icon: BookOpen,
+      id: 'comprehension-ecrite' as TCFQuestionType,
+      title: 'Compréhension Écrite',
       description: 'Développez votre capacité à comprendre des textes en français.',
+      icon: BookOpen,
       color: 'secondary'
     },
     {
-      id: 'expression-orale' as const,
-      name: 'Expression Orale',
-      icon: MessageSquare,
+      id: 'expression-orale' as TCFQuestionType,
+      title: 'Expression Orale',
       description: 'Pratiquez votre expression orale avec des exercices interactifs.',
+      icon: MessageSquare,
       color: 'accent'
     },
     {
-      id: 'expression-ecrite' as const,
-      name: 'Expression Écrite',
-      icon: PenTool,
+      id: 'expression-ecrite' as TCFQuestionType,
+      title: 'Expression Écrite',
       description: 'Améliorez votre écriture en français avec des exercices guidés.',
+      icon: PenTool,
       color: 'info'
     },
     {
-      id: 'grammaire' as const,
-      name: 'Grammaire et Structure',
-      icon: GraduationCap,
+      id: 'grammaire' as TCFQuestionType,
+      title: 'Grammaire et Structure',
       description: 'Maîtrisez les règles grammaticales essentielles pour le TCF.',
+      icon: GraduationCap,
       color: 'success'
     }
   ] as const;
 
-  if (selectedSection) {
+  if (activeSection) {
     return (
       <ExerciseSession
-        type={selectedSection}
-        onClose={() => setSelectedSection(null)}
-        onComplete={handleSessionComplete}
+        type={activeSection}
+        onClose={() => setActiveSection(null)}
+        onComplete={handleExerciseComplete}
       />
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-base-100 via-base-200 to-base-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* En-tête */}
-        <div className="mb-12">
-          <Link 
-            href="/outils"
-            className="inline-flex items-center text-base-content/60 hover:text-base-content mb-6 mt-8"
+    <div className="min-h-screen bg-base-100">
+      <div className="container mx-auto px-4 py-12">
+        <h1 className="text-5xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-6">
+          Préparation au TCF
+        </h1>
+        <p className="text-xl text-base-content/80 mb-8">
+          Préparez-vous efficacement au Test de Connaissance du Français avec nos exercices personnalisés.
+        </p>
+
+        <div className="flex justify-end mb-8">
+          <button
+            onClick={handleReset}
+            className="px-4 py-2 bg-error text-error-content rounded-lg hover:opacity-90 transition-opacity flex items-center gap-2"
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Retour aux outils
-          </Link>
-          <motion.h1 
-            className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            Préparation au TCF
-          </motion.h1>
-          <motion.p 
-            className="text-xl text-base-content/80"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-          >
-            Préparez-vous efficacement au Test de Connaissance du Français avec nos exercices personnalisés.
-          </motion.p>
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0" />
+              <path d="M19 12H5" />
+              <path d="m12 19-7-7 7-7" />
+            </svg>
+            Réinitialiser les scores
+          </button>
         </div>
 
-        {/* Niveau et Progression Globale */}
-        <motion.div
-          className="mb-12 p-6 bg-base-200 rounded-2xl"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          <div className="grid md:grid-cols-4 gap-6">
+        {/* Statistiques globales */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-16">
+          <div className="bg-base-200 p-6 rounded-xl">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                <GraduationCap className="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <div className="text-sm text-base-content/60">Niveau actuel</div>
+                <div className="text-2xl font-bold">{currentLevel}</div>
+              </div>
+            </div>
+          </div>
+          <div className="bg-base-200 p-6 rounded-xl">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
                 <Trophy className="w-6 h-6 text-primary" />
               </div>
               <div>
-                <div className="text-sm text-base-content/60">Niveau actuel</div>
-                <div className="text-2xl font-bold">{stats.currentLevel}</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center">
-                <Target className="w-6 h-6 text-secondary" />
-              </div>
-              <div>
                 <div className="text-sm text-base-content/60">Taux de réussite</div>
-                <div className="text-2xl font-bold">{stats.successRate}%</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center">
-                <BookOpen className="w-6 h-6 text-accent" />
-              </div>
-              <div>
-                <div className="text-sm text-base-content/60">Exercices complétés</div>
-                <div className="text-2xl font-bold">{stats.exercisesCompleted}</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-success/10 flex items-center justify-center">
-                <Clock className="w-6 h-6 text-success" />
-              </div>
-              <div>
-                <div className="text-sm text-base-content/60">Temps total</div>
-                <div className="text-2xl font-bold">{Math.floor(stats.totalTimeSpent / 60)}h {stats.totalTimeSpent % 60}m</div>
+                <div className="text-2xl font-bold">{Math.round(averageScore)}%</div>
               </div>
             </div>
           </div>
-        </motion.div>
+          <div className="bg-base-200 p-6 rounded-xl">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                <Target className="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <div className="text-sm text-base-content/60">Exercices complétés</div>
+                <div className="text-2xl font-bold">{totalExercisesCompleted}</div>
+              </div>
+            </div>
+          </div>
+          <div className="bg-base-200 p-6 rounded-xl">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                <Clock className="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <div className="text-sm text-base-content/60">Temps total</div>
+                <div className="text-2xl font-bold">{Math.floor(totalTime / 3600)}h {Math.floor((totalTime % 3600) / 60)}m {totalTime % 60}s</div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-        {/* Grille des sections */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* Sections d'exercices */}
+        <div className="grid md:grid-cols-3 gap-8">
           {sections.map((section, index) => (
             <motion.div
               key={section.id}
-              className="group relative p-8 backdrop-blur-md bg-white/5 rounded-3xl border border-white/20 shadow-xl hover:shadow-primary/20 transition-all duration-300 cursor-pointer"
+              className="bg-base-100 p-8 rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group relative border border-base-200"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
-              onClick={() => setSelectedSection(section.id)}
+              onClick={() => setActiveSection(section.id)}
             >
               <div className="absolute inset-0 bg-gradient-to-br from-base-200/50 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <div className="mb-6 relative z-10">
-                <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center">
-                  <section.icon className="w-6 h-6 text-primary" />
+                <div className={`w-12 h-12 rounded-xl bg-${section.color}/10 flex items-center justify-center`}>
+                  <section.icon className={`w-6 h-6 text-${section.color}`} />
                 </div>
               </div>
-              <h3 className="text-2xl font-semibold mb-4 text-base-content">
-                {section.name}
-              </h3>
-              <p className="text-base-content/80 leading-relaxed mb-6 relative z-10">
+              <h3 className="text-2xl font-bold mb-4 relative z-10">{section.title}</h3>
+              <p className="text-base-content/60 mb-6 relative z-10">
                 {section.description}
               </p>
               <div className="relative z-10">
                 <div className="h-2 bg-base-300 rounded-full overflow-hidden">
                   <div 
                     className="h-full bg-primary transition-all duration-500"
-                    style={{ width: `${stats.sectionProgress[section.id]}%` }}
+                    style={{ 
+                      width: `${scores[section.id]}%`
+                    }}
                   />
                 </div>
-                <div className="mt-2 text-sm text-base-content/60">
-                  Progression : {stats.sectionProgress[section.id]}%
+                <div className="mt-2 text-sm text-base-content/60 flex justify-between items-center">
+                  <span>Progression</span>
+                  <span className="font-medium">{scores[section.id]}%</span>
                 </div>
               </div>
             </motion.div>
