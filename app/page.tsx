@@ -429,7 +429,7 @@ export default function Home() {
                 <h3 className="text-lg font-semibold mb-4">Contact</h3>
                 <ul className="space-y-2">
                   <li className="text-base-content/70">
-                    Email: contact@cvdiali.com
+                    Email: cvdiali.contact@gmail.com
                   </li>
                 </ul>
               </div>

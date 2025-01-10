@@ -113,7 +113,7 @@ export default function TermsOfService() {
               <h2 className="text-2xl font-semibold mb-4">7. Contact</h2>
               <p className="text-base-content/80">
                 Pour toute question concernant ces conditions d&apos;utilisation, 
-                contactez-nous à : contact@cvdiali.com
+                contactez-nous à : cvdiali.contact@gmail.com
               </p>
             </motion.section>
           </div>
