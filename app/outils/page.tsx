@@ -2,10 +2,18 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { FileText, Search, Users } from 'lucide-react';
+import { FileText, Search, Users, GraduationCap } from 'lucide-react';
 import Navbar from '../components/Navbar';
 
 const outils = [
+  {
+    titre: "Préparation au TCF",
+    description: "Préparez-vous efficacement au Test de Connaissance du Français avec des exercices interactifs et personnalisés.",
+    icon: GraduationCap,
+    href: "/outils/tcf",
+    color: "from-primary to-secondary",
+    featured: true
+  },
   {
     titre: "Simulateur de Lettre de Motivation",
     description: "Créez des lettres de motivation personnalisées avec des modèles et des conseils par secteur d'activité.",
@@ -51,32 +59,25 @@ export default function Outils() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {outils.map((outil, index) => (
               <motion.div
-                key={index}
+                key={outil.titre}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                whileHover={{ y: -5 }}
-                className="group"
               >
                 <Link href={outil.href}>
-                  <div className="h-full bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100">
-                    <div className={`bg-gradient-to-r ${outil.color} p-8 flex items-center justify-center`}>
-                      <outil.icon className="w-16 h-16 text-white" />
+                  <div className={`relative group h-full p-8 rounded-3xl transition-all duration-300 ${
+                    outil.featured ? 'bg-gradient-to-br from-primary/10 to-secondary/10 hover:from-primary/20 hover:to-secondary/20' : 'bg-white hover:bg-gray-50'
+                  } border border-gray-200 hover:border-primary/20 hover:shadow-lg`}>
+                    <div className={`w-12 h-12 mb-6 rounded-2xl bg-gradient-to-br ${outil.color} flex items-center justify-center`}>
+                      <outil.icon className="w-6 h-6 text-white" />
                     </div>
-                    <div className="p-8">
-                      <h2 className="text-2xl font-semibold text-gray-800 mb-4 group-hover:text-blue-600 transition-colors">
-                        {outil.titre}
-                      </h2>
-                      <p className="text-gray-600 leading-relaxed">
-                        {outil.description}
-                      </p>
-                      <div className="mt-6 flex items-center text-blue-600 font-medium">
-                        Commencer
-                        <svg className="w-5 h-5 ml-2 transform group-hover:translate-x-2 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                        </svg>
+                    <h3 className="text-2xl font-semibold mb-4">{outil.titre}</h3>
+                    <p className="text-gray-600">{outil.description}</p>
+                    {outil.featured && (
+                      <div className="absolute top-4 right-4 px-3 py-1 text-sm bg-primary/10 text-primary rounded-full">
+                        Nouveau
                       </div>
-                    </div>
+                    )}
                   </div>
                 </Link>
               </motion.div>

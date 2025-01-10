@@ -12,6 +12,7 @@ export default function Navbar() {
     { name: 'Accueil', href: '/' },
     { name: 'Créer un CV', href: '/builder' },
     { name: 'Format Canadien', href: '/canadian-builder' },
+    { name: 'TCF', href: '/outils/tcf', highlight: true },
     { name: 'Blog', href: '/blog' },
     { name: 'Boîte à outils', href: '/outils' },
     { name: 'Modèles', href: '/templates' },
@@ -44,7 +45,9 @@ export default function Navbar() {
               <Link 
                 key={item.name}
                 href={item.href}
-                className="text-base-content/80 hover:text-primary transition-colors"
+                className={`text-base-content/80 hover:text-primary transition-colors ${
+                  item.highlight ? 'font-semibold text-primary' : ''
+                }`}
               >
                 {item.name}
               </Link>
@@ -83,7 +86,9 @@ export default function Navbar() {
               <Link 
                 key={item.name}
                 href={item.href}
-                className="block text-lg font-medium text-base-content/80 hover:text-primary transition-colors"
+                className={`block text-lg font-medium text-base-content/80 hover:text-primary transition-colors ${
+                  item.highlight ? 'font-semibold text-primary' : ''
+                }`}
                 onClick={() => setIsOpen(false)}
               >
                 {item.name}

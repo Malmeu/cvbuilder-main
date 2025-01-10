@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { ArrowRight, MapPin, Clock, Wand2, Download, Check } from 'lucide-react'
+import { ArrowRight, MapPin, Clock, Wand2, Download, Check, GraduationCap } from 'lucide-react'
 import Image from 'next/image'
 import Navbar from './components/Navbar'
 
@@ -66,6 +66,113 @@ export default function Home() {
                 </div>
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* Section TCF */}
+        <section className="py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-secondary/5" />
+          <div className="max-w-7xl mx-auto relative">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="grid lg:grid-cols-2 gap-12 items-center"
+            >
+              <div>
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.2 }}
+                >
+                  <span className="inline-block px-4 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium mb-4">
+                    Nouveau
+                  </span>
+                  <h2 className="text-4xl md:text-5xl font-bold mb-6">
+                    Préparez-vous au{" "}
+                    <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                      TCF
+                    </span>
+                  </h2>
+                  <p className="text-xl text-base-content/80 mb-8">
+                    Une préparation complète et interactive pour le Test de Connaissance du Français. 
+                    Améliorez vos compétences en compréhension orale, écrite et en expression.
+                  </p>
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center">
+                        <Check className="w-4 h-4 text-primary" />
+                      </div>
+                      <span>Exercices adaptés à votre niveau</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center">
+                        <Check className="w-4 h-4 text-primary" />
+                      </div>
+                      <span>Suivi de progression détaillé</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center">
+                        <Check className="w-4 h-4 text-primary" />
+                      </div>
+                      <span>Conseils personnalisés</span>
+                    </div>
+                  </div>
+                  <div className="mt-8">
+                    <Link
+                      href="/outils/tcf"
+                      className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-content rounded-full hover:shadow-lg transition-all duration-300 hover:scale-105"
+                    >
+                      Commencer la préparation
+                      <ArrowRight className="w-5 h-5" />
+                    </Link>
+                  </div>
+                </motion.div>
+              </div>
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.4 }}
+                className="relative"
+              >
+                <div className="aspect-square rounded-3xl bg-gradient-to-br from-primary/10 to-secondary/10 p-8">
+                  <div className="w-full h-full rounded-2xl bg-base-100/50 backdrop-blur-sm shadow-xl p-6">
+                    <div className="space-y-6">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="text-sm text-base-content/60">Niveau actuel</div>
+                          <div className="text-2xl font-bold">B1</div>
+                        </div>
+                        <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                          <GraduationCap className="w-6 h-6 text-primary" />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span>Progression</span>
+                          <span>75%</span>
+                        </div>
+                        <div className="h-2 bg-base-300 rounded-full overflow-hidden">
+                          <div className="h-full w-3/4 bg-primary rounded-full" />
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="p-4 rounded-xl bg-base-200">
+                          <div className="text-sm text-base-content/60">Exercices</div>
+                          <div className="text-xl font-bold">24</div>
+                        </div>
+                        <div className="p-4 rounded-xl bg-base-200">
+                          <div className="text-sm text-base-content/60">Score moyen</div>
+                          <div className="text-xl font-bold">85%</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
           </div>
         </section>
 
