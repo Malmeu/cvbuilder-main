@@ -42,6 +42,9 @@ export interface TCFSpeakingQuestion extends TCFQuestionBase {
   minSeconds: number;
   maxSeconds: number;
   criteria: string[];
+  preparationTime: number;  // Temps de préparation en secondes
+  speakingTime: number;     // Temps de parole en secondes
+  example?: string;         // Exemple de réponse
 }
 
 // Type union pour toutes les questions
