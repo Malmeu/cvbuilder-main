@@ -53,7 +53,7 @@ export default function Home() {
                 <div className="animate-float-slow transform-gpu">
                   <div className="relative w-full h-[600px] rounded-3xl shadow-2xl overflow-hidden backdrop-blur-sm bg-white/5 border border-white/10">
                     <Image
-                      src="/cv1.png"
+                      src="/cvhero.png"
                       alt="Modèle de CV"
                       fill
                       className="object-contain p-8"

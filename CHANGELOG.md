@@ -1,3 +1,4 @@
+# Changelog
 # CV Builder - Journal des modifications
 
 ## Fonctionnalités Principales
@@ -153,3 +154,39 @@ npm run test
 
 # Linting
 npm run lint
+Toutes les modifications notables apportées à ce projet seront documentées dans ce fichier.
+
+## [Non Publié]
+
+### Nouvelles Fonctionnalités
+- Ajout d'une section complète de préparation au TCF (Test de Connaissance du Français)
+- Exercices de compréhension orale avec audio pour tous les niveaux (A1 à C1)
+- Exercices d'expression écrite avec exemples et critères d'évaluation
+- Exercices d'expression orale avec temps de préparation et d'expression
+- Système de génération automatique d'audio utilisant Google Cloud Text-to-Speech
+- Interface moderne et responsive pour les exercices TCF
+- Système de notation et de feedback immédiat pour les exercices
+
+### Ajouté
+- Ajout des fichiers audio pour les questions de compréhension orale du TCF
+- Nouveaux fichiers audio : a1-cafe.mp3, a1-train.mp3, a2-cinema.mp3, a2-rdv.mp3, b1-ecologie.mp3, b1-sante.mp3, b2-innovation.mp3, b2-teletravail.mp3, c1-education.mp3, c1-science.mp3
+
+### Modifié
+- Mise à jour du type `TCFSpeakingQuestion` pour inclure `preparationTime` et `speakingTime`
+- Remplacement de `exampleAnswer` par `example` dans les types TCF pour une meilleure cohérence
+- Amélioration du service TTS pour une meilleure gestion des fichiers audio
+- Correction du composant RadioGroup pour un meilleur typage TypeScript
+
+### Supprimé
+- Suppression du composant `AudioQuestion` obsolète
+
+### Corrections de Bugs
+- Correction des erreurs de typage dans les fichiers de données TCF
+- Correction de la gestion des fichiers dans le service TTS
+- Amélioration de la gestion des dossiers pour la génération audio
+- Correction du typage du composant RadioGroup pour la compatibilité Vercel
+
+### Technique
+- Mise à jour de la gestion des fichiers dans le service TTS pour utiliser fs.promises
+- Amélioration de la vérification d'existence des dossiers avec fs.access
+- Meilleure gestion des types dans le composant RadioGroup
