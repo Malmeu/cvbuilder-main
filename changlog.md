@@ -68,6 +68,23 @@
    - Hiérarchie visuelle claire
    - Couleurs thématiques cohérentes
 
+### Mise à jour du 10 janvier 2024
+
+1. **Modifications de l'Interface**
+   - Retrait du titre "Créateur de CV Canadien" dans le builder canadien
+   - Amélioration de la visibilité des contrôles sur mobile
+   - Suppression de la prévisualisation en temps réel sur mobile pour une meilleure performance
+
+2. **Mise à jour des Informations de Contact**
+   - Mise à jour de l'adresse email de contact : cvdiali.contact@gmail.com
+   - Modification de l'email dans la page des conditions d'utilisation
+   - Modification de l'email dans le pied de page
+
+3. **Corrections et Optimisations**
+   - Correction des problèmes de superposition des éléments UI
+   - Amélioration de la réactivité sur les appareils mobiles
+   - Optimisation des performances générales
+
 ## Optimisations Techniques
 
 ### Performance
@@ -136,4 +153,3 @@ npm run test
 
 # Linting
 npm run lint
-```
