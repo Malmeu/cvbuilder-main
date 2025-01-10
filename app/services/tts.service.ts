@@ -1,4 +1,6 @@
 import { TextToSpeechClient } from '@google-cloud/text-to-speech';
+import { promises as fs } from 'fs';
+import { join } from 'path';
 
 const credentials = {
   projectId: process.env.GOOGLE_CLOUD_PROJECT_ID,
@@ -56,7 +58,12 @@ export class TTSService {
     try {
       const audioContent = await this.synthesizeSpeech(text, options);
       if (audioContent) {
-        await fs.promises.writeFile(outputPath, audioContent, 'binary');
+        const dir = join(outputPath, '..');
+        if (!(await fs.exists(dir))) {
+          await fs.mkdir(dir, { recursive: true });
+        }
+        
+        await fs.writeFile(outputPath, audioContent, 'binary');
         return true;
       }
       return false;
