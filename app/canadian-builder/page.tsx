@@ -168,13 +168,13 @@ export default function CanadianBuilder() {
     <div className="container mx-auto p-4 space-y-8">
       <div className="flex flex-col space-y-4">
         <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-          {cv.language === 'fr' ? 'Créateur de CV Canadien' : 'Canadian Resume Builder'}
+          {cv.language === 'fr' ? '' : ''}
         </h1>
         
         {/* Navigation et contrôles */}
         <div className="flex flex-col space-y-4 md:flex-row md:justify-between md:items-center pt-4">
           <button
-            className="btn btn-ghost gap-2 hover:bg-base-200/50"
+            className="btn btn-ghost gap-2 hover:bg-base-200/50 w-full md:w-auto"
             onClick={() => setCV(prev => ({
               ...prev,
               language: prev.language === 'fr' ? 'en' : 'fr'
@@ -184,9 +184,9 @@ export default function CanadianBuilder() {
             {cv.language === 'fr' ? 'English' : 'Français'}
           </button>
 
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex flex-wrap items-center gap-2">
             <select 
-              className="select select-bordered"
+              className="select select-bordered flex-grow md:flex-grow-0"
               value={theme}
               onChange={(e) => setTheme(e.target.value)}
             >
@@ -202,7 +202,7 @@ export default function CanadianBuilder() {
                 const modal = document.getElementById('preview_modal') as HTMLDialogElement
                 modal?.showModal()
               }}
-              className="btn btn-primary gap-2"
+              className="btn btn-primary gap-2 flex-grow md:flex-grow-0"
             >
               <Eye className="w-4 h-4" />
               {cv.language === 'fr' ? 'Prévisualiser' : 'Preview'}
@@ -211,7 +211,7 @@ export default function CanadianBuilder() {
             <button
               onClick={handleDownloadPdf}
               disabled={isGenerating}
-              className="btn btn-primary gap-2"
+              className="btn btn-primary gap-2 flex-grow md:flex-grow-0"
             >
               <FileText className="w-4 h-4" />
               {cv.language === 'fr' ? 'Télécharger PDF' : 'Download PDF'}
@@ -219,7 +219,7 @@ export default function CanadianBuilder() {
 
             <Link 
               href="/"
-              className="btn btn-ghost gap-2"
+              className="btn btn-ghost gap-2 flex-grow md:flex-grow-0"
             >
               <Home className="w-4 h-4" />
               {cv.language === 'fr' ? 'Accueil' : 'Home'}
@@ -229,7 +229,7 @@ export default function CanadianBuilder() {
       </div>
 
       <div className="grid lg:grid-cols-[350px_1fr] gap-8">
-        <div className="space-y-6">
+        <div className="space-y-6 order-2 lg:order-1">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
               {cv.language === 'fr' ? 'Informations' : 'Information'}
@@ -237,13 +237,13 @@ export default function CanadianBuilder() {
           </div>
 
           {/* Tabs avec effet de verre */}
-          <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+          <div className="flex gap-2 mb-6 overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`
-                  px-4 py-2 rounded-full transition-all
+                  px-4 py-2 rounded-full transition-all whitespace-nowrap
                   ${activeTab === tab.id 
                     ? 'bg-primary text-primary-content shadow-lg' 
                     : 'hover:bg-base-200/50'
@@ -285,8 +285,9 @@ export default function CanadianBuilder() {
           )}
         </div>
 
-        <div className="relative">
-          <div className="sticky top-4">
+        {/* Prévisualisation uniquement sur desktop */}
+        <div className="hidden lg:block relative order-1 lg:order-2">
+          <div className="lg:sticky lg:top-4">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                 {cv.language === 'fr' ? 'Prévisualisation' : 'Preview'}
@@ -296,7 +297,7 @@ export default function CanadianBuilder() {
               ref={cvPreviewRef}
               data-cv-preview 
               data-theme={theme}
-              className="bg-base-100 w-[210mm] mx-auto hidden lg:block"
+              className="bg-base-100 w-full lg:w-[210mm] mx-auto overflow-x-auto"
             >
               <CVPreview cv={cv} theme={theme} />
             </div>
