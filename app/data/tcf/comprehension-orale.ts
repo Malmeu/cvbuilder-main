@@ -7,7 +7,7 @@ export const comprehensionOrale: TCFMultipleChoiceQuestion[] = [
     level: 'a1',
     question: "Écoutez l'audio et choisissez la bonne réponse.",
     context: "Dans un café",
-    audioUrl: "/audio/tcf/cafe-commande.mp3",
+    audioUrl: "/audio/tcf/a1-cafe.mp3",
     options: [
       "Le client commande un café au lait",
       "Le client commande un thé",
@@ -22,7 +22,7 @@ export const comprehensionOrale: TCFMultipleChoiceQuestion[] = [
     level: 'a1',
     question: "Que fait la personne ?",
     context: "À la gare",
-    audioUrl: "/audio/tcf/gare-billet.mp3",
+    audioUrl: "/audio/tcf/a1-train.mp3",
     options: [
       "Elle achète un billet de train",
       "Elle demande l'heure",
@@ -37,7 +37,7 @@ export const comprehensionOrale: TCFMultipleChoiceQuestion[] = [
     level: 'a2',
     question: "Quel est le sujet principal de la conversation ?",
     context: "Conversation téléphonique",
-    audioUrl: "/audio/tcf/rendez-vous.mp3",
+    audioUrl: "/audio/tcf/a2-rdv.mp3",
     options: [
       "Prendre un rendez-vous chez le médecin",
       "Commander une pizza",
@@ -51,12 +51,12 @@ export const comprehensionOrale: TCFMultipleChoiceQuestion[] = [
     type: 'comprehension-orale',
     level: 'a2',
     question: "Que propose la personne ?",
-    context: "Entre amis",
-    audioUrl: "/audio/tcf/invitation-cinema.mp3",
+    context: "Message vocal",
+    audioUrl: "/audio/tcf/a2-cinema.mp3",
     options: [
       "Aller au cinéma ce soir",
       "Faire du shopping",
-      "Dîner au restaurant"
+      "Préparer le dîner"
     ],
     correctAnswer: 0,
     explanation: "La personne propose d'aller voir un film au cinéma ce soir."
@@ -65,90 +65,90 @@ export const comprehensionOrale: TCFMultipleChoiceQuestion[] = [
     id: 'co-5',
     type: 'comprehension-orale',
     level: 'b1',
-    question: "Quel est le thème principal du reportage ?",
+    question: "Quel est le thème principal de ce reportage ?",
     context: "Reportage radio",
-    audioUrl: "/audio/tcf/environnement.mp3",
+    audioUrl: "/audio/tcf/b1-ecologie.mp3",
     options: [
-      "Le réchauffement climatique",
-      "La pollution plastique",
-      "Les énergies renouvelables"
+      "L'écologie et le développement durable",
+      "La politique internationale",
+      "Les nouvelles technologies"
     ],
-    correctAnswer: 1,
-    explanation: "Le reportage traite principalement de la pollution plastique dans les océans."
+    correctAnswer: 0,
+    explanation: "Le reportage traite des questions environnementales et du développement durable."
   },
   {
     id: 'co-6',
     type: 'comprehension-orale',
     level: 'b1',
-    question: "Quel est le sujet de l'interview ?",
+    question: "Que recommande l'intervenant ?",
     context: "Interview radio",
-    audioUrl: "/audio/tcf/interview-chef.mp3",
+    audioUrl: "/audio/tcf/b1-sante.mp3",
     options: [
-      "La cuisine française traditionnelle",
-      "Les nouvelles tendances culinaires",
-      "La formation des chefs cuisiniers"
+      "Faire plus d'exercice physique",
+      "Manger plus de fast-food",
+      "Dormir moins longtemps"
     ],
-    correctAnswer: 1,
-    explanation: "L'interview porte sur les nouvelles tendances dans la cuisine moderne."
+    correctAnswer: 0,
+    explanation: "L'intervenant recommande d'augmenter son activité physique pour une meilleure santé."
   },
   {
     id: 'co-7',
     type: 'comprehension-orale',
     level: 'b2',
-    question: "Quelle est la conclusion de l'intervenant ?",
-    context: "Débat sur l'éducation",
-    audioUrl: "/audio/tcf/education-debat.mp3",
+    question: "Quel est l'argument principal de l'intervenant ?",
+    context: "Débat télévisé",
+    audioUrl: "/audio/tcf/b2-teletravail.mp3",
     options: [
-      "Il faut réformer le système éducatif",
-      "Les élèves travaillent trop",
-      "Les professeurs sont mal payés"
+      "Le télétravail améliore la productivité",
+      "Le télétravail est néfaste pour l'entreprise",
+      "Le télétravail devrait être interdit"
     ],
     correctAnswer: 0,
-    explanation: "L'intervenant conclut sur la nécessité de réformer le système éducatif."
+    explanation: "L'intervenant soutient que le télétravail a un impact positif sur la productivité des employés."
   },
   {
     id: 'co-8',
     type: 'comprehension-orale',
     level: 'b2',
-    question: "Quel est l'objectif principal du projet présenté ?",
-    context: "Présentation professionnelle",
-    audioUrl: "/audio/tcf/presentation-projet.mp3",
+    question: "Quelle est la conclusion de cette présentation ?",
+    context: "Conférence professionnelle",
+    audioUrl: "/audio/tcf/b2-innovation.mp3",
     options: [
-      "Réduire l'empreinte carbone de l'entreprise",
-      "Augmenter les ventes",
-      "Améliorer la communication interne"
+      "L'innovation est essentielle pour l'avenir",
+      "Il faut éviter les changements",
+      "La technologie est dangereuse"
     ],
     correctAnswer: 0,
-    explanation: "Le projet vise à réduire l'impact environnemental de l'entreprise."
+    explanation: "Le conférencier conclut sur l'importance de l'innovation pour le futur des entreprises."
   },
   {
     id: 'co-9',
     type: 'comprehension-orale',
     level: 'c1',
-    question: "Quelle est la thèse principale de la conférence ?",
-    context: "Conférence scientifique",
-    audioUrl: "/audio/tcf/science-conf.mp3",
+    question: "Quelle est la thèse défendue par l'orateur ?",
+    context: "Conférence académique",
+    audioUrl: "/audio/tcf/c1-education.mp3",
     options: [
-      "L'impact de l'IA sur la société",
-      "Les dangers des réseaux sociaux",
-      "L'avenir du travail"
+      "L'éducation doit s'adapter aux nouvelles technologies",
+      "L'éducation traditionnelle est parfaite",
+      "Il faut supprimer les nouvelles technologies"
     ],
     correctAnswer: 0,
-    explanation: "La conférence traite de l'impact de l'intelligence artificielle sur la société."
+    explanation: "L'orateur défend la nécessité d'adapter le système éducatif aux nouvelles technologies."
   },
   {
     id: 'co-10',
     type: 'comprehension-orale',
     level: 'c1',
-    question: "Quelle est la principale recommandation du spécialiste ?",
-    context: "Débat économique",
-    audioUrl: "/audio/tcf/economie-debat.mp3",
+    question: "Quel est le point de vue de l'expert sur la question ?",
+    context: "Émission scientifique",
+    audioUrl: "/audio/tcf/c1-science.mp3",
     options: [
-      "Investir dans la formation continue",
-      "Réduire les dépenses publiques",
-      "Augmenter les impôts"
+      "La recherche scientifique doit être une priorité",
+      "La recherche scientifique est inutile",
+      "Il faut réduire les budgets de recherche"
     ],
     correctAnswer: 0,
-    explanation: "Le spécialiste recommande d'investir davantage dans la formation continue pour adapter la main-d'œuvre aux changements économiques."
+    explanation: "L'expert souligne l'importance cruciale de la recherche scientifique pour le progrès de la société."
   }
 ];

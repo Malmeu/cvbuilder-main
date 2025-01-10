@@ -17,22 +17,25 @@ type AudioContent = {
 
 // Dialogues pour la compréhension orale
 const audioContent: Record<string, AudioContent> = {
-  'a1-lieu.mp3': {
+  'a1-cafe.mp3': {
     text: `
-      - Bonjour madame, je voudrais des médicaments pour le mal de tête.
-      - Bien sûr. Avez-vous une ordonnance ?
-      - Non, je voudrais juste du paracétamol.
-      - D'accord, je vous conseille cette boîte. C'est 5 euros.
+      - Bonjour monsieur, que désirez-vous ?
+      - Bonjour, je voudrais un café au lait s'il vous plaît.
+      - Un café au lait, très bien. Ce sera tout ?
+      - Oui, merci.
+      - Ça fait 3 euros 50 s'il vous plaît.
     `,
     voiceParams: { languageCode: 'fr-FR', name: 'fr-FR-Neural2-A' }
   },
   'a1-train.mp3': {
     text: `
-      Attention s'il vous plaît. Le TGV numéro 5872 à destination de Lyon Part-Dieu 
-      va partir de la voie 7 dans 5 minutes. Les voyageurs sont priés de se rendre 
-      sur le quai.
+      - Bonjour, je voudrais un billet pour Paris s'il vous plaît.
+      - Oui, pour quel jour ?
+      - Pour aujourd'hui, le prochain train.
+      - Il y a un train dans 30 minutes. Ça fait 45 euros.
+      - D'accord, je prends.
     `,
-    voiceParams: { languageCode: 'fr-FR', name: 'fr-FR-Neural2-D' }
+    voiceParams: { languageCode: 'fr-FR', name: 'fr-FR-Neural2-B' }
   },
   'a2-rdv.mp3': {
     text: `
@@ -43,28 +46,73 @@ const audioContent: Record<string, AudioContent> = {
       - Je peux vous proposer demain à 14h30.
       - Oui, c'est parfait. Merci.
     `,
-    voiceParams: { languageCode: 'fr-FR', name: 'fr-FR-Neural2-B' }
+    voiceParams: { languageCode: 'fr-FR', name: 'fr-FR-Neural2-C' }
+  },
+  'a2-cinema.mp3': {
+    text: `
+      Salut Marie ! J'ai vu qu'il y a un nouveau film français au cinéma ce soir. 
+      Ça te dit d'aller le voir ? La séance est à 20h30. Rappelle-moi quand tu 
+      as ce message. À plus !
+    `,
+    voiceParams: { languageCode: 'fr-FR', name: 'fr-FR-Neural2-D' }
   },
   'b1-ecologie.mp3': {
     text: `
-      Selon un nouveau rapport scientifique, la pollution des océans atteint des 
-      niveaux alarmants. Chaque année, plus de 8 millions de tonnes de plastique 
-      sont déversées dans les mers. Cette pollution affecte gravement la vie marine 
-      et peut avoir des conséquences sur la santé humaine. Des chercheurs appellent 
-      à des mesures urgentes pour réduire la consommation de plastique.
+      Dans notre journal aujourd'hui, nous parlons du développement durable. De plus 
+      en plus d'entreprises s'engagent pour réduire leur impact environnemental. 
+      Elles adoptent des solutions écologiques comme l'utilisation d'énergies 
+      renouvelables ou la réduction des déchets. Ces initiatives sont essentielles 
+      pour protéger notre planète.
     `,
-    voiceParams: { languageCode: 'fr-FR', name: 'fr-FR-Neural2-C' }
+    voiceParams: { languageCode: 'fr-FR', name: 'fr-FR-Neural2-A' }
+  },
+  'b1-sante.mp3': {
+    text: `
+      L'activité physique est essentielle pour maintenir une bonne santé. Les experts 
+      recommandent de faire au moins 30 minutes d'exercice par jour. Cela peut être 
+      de la marche, de la natation ou du vélo. L'important est de bouger régulièrement 
+      pour rester en forme.
+    `,
+    voiceParams: { languageCode: 'fr-FR', name: 'fr-FR-Neural2-B' }
   },
   'b2-teletravail.mp3': {
     text: `
-      Le télétravail a considérablement transformé notre façon de travailler. 
-      D'après notre étude, la productivité a augmenté de 15% en moyenne, grâce 
-      à une meilleure concentration et moins d'interruptions. Cependant, nous 
-      constatons que l'isolement social est un défi majeur. 30% des employés 
-      rapportent se sentir moins connectés à leurs collègues. Il est donc 
-      crucial de trouver un équilibre entre travail à distance et présence au bureau.
+      Selon notre étude récente, le télétravail a un impact positif sur la productivité 
+      des employés. Les personnes travaillant à domicile rapportent moins de stress, 
+      une meilleure concentration et un meilleur équilibre vie professionnelle-vie 
+      personnelle. Les entreprises constatent également une réduction des coûts 
+      opérationnels.
+    `,
+    voiceParams: { languageCode: 'fr-FR', name: 'fr-FR-Neural2-C' }
+  },
+  'b2-innovation.mp3': {
+    text: `
+      L'innovation est la clé de la réussite dans le monde des affaires moderne. 
+      Les entreprises qui ne s'adaptent pas aux changements technologiques risquent 
+      de perdre leur compétitivité. Il est crucial d'investir dans la recherche et 
+      le développement pour rester à la pointe de son secteur.
     `,
     voiceParams: { languageCode: 'fr-FR', name: 'fr-FR-Neural2-D' }
+  },
+  'c1-education.mp3': {
+    text: `
+      Le système éducatif doit évoluer pour répondre aux défis du 21e siècle. 
+      L'intégration des nouvelles technologies dans l'enseignement n'est plus une 
+      option mais une nécessité. Nous devons former les élèves aux compétences 
+      numériques tout en préservant les fondamentaux de l'apprentissage. Cette 
+      transformation requiert une approche équilibrée et réfléchie.
+    `,
+    voiceParams: { languageCode: 'fr-FR', name: 'fr-FR-Neural2-A' }
+  },
+  'c1-science.mp3': {
+    text: `
+      La recherche scientifique est le moteur du progrès humain. Sans investissement 
+      dans la recherche fondamentale et appliquée, nous ne pourrons pas relever les 
+      grands défis de notre époque : le changement climatique, les maladies émergentes, 
+      la transition énergétique. Il est impératif de soutenir la communauté scientifique 
+      et de valoriser son travail essentiel.
+    `,
+    voiceParams: { languageCode: 'fr-FR', name: 'fr-FR-Neural2-B' }
   }
 };
 
