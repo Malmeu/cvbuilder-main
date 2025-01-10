@@ -30,7 +30,7 @@ export default function ArticleContent({ article }: { article: Article | null })
   }
 
   return (
-    <article className="relative py-16 px-4 sm:px-6 lg:px-8">
+    <article className="relative py-16 px-4 sm:px-6 lg:px-8 space-y-8">
       {/* Effets de fond style Apple */}
       <div className="absolute top-0 left-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
       <div className="absolute top-0 right-0 w-96 h-96 bg-secondary/10 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2" />
@@ -95,7 +95,16 @@ export default function ArticleContent({ article }: { article: Article | null })
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="prose prose-base max-w-none prose-headings:text-base-content prose-p:text-base-content/80 prose-a:text-primary mb-8"
+          className="prose prose-base max-w-none prose-headings:text-base-content prose-p:text-base-content/80 prose-a:text-primary mb-8 
+          prose-h1:text-4xl prose-h1:font-bold prose-h1:mb-6 
+          prose-h2:text-3xl prose-h2:font-semibold prose-h2:mb-4 prose-h2:mt-8
+          prose-h3:text-2xl prose-h3:font-medium prose-h3:mb-3 prose-h3:mt-6
+          prose-p:text-lg prose-p:leading-relaxed prose-p:mb-4
+          prose-ul:my-6 prose-ul:list-disc prose-ul:pl-12
+          prose-li:mb-3 prose-li:text-base-content/80 prose-li:text-lg prose-li:ml-4
+          prose-strong:text-base-content prose-strong:font-semibold
+          [&>ul]:pl-12 [&>ul>li]:ml-4 [&>ul>li]:relative [&>ul>li]:pl-2
+          [&>ul>li]:before:content-['•'] [&>ul>li]:before:absolute [&>ul>li]:before:left-[-1rem] [&>ul>li]:before:text-primary"
           dangerouslySetInnerHTML={{ __html: article.content }}
         />
 
