@@ -644,7 +644,7 @@ export default function Home() {
             </div>
 
             <div className="border-t border-base-content/10 mt-12 pt-8 text-center text-base-content/60">
-              <p>&copy; {new Date().getFullYear()} CV Diali. Tous droits réservés.</p>
+              <p>&copy; {new Date().getFullYear()} CV Diali.avec la contribution de el Hadj Tous droits réservés.</p>
             </div>
           </div>
         </footer>

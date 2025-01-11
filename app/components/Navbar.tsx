@@ -10,7 +10,7 @@ export default function Navbar() {
 
   const navigation = [
     { name: 'Accueil', href: '/' },
-    { name: 'Créer un CV', href: '/builder' },
+    { name: 'Immigration', href: '/immigration', highlight: true },
     { name: 'Format Canadien', href: '/canadian-builder' },
     { name: 'TCF', href: '/outils/tcf', highlight: true },
     { name: 'Blog', href: '/blog' },
