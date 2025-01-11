@@ -230,23 +230,53 @@ export default function TCFPage() {
     localStorage.removeItem('tcf-scores');
     localStorage.removeItem('tcf-completed');
     localStorage.removeItem('tcf-times');
+
+    // Log de vérification
+    console.log('=== Réinitialisation des scores ===');
+    console.log('Scores initialisés:', initialScores);
+    console.log('Exercices complétés initialisés:', initialCompleted);
+    console.log('Vérification localStorage:');
+    console.log('- Scores:', localStorage.getItem('tcf-scores'));
+    console.log('- Completed:', localStorage.getItem('tcf-completed'));
+    console.log('- Times:', localStorage.getItem('tcf-times'));
   };
 
-  // Sauvegarder les scores dans le localStorage
+  // Charger les données au démarrage
   useEffect(() => {
-    const savedScores = localStorage.getItem('tcf-scores');
-    const savedCompleted = localStorage.getItem('tcf-completed');
-    const savedTimes = localStorage.getItem('tcf-times');
+    const loadStoredData = () => {
+      try {
+        const storedScores = localStorage.getItem('tcf-scores');
+        const storedCompleted = localStorage.getItem('tcf-completed');
+        const storedTimes = localStorage.getItem('tcf-times');
 
-    if (savedScores) {
-      setScores(JSON.parse(savedScores));
-    }
-    if (savedCompleted) {
-      setCompletedExercises(JSON.parse(savedCompleted));
-    }
-    if (savedTimes) {
-      setTimes(JSON.parse(savedTimes));
-    }
+        console.log('=== Chargement des données stockées ===');
+        console.log('Scores trouvés:', storedScores);
+        console.log('Exercices complétés trouvés:', storedCompleted);
+
+        if (storedScores) {
+          const parsedScores = JSON.parse(storedScores);
+          setScores(parsedScores);
+          console.log('Scores chargés:', parsedScores);
+        }
+
+        if (storedCompleted) {
+          const parsedCompleted = JSON.parse(storedCompleted);
+          setCompletedExercises(parsedCompleted);
+          console.log('États de complétion chargés:', parsedCompleted);
+        }
+
+        if (storedTimes) {
+          const parsedTimes = JSON.parse(storedTimes);
+          setTimes(parsedTimes);
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des données:', error);
+        // En cas d'erreur, réinitialiser
+        handleReset();
+      }
+    };
+
+    loadStoredData();
   }, []);
 
   // Calculer les statistiques globales
@@ -271,33 +301,60 @@ export default function TCFPage() {
 
   const currentLevel = calculateLevel(averageScore);
 
-  const handleExerciseComplete = (score: number, total: number, timeSpent: number) => {
-    if (!activeSection) return;
-    
-    const newScores = {
-      ...scores,
-      [activeSection]: score
-    };
-    
-    const newCompleted = {
-      ...completedExercises,
-      [activeSection]: true
-    };
-    
-    const newTimes = {
-      ...times,
-      [activeSection]: timeSpent
-    };
+  const handleExerciseComplete = (score: number, totalQuestions: number, timeSpent: number) => {
+    console.log('=== Début de handleExerciseComplete ===');
+    console.log('Score reçu:', score);
+    console.log('Questions totales:', totalQuestions);
+    console.log('Temps passé:', timeSpent);
 
-    // Mettre à jour les états
-    setScores(newScores);
-    setCompletedExercises(newCompleted);
-    setTimes(newTimes);
+    if (activeSection) {
+      // Créer une copie des scores actuels
+      const newScores = { ...scores };
+      
+      // Vérifier que le score est valide
+      if (score < 0 || score > 100) {
+        console.error('Score invalide reçu:', score);
+        return;
+      }
 
-    // Sauvegarder dans le localStorage
-    localStorage.setItem('tcf-scores', JSON.stringify(newScores));
-    localStorage.setItem('tcf-completed', JSON.stringify(newCompleted));
-    localStorage.setItem('tcf-times', JSON.stringify(newTimes));
+      // Vérifier que le nombre de questions est correct
+      if (totalQuestions !== 10) {
+        console.error('Nombre de questions incorrect:', totalQuestions);
+        return;
+      }
+
+      // Mettre à jour le score
+      newScores[activeSection] = score;
+      
+      console.log('=== Mise à jour des scores ===');
+      console.log('Section active:', activeSection);
+      console.log('Ancien score:', scores[activeSection]);
+      console.log('Nouveau score:', score);
+      console.log('Tous les scores:', newScores);
+
+      // Mettre à jour l'état et le localStorage
+      setScores(newScores);
+      localStorage.setItem('tcf-scores', JSON.stringify(newScores));
+
+      // Mettre à jour les exercices complétés
+      const newCompleted = { ...completedExercises };
+      newCompleted[activeSection] = true;
+      setCompletedExercises(newCompleted);
+      localStorage.setItem('tcf-completed', JSON.stringify(newCompleted));
+
+      // Mettre à jour les temps
+      const newTimes = { ...times };
+      newTimes[activeSection] = timeSpent;
+      setTimes(newTimes);
+      localStorage.setItem('tcf-times', JSON.stringify(newTimes));
+
+      console.log('=== État final ===');
+      console.log('Scores finaux:', newScores);
+      console.log('Exercices complétés:', newCompleted);
+      console.log('Temps:', newTimes);
+      console.log('localStorage - scores:', localStorage.getItem('tcf-scores'));
+      console.log('localStorage - completed:', localStorage.getItem('tcf-completed'));
+    }
 
     setActiveSection(null);
   };

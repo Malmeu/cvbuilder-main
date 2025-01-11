@@ -143,7 +143,7 @@ export default function Home() {
                       <div className="flex items-center justify-between">
                         <div>
                           <div className="text-sm text-base-content/60">Niveau actuel</div>
-                          <div className="text-2xl font-bold">B1</div>
+                          <div className="text-2xl font-bold">C1</div>
                         </div>
                         <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
                           <GraduationCap className="w-6 h-6 text-primary" />

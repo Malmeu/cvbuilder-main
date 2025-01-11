@@ -21,6 +21,7 @@ export default function ExerciseSession({ type, onClose, onComplete }: ExerciseS
   const [feedback, setFeedback] = useState<string>('');
   const [timeLeft, setTimeLeft] = useState<number>(300); // 5 minutes par défaut
   const [startTime] = useState<number>(Date.now()); // Temps de début
+  const [answers, setAnswers] = useState<boolean[]>([]);
 
   useEffect(() => {
     fetchQuestions();
@@ -62,28 +63,52 @@ export default function ExerciseSession({ type, onClose, onComplete }: ExerciseS
   };
 
   const handleAnswer = async (answer: string) => {
+    if (currentIndex >= questions.length) {
+      console.error('Index de question invalide:', currentIndex);
+      return;
+    }
+
     setCurrentAnswer(answer);
     try {
+      // Convertir la réponse en nombre pour la comparaison
+      const answerIndex = parseInt(answer, 10);
+      const currentQuestion = questions[currentIndex];
+
       const response = await fetch('/api/tcf', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          questionId: questions[currentIndex].id,
-          answer,
+          questionId: currentQuestion.id,
+          answer: answerIndex, // Envoyer l'index numérique
         }),
       });
 
       const data = await response.json();
-      setIsCorrect(data.correct);
+      
+      // Vérifier si la réponse est correcte
+      const isAnswerCorrect = data.correct === true;
+      
+      // Mettre à jour le tableau des réponses
+      const newAnswers = [...answers];
+      newAnswers[currentIndex] = isAnswerCorrect;
+      setAnswers(newAnswers);
+
+      setIsCorrect(isAnswerCorrect);
       setFeedback(data.feedback);
       setShowFeedback(true);
 
-      if (data.correct) {
-        setCorrectAnswers(prev => prev + 1);
-      }
+      // Log détaillé pour le débogage
+      console.log('=== Réponse à la question ===');
+      console.log('Question:', currentQuestion.question);
+      console.log('Index de la réponse donnée:', answerIndex);
+      console.log('Index de la bonne réponse:', currentQuestion.correctAnswer);
+      console.log('Réponse correcte:', isAnswerCorrect);
+      console.log('Réponses correctes totales:', newAnswers.filter(a => a === true).length);
+
     } catch (err) {
+      console.error('Erreur lors de la vérification de la réponse:', err);
       setError('Erreur lors de la vérification de la réponse');
     }
   };
@@ -101,9 +126,27 @@ export default function ExerciseSession({ type, onClose, onComplete }: ExerciseS
   const handleSessionComplete = () => {
     const timeSpent = Math.floor((Date.now() - startTime) / 1000);
     const totalQuestions = questions.length;
-    const finalScore = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
-    console.log(`Score final: ${correctAnswers}/${totalQuestions} = ${finalScore}%`); // Pour le débogage
-    onComplete(finalScore, totalQuestions, timeSpent);
+    
+    // S'assurer que nous avons répondu à toutes les questions
+    const answeredQuestions = answers.filter(a => a !== undefined).length;
+    if (answeredQuestions < totalQuestions) {
+      console.warn(`Attention: Seulement ${answeredQuestions}/${totalQuestions} questions ont reçu une réponse`);
+      return; // Ne pas terminer si toutes les questions n'ont pas été répondues
+    }
+    
+    // Calculer le score final en pourcentage
+    const correctCount = answers.filter(answer => answer === true).length;
+    const score = Math.round((correctCount / totalQuestions) * 100);
+    
+    // Log détaillé pour le débogage
+    console.log('=== Calcul du score final ===');
+    console.log(`Total des questions: ${totalQuestions}`);
+    console.log(`Questions répondues: ${answeredQuestions}`);
+    console.log(`Réponses correctes: ${correctCount}`);
+    console.log(`Score calculé: (${correctCount}/${totalQuestions}) * 100 = ${score}%`);
+    console.log('Détail de toutes les réponses:', answers);
+    
+    onComplete(score, totalQuestions, timeSpent);
   };
 
   const formatTime = (seconds: number) => {

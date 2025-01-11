@@ -22,22 +22,38 @@ export const grammaire: TCFMultipleChoiceQuestion[] = [
     type: 'grammaire',
     level: 'a1',
     question: "Complétez avec l'article défini correct :",
-    text: "J'aime ___ chocolat.",
+    text: "___ soleil brille.",
     options: [
       'le',
       'la',
       'les',
-      'un'
+      "l'"
     ],
     correctAnswer: 0,
-    explanation: "Le mot 'chocolat' est masculin singulier, donc on utilise l'article défini 'le'.",
+    explanation: "'Le soleil' est masculin singulier.",
     context: 'Articles définis'
   },
   {
     id: 'gr-a2-1',
     type: 'grammaire',
     level: 'a2',
-    question: "Choisissez le pronom relatif correct :",
+    question: "Choisissez le bon temps du verbe :",
+    text: "Hier, je ___ au cinéma.",
+    options: [
+      'suis allé',
+      'vais',
+      'irai',
+      'va'
+    ],
+    correctAnswer: 0,
+    explanation: "Avec 'hier', on utilise le passé composé.",
+    context: 'Temps du passé'
+  },
+  {
+    id: 'gr-a2-2',
+    type: 'grammaire',
+    level: 'a2',
+    question: "Complétez avec le pronom relatif correct :",
     text: "C'est le livre ___ j'ai lu hier.",
     options: [
       'que',
@@ -46,55 +62,103 @@ export const grammaire: TCFMultipleChoiceQuestion[] = [
       'où'
     ],
     correctAnswer: 0,
-    explanation: "On utilise 'que' car le pronom remplace le COD (le livre). 'Que' est utilisé quand le pronom relatif est complément d'objet direct.",
+    explanation: "'Que' est utilisé quand le pronom relatif est COD.",
     context: 'Pronoms relatifs'
   },
   {
     id: 'gr-b1-1',
     type: 'grammaire',
     level: 'b1',
-    question: "Complétez avec le temps correct :",
-    text: "Si j'avais plus de temps, je ___ voyager.",
+    question: "Choisissez la bonne préposition :",
+    text: "Je pense ___ mes vacances.",
     options: [
-      'pourrais',
-      'peux',
-      'pourrai',
-      'ai pu'
+      'à',
+      'de',
+      'pour',
+      'par'
     ],
     correctAnswer: 0,
-    explanation: "Dans une phrase hypothétique avec 'si + imparfait', on utilise le conditionnel présent dans la principale (pourrais).",
-    context: 'Conditionnel'
+    explanation: "Le verbe 'penser' est suivi de la préposition 'à'.",
+    context: 'Prépositions'
+  },
+  {
+    id: 'gr-b1-2',
+    type: 'grammaire',
+    level: 'b1',
+    question: "Complétez avec le bon pronom possessif :",
+    text: "Cette voiture est ___.",
+    options: [
+      'la mienne',
+      'le mien',
+      'les miennes',
+      'à moi'
+    ],
+    correctAnswer: 0,
+    explanation: "'La mienne' s'accorde avec 'voiture' (féminin singulier).",
+    context: 'Pronoms possessifs'
   },
   {
     id: 'gr-b2-1',
     type: 'grammaire',
     level: 'b2',
     question: "Choisissez la bonne forme du subjonctif :",
-    text: "Il faut que vous ___ plus attentif.",
+    text: "Il faut que tu ___ plus tôt.",
     options: [
-      'soyez',
-      'êtes',
-      'serez',
-      'étiez'
+      'viennes',
+      'viens',
+      'viendrais',
+      'venais'
     ],
     correctAnswer: 0,
-    explanation: "Après 'il faut que', on utilise le subjonctif présent. La forme correcte du verbe être au subjonctif présent avec 'vous' est 'soyez'.",
-    context: 'Subjonctif présent'
+    explanation: "Après 'il faut que', on utilise le subjonctif présent.",
+    context: 'Subjonctif'
+  },
+  {
+    id: 'gr-b2-2',
+    type: 'grammaire',
+    level: 'b2',
+    question: "Complétez avec le bon participe passé :",
+    text: "Les fleurs que j'ai ___ sont belles.",
+    options: [
+      'achetées',
+      'acheté',
+      'acheter',
+      'achetés'
+    ],
+    correctAnswer: 0,
+    explanation: "Le participe passé s'accorde avec le COD placé avant le verbe (que = les fleurs).",
+    context: 'Accord du participe passé'
   },
   {
     id: 'gr-c1-1',
     type: 'grammaire',
     level: 'c1',
-    question: "Complétez avec le temps qui convient :",
-    text: "Au moment où je l'ai appelé, il ___ déjà parti.",
+    question: "Choisissez la bonne construction :",
+    text: "___ qu'il pleuve, nous irons à la plage.",
     options: [
-      'était',
-      'a été',
-      'fut',
-      'serait'
+      'Quoi',
+      'Bien',
+      'Même',
+      'Pour'
+    ],
+    correctAnswer: 2,
+    explanation: "'Même' exprime ici la concession.",
+    context: 'Expression de la concession'
+  },
+  {
+    id: 'gr-c1-2',
+    type: 'grammaire',
+    level: 'c1',
+    question: "Complétez avec la forme correcte du conditionnel passé :",
+    text: "Si j'avais su, je ___ différemment.",
+    options: [
+      'aurais agi',
+      'agirais',
+      'agirai',
+      'avais agi'
     ],
     correctAnswer: 0,
-    explanation: "Pour une action antérieure à une action au passé composé, on utilise le plus-que-parfait ou l'imparfait selon le contexte. Ici, l'imparfait 'était' est approprié car il s'agit d'un état.",
-    context: 'Concordance des temps'
+    explanation: "Dans une hypothèse du passé, on utilise le conditionnel passé dans la principale.",
+    context: 'Conditionnel passé'
   }
 ];

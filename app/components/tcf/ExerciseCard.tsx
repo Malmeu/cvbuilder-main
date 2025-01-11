@@ -56,9 +56,16 @@ export default function ExerciseCard({
     }
   };
 
-  const handleAnswerSelect = (answer: string) => {
+  const handleAnswerSelect = (answer: string, index: number) => {
     setSelectedAnswer(answer);
-    onAnswer(answer);
+    // Passer l'index de la réponse au lieu de la réponse elle-même
+    onAnswer(index.toString());
+    
+    // Log pour le débogage
+    console.log('=== Sélection de réponse ===');
+    console.log('Question:', question.question);
+    console.log('Réponse sélectionnée:', answer);
+    console.log('Index de la réponse:', index);
   };
 
   return (
@@ -100,36 +107,27 @@ export default function ExerciseCard({
       </div>
 
       {/* Question */}
-      <div className="mb-8">
-        <h3 className="text-xl font-medium mb-4">{question.question}</h3>
-        {question.imageUrl && (
-          <img
-            src={question.imageUrl}
-            alt="Question illustration"
-            className="w-full rounded-xl mb-4 object-cover"
-          />
-        )}
-      </div>
+      <h3 className="text-xl font-semibold mb-6 text-white/90">{question.question}</h3>
 
-      {/* Options */}
+      {/* Options de réponse */}
       {question.options && (
-        <div className="space-y-3">
+        <div className="space-y-4">
           {question.options.map((option, index) => (
             <button
               key={index}
-              onClick={() => handleAnswerSelect(option)}
-              className={`w-full p-4 rounded-xl border transition-all duration-300 ${
+              onClick={() => handleAnswerSelect(option, index)}
+              className={`w-full p-4 rounded-xl text-left transition-all ${
                 selectedAnswer === option
                   ? showFeedback
                     ? isCorrect
-                      ? 'border-success/50 bg-success/10'
-                      : 'border-error/50 bg-error/10'
-                    : 'border-primary/50 bg-primary/10'
-                  : 'border-white/10 hover:border-white/30 hover:bg-white/5'
-              }`}
+                      ? 'bg-green-500/20 border-green-500/50'
+                      : 'bg-red-500/20 border-red-500/50'
+                    : 'bg-primary/20 border-primary/50'
+                  : 'bg-white/5 hover:bg-white/10'
+              } border border-white/10`}
               disabled={showFeedback}
             >
-              <span className="text-left block">{option}</span>
+              {option}
             </button>
           ))}
         </div>
@@ -141,7 +139,7 @@ export default function ExerciseCard({
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           className={`mt-6 p-4 rounded-xl ${
-            isCorrect ? 'bg-success/10 text-success' : 'bg-error/10 text-error'
+            isCorrect ? 'bg-green-500/20' : 'bg-red-500/20'
           }`}
         >
           {feedback}

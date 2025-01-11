@@ -5,150 +5,150 @@ export const comprehensionEcrite: TCFMultipleChoiceQuestion[] = [
     id: 'ce-1',
     type: 'comprehension-ecrite',
     level: 'a1',
-    question: "Lisez le texte et répondez à la question.",
-    context: "Panneau d'affichage",
-    text: "PHARMACIE CENTRALE\nOuvert du lundi au samedi\n9h00 - 19h30\nFermé le dimanche",
+    question: "Lisez le texte et choisissez la bonne réponse.",
+    text: "Fermé le lundi. Ouvert du mardi au samedi de 9h à 19h. Dimanche de 10h à 16h.",
     options: [
-      "La pharmacie est ouverte le dimanche",
-      "La pharmacie est fermée le samedi",
-      "La pharmacie est fermée le dimanche"
+      "Le magasin est fermé le lundi",
+      "Le magasin est ouvert tous les jours",
+      "Le magasin est fermé le dimanche"
     ],
-    correctAnswer: 2,
-    explanation: "Le panneau indique clairement que la pharmacie est fermée le dimanche."
+    correctAnswer: 0,
+    explanation: "Le texte indique clairement que le magasin est fermé le lundi.",
+    context: "Horaires d'ouverture"
   },
   {
     id: 'ce-2',
     type: 'comprehension-ecrite',
     level: 'a1',
     question: "Que dit cette annonce ?",
-    context: "Petite annonce",
-    text: "À VENDRE\nVélo rouge en bon état\nPrix : 50€\nTél : 06 12 34 56 78",
+    text: "Appartement à louer : 2 chambres, cuisine équipée, proche métro. 800€/mois.",
     options: [
-      "On vend un vélo rouge",
-      "On cherche un vélo rouge",
-      "On répare les vélos"
+      "On loue un appartement",
+      "On vend un appartement",
+      "On cherche un appartement"
     ],
     correctAnswer: 0,
-    explanation: "L'annonce indique qu'un vélo rouge est à vendre pour 50€."
+    explanation: "L'annonce propose un appartement à louer.",
+    context: "Petite annonce immobilière"
   },
   {
     id: 'ce-3',
     type: 'comprehension-ecrite',
     level: 'a2',
-    question: "Quel est le but principal de ce message ?",
-    context: "Email professionnel",
-    text: "Cher M. Dupont,\n\nJe vous confirme notre rendez-vous de demain à 14h dans nos bureaux pour discuter du projet. N'oubliez pas d'apporter les documents nécessaires.\n\nCordialement,\nMme Martin",
+    question: "De quel type de document s'agit-il ?",
+    text: "Chère Marie, Je suis bien arrivée à Paris. Le voyage était long mais agréable. Je te raconterai tout à mon retour. Bisous, Sophie",
     options: [
-      "Annuler un rendez-vous",
-      "Confirmer un rendez-vous",
-      "Demander un rendez-vous"
+      "Une carte postale",
+      "Un article de journal",
+      "Une publicité"
     ],
-    correctAnswer: 1,
-    explanation: "L'email confirme un rendez-vous prévu pour le lendemain."
+    correctAnswer: 0,
+    explanation: "Le format et le style correspondent à une carte postale.",
+    context: "Correspondance personnelle"
   },
   {
     id: 'ce-4',
     type: 'comprehension-ecrite',
     level: 'a2',
-    question: "Que propose cette affiche ?",
-    context: "Affiche culturelle",
-    text: "FESTIVAL DE MUSIQUE\nDu 15 au 17 juillet\nParc municipal\nEntrée gratuite\nConcerts tous les soirs à partir de 19h",
+    question: "Quel est le message principal ?",
+    text: "SOLDES D'HIVER : Jusqu'à -50% sur tous les vêtements du 10 au 30 janvier !",
     options: [
-      "Un festival de théâtre",
-      "Un festival de musique gratuit",
-      "Un concert payant"
+      "Il y a des réductions sur les vêtements",
+      "Le magasin ferme en janvier",
+      "Les vêtements d'hiver sont arrivés"
     ],
-    correctAnswer: 1,
-    explanation: "L'affiche annonce un festival de musique gratuit au parc municipal."
+    correctAnswer: 0,
+    explanation: "L'annonce informe sur des réductions pendant les soldes d'hiver.",
+    context: "Publicité commerciale"
   },
   {
     id: 'ce-5',
     type: 'comprehension-ecrite',
     level: 'b1',
-    question: "Quelle est l'idée principale de l'article ?",
-    context: "Article de journal",
-    text: "Le télétravail continue de se développer en France. Selon une récente étude, 30% des employés travaillent désormais au moins un jour par semaine depuis leur domicile. Cette tendance, accélérée par la crise sanitaire, semble s'installer durablement dans le paysage professionnel français.",
+    question: "Que propose cette annonce ?",
+    text: "Cours de français tous niveaux. Professeur expérimenté. Méthode interactive. Petits groupes. 20€/heure.",
     options: [
-      "La crise sanitaire en France",
-      "L'augmentation du télétravail",
-      "Les conditions de travail"
+      "Des cours de français personnalisés",
+      "Des livres de français",
+      "Un emploi de professeur"
     ],
-    correctAnswer: 1,
-    explanation: "L'article traite principalement de l'augmentation du télétravail en France."
+    correctAnswer: 0,
+    explanation: "L'annonce propose des cours de français.",
+    context: "Annonce de service"
   },
   {
     id: 'ce-6',
     type: 'comprehension-ecrite',
     level: 'b1',
-    question: "Quel est le message principal de cette publicité ?",
-    context: "Publicité",
-    text: "Découvrez notre nouvelle application mobile ! Gérez vos comptes, effectuez vos virements et payez vos factures en quelques clics. Simple, rapide et sécurisée, elle vous accompagne partout. Téléchargez-la gratuitement dès aujourd'hui !",
+    question: "Quel est le sujet principal de cet article ?",
+    text: "Le télétravail continue de se développer en France. Selon une récente étude, 30% des employés travaillent désormais régulièrement depuis leur domicile.",
     options: [
-      "Une nouvelle application bancaire pratique",
-      "Un nouveau système de paiement en ligne",
-      "Une offre de compte bancaire gratuit"
+      "L'évolution du télétravail",
+      "Le chômage en France",
+      "Les conditions de travail"
     ],
     correctAnswer: 0,
-    explanation: "La publicité présente une nouvelle application mobile bancaire avec ses fonctionnalités."
+    explanation: "L'article traite principalement du développement du télétravail.",
+    context: "Article de presse"
   },
   {
     id: 'ce-7',
     type: 'comprehension-ecrite',
     level: 'b2',
-    question: "Quelle est la conclusion de l'auteur ?",
-    context: "Article scientifique",
-    text: "L'intelligence artificielle révolutionne de nombreux secteurs, de la médecine à l'éducation. Cependant, son développement rapide soulève des questions éthiques importantes. Il est crucial d'établir un cadre réglementaire strict pour encadrer son utilisation et protéger les droits des citoyens.",
+    question: "Quelle est la conclusion de cet extrait ?",
+    text: "Bien que les énergies renouvelables présentent de nombreux avantages, leur développement nécessite des investissements importants et une volonté politique forte.",
     options: [
-      "Il faut réglementer l'IA",
-      "L'IA est dangereuse",
-      "L'IA n'est pas fiable"
+      "Le développement des énergies renouvelables est complexe",
+      "Les énergies renouvelables sont trop chères",
+      "Il faut abandonner les énergies renouvelables"
     ],
     correctAnswer: 0,
-    explanation: "L'auteur conclut sur la nécessité d'établir un cadre réglementaire pour l'IA."
+    explanation: "Le texte conclut sur la complexité du développement des énergies renouvelables.",
+    context: "Article scientifique"
   },
   {
     id: 'ce-8',
     type: 'comprehension-ecrite',
     level: 'b2',
-    question: "Quel est le point de vue de l'auteur sur le sujet ?",
-    context: "Article d'opinion",
-    text: "La réduction du temps de travail fait débat. Si certains y voient une menace pour la productivité, les expériences menées dans plusieurs pays montrent qu'elle peut, au contraire, améliorer le bien-être des employés sans impact négatif sur les résultats. Il est temps d'envisager sérieusement cette option.",
+    question: "Quel est l'argument principal du texte ?",
+    text: "L'apprentissage d'une langue étrangère ne se limite pas à la grammaire et au vocabulaire. C'est aussi une ouverture sur une nouvelle culture et une façon différente de voir le monde.",
     options: [
-      "Il est favorable à la réduction du temps de travail",
-      "Il est contre la réduction du temps de travail",
-      "Il reste neutre sur la question"
+      "L'apprentissage des langues est culturel",
+      "La grammaire est difficile",
+      "Il faut voyager pour apprendre"
     ],
     correctAnswer: 0,
-    explanation: "L'auteur se positionne en faveur de la réduction du temps de travail, s'appuyant sur des expériences positives."
+    explanation: "Le texte souligne l'aspect culturel de l'apprentissage des langues.",
+    context: "Article éducatif"
   },
   {
     id: 'ce-9',
     type: 'comprehension-ecrite',
     level: 'c1',
-    question: "Quel est l'argument principal de l'auteur ?",
-    context: "Essai philosophique",
-    text: "Dans notre société hyperconnectée, la frontière entre vie privée et vie publique s'estompe progressivement. Les réseaux sociaux, initialement conçus comme des outils de communication, sont devenus des extensions de notre identité. Cette transformation profonde de notre rapport à l'intimité questionne les fondements mêmes de notre conception de l'individu.",
+    question: "Quelle est la thèse défendue ?",
+    text: "Dans un monde hyperconnecté, la protection de la vie privée devient un enjeu majeur. Les récentes législations tentent de répondre à ce défi, mais sont-elles suffisantes ?",
     options: [
-      "Les réseaux sociaux transforment notre rapport à l'intimité",
-      "La technologie est dangereuse",
-      "Il faut limiter l'usage des réseaux sociaux"
+      "La protection des données est un défi important",
+      "Il faut interdire internet",
+      "Les lois sont parfaites"
     ],
     correctAnswer: 0,
-    explanation: "L'auteur argumente sur la transformation de notre rapport à l'intimité par les réseaux sociaux."
+    explanation: "Le texte défend l'importance de la protection des données personnelles.",
+    context: "Article d'opinion"
   },
   {
     id: 'ce-10',
     type: 'comprehension-ecrite',
     level: 'c1',
-    question: "Quelle est la thèse défendue par l'auteur ?",
-    context: "Article académique",
-    text: "Le multilinguisme précoce, loin d'être un obstacle au développement cognitif comme on le pensait autrefois, constitue un atout majeur dans le développement intellectuel de l'enfant. Les recherches récentes en neurosciences démontrent que l'exposition à plusieurs langues dès le plus jeune âge favorise la plasticité cérébrale et renforce les capacités d'apprentissage.",
+    question: "Quel est le ton de cet article ?",
+    text: "Les avancées en intelligence artificielle soulèvent des questions éthiques fondamentales. Si ces technologies offrent des opportunités sans précédent, elles comportent aussi des risques qu'il serait imprudent d'ignorer.",
     options: [
-      "Le multilinguisme est bénéfique pour le développement",
-      "Le multilinguisme peut être dangereux",
-      "Le multilinguisme doit être limité"
+      "Analytique et nuancé",
+      "Totalement négatif",
+      "Purement enthousiaste"
     ],
     correctAnswer: 0,
-    explanation: "L'auteur défend les bienfaits du multilinguisme précoce sur le développement cognitif."
+    explanation: "L'article adopte un ton équilibré, présentant à la fois les opportunités et les risques.",
+    context: "Article technologique"
   }
 ];
