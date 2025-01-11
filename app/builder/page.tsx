@@ -289,22 +289,24 @@ export default function Builder() {
           <div className="flex flex-col space-y-4 fixed z-[9998] top-20 right-5">
             <div className="flex items-center gap-2 flex-wrap">
               <button
-                onClick={() => setZoom(zoom + 10)}
-                className="btn"
-                title="Zoom in"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM13.5 10.5h-6" />
-                </svg>
-              </button>
-
-              <button
                 onClick={() => setZoom(zoom - 10)}
                 className="btn"
                 title="Zoom out"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607ZM13.5 10.5h-6" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM13 10H7" />
+                </svg>
+              </button>
+
+              <span className="mx-2">{zoom}%</span>
+
+              <button
+                onClick={() => setZoom(zoom + 10)}
+                className="btn"
+                title="Zoom in"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10 7h4m0 0v4m0-4H7" />
                 </svg>
               </button>
 

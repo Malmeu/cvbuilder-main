@@ -190,3 +190,6 @@ Toutes les modifications notables apportées à ce projet seront documentées da
 - Mise à jour de la gestion des fichiers dans le service TTS pour utiliser fs.promises
 - Amélioration de la vérification d'existence des dossiers avec fs.access
 - Meilleure gestion des types dans le composant RadioGroup
+
+### Navbar
+-{ name: 'Modèles', href: '/templates' },

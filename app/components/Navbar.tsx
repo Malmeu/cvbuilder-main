@@ -15,7 +15,7 @@ export default function Navbar() {
     { name: 'TCF', href: '/outils/tcf', highlight: true },
     { name: 'Blog', href: '/blog' },
     { name: 'Boîte à outils', href: '/outils' },
-    { name: 'Modèles', href: '/templates' },
+    
   ];
 
   useEffect(() => {
