@@ -125,6 +125,17 @@
    - Monitoring des performances
    - Analytics avancés
 
+## Améliorations Futures Planifiées
+
+### Analyseur de CV
+- Migration vers un serveur plus puissant pour supporter une analyse plus complète
+- Expansion de l'analyse avec plus de sections détaillées
+- Recommandations plus approfondies et personnalisées
+- Meilleure utilisation des capacités du modèle d'IA
+- Ajout d'une analyse comparative par secteur
+- Support pour plus de formats de CV
+- Suggestions de mots-clés optimisés par industrie
+
 ## Notes de Maintenance
 - Vérifier régulièrement les dépendances
 - Maintenir la compatibilité navigateur
