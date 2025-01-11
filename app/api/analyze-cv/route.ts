@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-export const maxDuration = 300;
+export const maxDuration = 60; // Limité à 60 secondes pour Vercel hobby
 export const dynamic = 'force-dynamic';
 
 type LanguageType = 'fr' | 'en';
