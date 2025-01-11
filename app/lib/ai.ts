@@ -129,14 +129,77 @@ export async function generateInterviewPrep(
   langue: 'fr' | 'en' = 'fr'
 ): Promise<InterviewPrep> {
   try {
-    const prompt = langue === 'fr'
-      ? `Prépare des questions d'entretien concises pour un poste de ${poste} chez ${entreprise}.${
-          experience ? ` Le candidat a ${experience} d'expérience.` : ''
-        }\n\nFournis :\n1. 3 questions techniques\n2. 2 questions sur la culture d'entreprise\n3. 2 questions pièges\n4. 3 conseils de préparation\n5. 3 points clés à retenir`
-      : `Prepare concise interview questions for a ${poste} position at ${entreprise}.${
-          experience ? ` The candidate has ${experience} of experience.` : ''
-        }\n\nProvide:\n1. 3 technical questions\n2. 2 company culture questions\n3. 2 tricky questions\n4. 3 preparation tips\n5. 3 key points to remember`;
+    console.log('Début de generateInterviewPrep avec:', { poste, entreprise, experience });
+    
+    const systemPrompt = langue === 'fr'
+      ? 'Tu es un expert en recrutement. Génère une préparation d\'entretien en format JSON uniquement, sans texte additionnel.'
+      : 'You are a recruitment expert. Generate an interview preparation in JSON format only, without any additional text.';
 
+    const userPrompt = langue === 'fr'
+      ? `Prépare un entretien pour un poste de ${poste} chez ${entreprise}.${
+          experience ? ` Le candidat a ${experience} d'expérience.` : ''
+        }
+        Retourne UNIQUEMENT un objet JSON avec cette structure exacte :
+        {
+          "questions_techniques": [
+            "Question technique 1",
+            "Question technique 2",
+            "Question technique 3",
+            "Question technique 4",
+            "Question technique 5"
+          ],
+          "questions_culture": [
+            "Question culture 1",
+            "Question culture 2",
+            "Question culture 3"
+          ],
+          "questions_pieges": [
+            "Question piège 1",
+            "Question piège 2"
+          ],
+          "conseils_preparation": [
+            "Conseil 1",
+            "Conseil 2",
+            "Conseil 3"
+          ],
+          "points_cles": [
+            "Point clé 1",
+            "Point clé 2"
+          ]
+        }`
+      : `Prepare an interview for a ${poste} position at ${entreprise}.${
+          experience ? ` The candidate has ${experience} of experience.` : ''
+        }
+        Return ONLY a JSON object with this exact structure:
+        {
+          "questions_techniques": [
+            "Technical question 1",
+            "Technical question 2",
+            "Technical question 3",
+            "Technical question 4",
+            "Technical question 5"
+          ],
+          "questions_culture": [
+            "Culture question 1",
+            "Culture question 2",
+            "Culture question 3"
+          ],
+          "questions_pieges": [
+            "Tricky question 1",
+            "Tricky question 2"
+          ],
+          "conseils_preparation": [
+            "Preparation tip 1",
+            "Preparation tip 2",
+            "Preparation tip 3"
+          ],
+          "points_cles": [
+            "Key point 1",
+            "Key point 2"
+          ]
+        }`;
+
+    console.log('Envoi de la requête à Deepseek');
     const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -148,95 +211,64 @@ export async function generateInterviewPrep(
         messages: [
           {
             role: 'system',
-            content: langue === 'fr'
-              ? 'Tu es un expert en recrutement qui prépare des questions d\'entretien pertinentes et concises.'
-              : 'You are a recruitment expert preparing relevant and concise interview questions.'
+            content: systemPrompt
           },
           {
             role: 'user',
-            content: prompt
+            content: userPrompt
           }
         ],
-        temperature: 0.3,
-        max_tokens: 500,
-        timeout: 25000
+        temperature: 0.7,
+        max_tokens: 2000,
+        response_format: { type: "json_object" }
       })
     });
 
+    console.log('Réponse reçue, status:', response.status);
+    
     if (!response.ok) {
-      const responseText = await response.text();
-      console.error('Erreur API Deepseek:', responseText);
-      throw new Error(langue === 'fr' ? 'Erreur lors de la génération des questions' : 'Error generating questions');
+      const errorData = await response.json().catch(() => ({}));
+      console.error('Erreur Deepseek:', errorData);
+      throw new Error(`Erreur API: ${response.status} - ${JSON.stringify(errorData)}`);
     }
 
-    const responseText = await response.text();
-    console.log('Réponse brute de l\'API:', responseText);
-    
-    const data = JSON.parse(responseText);
+    const data = await response.json();
+    console.log('Données reçues de Deepseek:', data);
+
+    if (!data.choices?.[0]?.message?.content) {
+      console.error('Format de réponse invalide:', data);
+      throw new Error('Format de réponse invalide de l\'API');
+    }
+
     const content = data.choices[0].message.content;
+    console.log('Contenu de la réponse:', content);
 
-    // Extraction structurée des données
-    const sections = content.split('\n').filter((line: string) => line.trim());
-    
-    const questions_techniques: string[] = [];
-    const questions_culture: string[] = [];
-    const questions_pieges: string[] = [];
-    const conseils_preparation: string[] = [];
-    const points_cles: string[] = [];
-
-    let currentSection = '';
-    for (const line of sections) {
-      if (line.includes('technique') || line.includes('technical')) {
-        currentSection = 'technique';
-      } else if (line.includes('culture')) {
-        currentSection = 'culture';
-      } else if (line.includes('piège') || line.includes('tricky')) {
-        currentSection = 'piege';
-      } else if (line.includes('conseil') || line.includes('tip')) {
-        currentSection = 'conseil';
-      } else if (line.includes('clé') || line.includes('key')) {
-        currentSection = 'cle';
-      } else if (line.trim().length > 0) {
-        const cleanLine = line.replace(/^\d+\.\s*[-•]?\s*/, '').trim();
-        if (cleanLine) {
-          switch (currentSection) {
-            case 'technique':
-              questions_techniques.push(cleanLine);
-              break;
-            case 'culture':
-              questions_culture.push(cleanLine);
-              break;
-            case 'piege':
-              questions_pieges.push(cleanLine);
-              break;
-            case 'conseil':
-              conseils_preparation.push(cleanLine);
-              break;
-            case 'cle':
-              points_cles.push(cleanLine);
-              break;
-          }
-        }
+    let prepData;
+    try {
+      prepData = typeof content === 'string' ? JSON.parse(content) : content;
+      console.log('Données parsées avec succès:', prepData);
+    } catch (parseError) {
+      console.error('Erreur de parsing JSON:', parseError, 'Content:', content);
+      const cleanedContent = content.replace(/[\n\r\t]/g, '').trim();
+      try {
+        prepData = JSON.parse(cleanedContent);
+        console.log('Parsing réussi après nettoyage:', prepData);
+      } catch (e) {
+        throw new Error('Impossible de parser la réponse de l\'API');
       }
     }
 
+    // Vérification et normalisation des données
     return {
-      questions_techniques: questions_techniques.slice(0, 3),
-      questions_culture: questions_culture.slice(0, 2),
-      questions_pieges: questions_pieges.slice(0, 2),
-      conseils_preparation: conseils_preparation.slice(0, 3),
-      points_cles: points_cles.slice(0, 3)
+      questions_techniques: Array.isArray(prepData.questions_techniques) ? prepData.questions_techniques.slice(0, 5) : [],
+      questions_culture: Array.isArray(prepData.questions_culture) ? prepData.questions_culture.slice(0, 3) : [],
+      questions_pieges: Array.isArray(prepData.questions_pieges) ? prepData.questions_pieges.slice(0, 2) : [],
+      conseils_preparation: Array.isArray(prepData.conseils_preparation) ? prepData.conseils_preparation.slice(0, 3) : [],
+      points_cles: Array.isArray(prepData.points_cles) ? prepData.points_cles.slice(0, 2) : []
     };
 
   } catch (error) {
     console.error('Erreur dans generateInterviewPrep:', error);
-    return {
-      questions_techniques: [],
-      questions_culture: [],
-      questions_pieges: [],
-      conseils_preparation: [],
-      points_cles: [],
-      error: error instanceof Error ? error.message : 'Erreur inconnue'
-    };
+    throw error;
   }
 }

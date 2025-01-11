@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-export const maxDuration = 60; // Limité à 60 secondes pour Vercel hobby
+export const maxDuration = 300;
 export const dynamic = 'force-dynamic';
 
 type LanguageType = 'fr' | 'en';
@@ -28,17 +28,28 @@ async function analyzeSection(content: string, section: string, langue: Language
           {
             role: 'system',
             content: langue === 'fr'
-              ? `Tu es un expert en recrutement qui analyse uniquement ${section} du CV.`
-              : `You are a recruitment expert analyzing only the ${section} of the resume.`
+              ? 'Tu es un expert en recrutement qui analyse des CV.'
+              : 'You are a recruitment expert who analyzes resumes.'
           },
           {
             role: 'user',
-            content: content
+            content: langue === 'fr'
+              ? `Analyse ce CV et fournis :
+                 1. Un score sur 100
+                 2. Une liste de recommandations pour l'améliorer
+
+                 CV à analyser :
+                 ${content}`
+              : `Analyze this resume and provide:
+                 1. A score out of 100
+                 2. A list of recommendations for improvement
+
+                 Resume to analyze:
+                 ${content}`
           }
         ],
-        temperature: 0.3,
-        max_tokens: 500,
-        timeout: 30000
+        temperature: 0.7,
+        max_tokens: 800
       })
     });
 
@@ -74,56 +85,27 @@ export async function POST(request: Request) {
     }
 
     console.log('Longueur du CV:', cvContent.length);
-    const maxLength = 3000;
-    const truncatedContent = cvContent
-      .slice(0, maxLength)
-      .replace(/\s+/g, ' ')
-      .trim();
-    console.log('Longueur du CV après troncature:', truncatedContent.length);
+    const maxLength = 4000;
+    const truncatedContent = cvContent.slice(0, maxLength);
 
     try {
-      const [scoreAnalysis, strengthsAnalysis, recommendationsAnalysis] = await Promise.all([
-        analyzeSection(
-          langue === 'fr'
-            ? `Évalue ce CV sur 100 points en te basant sur sa structure, son contenu et sa clarté. Réponds uniquement avec un nombre entre 0 et 100.\n\n${truncatedContent}`
-            : `Evaluate this resume out of 100 points based on its structure, content and clarity. Reply only with a number between 0 and 100.\n\n${truncatedContent}`,
-          'score',
-          langue
-        ),
+      const analysis = await analyzeSection(truncatedContent, 'cv', langue);
 
-        analyzeSection(
-          langue === 'fr'
-            ? `Identifie les 2-3 points forts principaux de ce CV. Sois bref et direct.\n\n${truncatedContent}`
-            : `Identify the 2-3 main strengths of this resume. Be brief and direct.\n\n${truncatedContent}`,
-          'points forts',
-          langue
-        ),
+      console.log('Analyse terminée avec succès');
+      console.log('Analyse:', analysis);
 
-        analyzeSection(
-          langue === 'fr'
-            ? `Suggère 3 améliorations essentielles pour ce CV. Sois bref et direct.\n\n${truncatedContent}`
-            : `Suggest 3 essential improvements for this resume. Be brief and direct.\n\n${truncatedContent}`,
-          'recommandations',
-          langue
-        )
-      ]);
-
-      console.log('Analyses terminées avec succès');
-      console.log('Score analysis:', scoreAnalysis);
-      console.log('Strengths:', strengthsAnalysis);
-      console.log('Recommendations:', recommendationsAnalysis);
-
-      const scoreMatch = scoreAnalysis.match(/\d+/);
-      const score = scoreMatch ? Math.min(100, Math.max(0, parseInt(scoreMatch[0]))) : 70;
-
-      const recommendations = [
-        ...strengthsAnalysis.split('\n').filter((line: string) => line.trim()),
-        ...recommendationsAnalysis.split('\n').filter((line: string) => line.trim())
-      ].map((line: string) => line.replace(/^[-•*]\s*/, '').trim());
+      // Extraire le score et les recommandations
+      const scoreMatch = analysis.match(/(\d+)\/100/);
+      const score = scoreMatch ? parseInt(scoreMatch[1]) : 70;
+      
+      const recommendations = analysis
+        .split('\n')
+        .filter((line: string) => line.trim().length > 0 && !line.includes('/100'))
+        .map((line: string) => line.replace(/^[0-9-.\s]+/, '').trim());
 
       return NextResponse.json({
         score,
-        recommendations: recommendations.filter(rec => rec.length > 0)
+        recommendations
       });
 
     } catch (analysisError) {
@@ -135,7 +117,7 @@ export async function POST(request: Request) {
     console.error('Erreur globale:', error);
     const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';
     return NextResponse.json(
-      {
+      { 
         error: userLang === 'fr'
           ? `Une erreur est survenue: ${errorMessage}`
           : `An error occurred: ${errorMessage}`
