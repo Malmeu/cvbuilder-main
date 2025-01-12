@@ -4,7 +4,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { ArticleContent } from './ArticleContent';
 
 interface BlogArticleProps {
   title: string;
@@ -39,17 +38,26 @@ export function BlogArticle({
   coverImage,
   category,
   readingTime,
-  author,
-  content
-}: BlogArticleProps & { content?: string }) {
+  author
+}: BlogArticleProps) {
   const formattedDate = format(new Date(date), 'dd MMMM yyyy', { locale: fr });
   const categoryColor = getCategoryColor(category);
 
   return (
     <Link href={`/blog/${slug}`}>
-      <article className="bg-white rounded-xl shadow-sm overflow-hidden">
-        {/* En-tête de l'article */}
-        <div className="p-6 border-b border-gray-100">
+      <article className="group bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+        {coverImage && (
+          <div className="relative w-full h-48 overflow-hidden">
+            <Image
+              src={coverImage}
+              alt={title}
+              fill
+              className="object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+          </div>
+        )}
+        
+        <div className="p-6">
           <div className="flex items-center gap-3 mb-4">
             <span className={`px-3 py-1 rounded-full text-sm font-medium ${categoryColor}`}>
               {category}
@@ -57,13 +65,17 @@ export function BlogArticle({
             <span className="text-sm text-gray-500">{readingTime}</span>
           </div>
 
-          <h1 className="text-3xl font-bold mb-4 text-gray-900">
+          <h2 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-violet-600 transition-colors line-clamp-2">
             {title}
-          </h1>
+          </h2>
+          
+          <p className="text-gray-600 mb-4 line-clamp-3">
+            {description}
+          </p>
 
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between pt-4 border-t border-gray-100">
             <div className="flex items-center gap-3">
-              <div className="relative w-10 h-10 rounded-full overflow-hidden">
+              <div className="relative w-8 h-8 rounded-full overflow-hidden">
                 <Image
                   src={author.image}
                   alt={author.name}
@@ -71,33 +83,17 @@ export function BlogArticle({
                   className="object-cover"
                 />
               </div>
-              <div>
-                <span className="block text-sm font-medium text-gray-900">{author.name}</span>
-                <time className="text-sm text-gray-500">{formattedDate}</time>
-              </div>
+              <span className="text-sm font-medium text-gray-700">{author.name}</span>
             </div>
+            <time className="text-sm text-gray-500">{formattedDate}</time>
           </div>
-        </div>
 
-        {/* Image de couverture */}
-        {coverImage && (
-          <div className="relative w-full h-[400px] border-b border-gray-100">
-            <Image
-              src={coverImage}
-              alt={title}
-              fill
-              className="object-cover"
-            />
+          <div className="mt-4 flex items-center text-violet-600 text-sm font-medium">
+            Lire l'article
+            <svg className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
           </div>
-        )}
-
-        {/* Contenu de l'article */}
-        <div className="p-6 lg:p-8">
-          {content ? (
-            <ArticleContent content={content} />
-          ) : (
-            <p className="text-gray-700 mb-4">{description}</p>
-          )}
         </div>
       </article>
     </Link>
