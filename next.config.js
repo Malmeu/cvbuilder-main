@@ -1,10 +1,70 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  images: {
+    domains: [
+      'images.pexels.com',
+      'res.cloudinary.com',
+      'i.ibb.co',
+      'img.freepik.com'
+    ],
+  },
   experimental: {
+    optimizeFonts: true,
+    optimizeImages: true,
     serverComponentsExternalPackages: ['pdf-parse', 'pdf2pic', 'canvas']
   },
-  images: {
-    domains: ['i.ibb.co', 'images.pexels.com'],
+  // Optimisation des ressources
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
+  // Compression des ressources
+  compress: true,
+  // Configuration du cache
+  onDemandEntries: {
+    maxInactiveAge: 60 * 60 * 1000,
+    pagesBufferLength: 5,
+  },
+  // Optimisation des performances
+  swcMinify: true,
+  poweredByHeader: false,
+  reactStrictMode: true,
+  // Configuration des en-têtes HTTP pour la sécurité et les performances
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'X-DNS-Prefetch-Control',
+            value: 'on'
+          },
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=63072000; includeSubDomains; preload'
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff'
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY'
+          },
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block'
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'origin-when-cross-origin'
+          },
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=()'
+          }
+        ]
+      }
+    ];
   },
   webpack: (config, { isServer }) => {
     if (isServer) {
@@ -16,6 +76,6 @@ const nextConfig = {
     }
     return config;
   }
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

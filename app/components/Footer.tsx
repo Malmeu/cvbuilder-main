@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { Facebook, Twitter, Linkedin, Instagram } from 'lucide-react';
 
-export function Footer() {
+export const Footer = () => {
   const currentYear = new Date().getFullYear();
   
   const socialLinks = [
@@ -150,4 +150,4 @@ export function Footer() {
       </div>
     </footer>
   );
-}
+};
