@@ -1,24 +1,19 @@
-import { Metadata } from 'next';
+'use client';
+
 import { BlogContent } from './BlogContent';
 
-export const metadata: Metadata = {
-  title: 'Blog CV Diali | Conseils Emploi, Immigration et Développement de Carrière',
-  description: 'Découvrez nos articles sur la création de CV, la recherche d\'emploi, l\'immigration au Canada et le développement professionnel. Conseils d\'experts et guides pratiques.',
-  keywords: 'blog emploi, conseils cv, immigration canada, carrière, développement professionnel, lettre motivation, entretien embauche',
-  openGraph: {
-    title: 'Blog CV Diali | Conseils Carrière et Immigration',
-    description: 'Articles et guides pratiques pour votre carrière et vos projets d\'immigration',
-    images: [
-      {
-        url: '/images/blog-banner.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'Blog CV Diali',
-      },
-    ],
-  },
-};
+const CATEGORIES = [
+  { id: 'all', name: 'Tous' },
+  { id: 'cv', name: 'CV' },
+  { id: 'visa', name: 'Visa' },
+  { id: 'immigration', name: 'Immigration' },
+  { id: 'emploi', name: 'Emploi' }
+];
 
 export default function BlogPage() {
-  return <BlogContent />;
+  return (
+    <BlogContent 
+      categories={CATEGORIES}
+    />
+  );
 }

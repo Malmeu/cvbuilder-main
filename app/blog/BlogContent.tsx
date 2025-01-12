@@ -19,10 +19,33 @@ interface Article {
   tags: string[];
 }
 
-export function BlogContent() {
+interface Category {
+  id: string;
+  name: string;
+}
+
+interface BlogArticleProps {
+  title: string;
+  description: string;
+  slug: string;
+  date: string;
+  coverImage: string;
+  category: string;
+  readingTime: string;
+  author: {
+    name: string;
+    image: string;
+  };
+}
+
+interface BlogContentProps {
+  categories?: Category[];
+}
+
+export function BlogContent({ categories: predefinedCategories = [] }: BlogContentProps) {
   const [articles, setArticles] = useState<Article[]>([]);
   const [filteredArticles, setFilteredArticles] = useState<Article[]>([]);
-  const [categories, setCategories] = useState<string[]>([]);
+  const [categories, setCategories] = useState<Category[]>(predefinedCategories);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [view, setView] = useState<'grid' | 'list'>('grid');
@@ -45,8 +68,13 @@ export function BlogContent() {
     if (data) {
       setArticles(data);
       setFilteredArticles(data);
-      const uniqueCategories = Array.from(new Set(data.map(article => article.category)));
-      setCategories(uniqueCategories.filter(Boolean) as string[]);
+      const uniqueCategories = Array.from(new Set(data.map(article => article.category)))
+        .filter(Boolean)
+        .map(category => ({
+          id: category,
+          name: category
+        }));
+      setCategories([...predefinedCategories, ...uniqueCategories]);
     }
   }
 

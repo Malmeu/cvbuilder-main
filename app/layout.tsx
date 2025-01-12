@@ -3,6 +3,7 @@ import { Analytics } from '@vercel/analytics/react';
 import { Metadata } from 'next';
 import { Inter as FontSans } from "next/font/google";
 import { JetBrains_Mono as FontMono } from "next/font/google";
+import Script from 'next/script';
 import Navbar from './components/Navbar';
 import CookieConsent from './components/CookieConsent';
 import { Footer } from './components/Footer';
@@ -72,6 +73,14 @@ export default function RootLayout({
   return (
     <html lang="fr" data-theme="light" suppressHydrationWarning>
       <head>
+        {/* Google AdSense */}
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4559991197605180"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
+
         {/* Préchargement des ressources critiques */}
         <link
           rel="preconnect"

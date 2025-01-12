@@ -9,29 +9,24 @@ interface ViewToggleProps {
 
 export default function ViewToggle({ view, onViewChange }: ViewToggleProps) {
   return (
-    <div className="flex items-center gap-2 bg-white rounded-lg border border-gray-200 p-1">
+    <div className="flex items-center space-x-2">
       <button
         onClick={() => onViewChange('grid')}
-        className={`p-2 rounded-md transition-colors ${
-          view === 'grid'
-            ? 'bg-violet-100 text-violet-700'
-            : 'hover:bg-gray-100 text-gray-600'
+        className={`p-2 rounded-lg transition-colors ${
+          view === 'grid' ? 'bg-primary text-white' : 'bg-base-200 hover:bg-base-300'
         }`}
-        aria-label="Vue en grille"
+        aria-label="Vue grille"
       >
-        <Grid2X2 className="w-5 h-5" />
+        <Grid2X2 className="h-5 w-5" />
       </button>
-      
       <button
         onClick={() => onViewChange('list')}
-        className={`p-2 rounded-md transition-colors ${
-          view === 'list'
-            ? 'bg-violet-100 text-violet-700'
-            : 'hover:bg-gray-100 text-gray-600'
+        className={`p-2 rounded-lg transition-colors ${
+          view === 'list' ? 'bg-primary text-white' : 'bg-base-200 hover:bg-base-300'
         }`}
-        aria-label="Vue en liste"
+        aria-label="Vue liste"
       >
-        <List className="w-5 h-5" />
+        <List className="h-5 w-5" />
       </button>
     </div>
   );
