@@ -8,7 +8,8 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Breadcrumbs } from '../components/Breadcrumbs';
 
-interface Article {
+// Interface pour les données brutes de Supabase
+interface RawArticle {
   id: string;
   title: string;
   description: string;
@@ -19,23 +20,26 @@ interface Article {
   tags: string[];
 }
 
-interface Category {
+// Interface pour les articles transformés
+interface Article {
   id: string;
-  name: string;
-}
-
-interface BlogArticleProps {
   title: string;
   description: string;
   slug: string;
   date: string;
   coverImage: string;
   category: string;
+  tags: string[];
   readingTime: string;
   author: {
     name: string;
     image: string;
   };
+}
+
+interface Category {
+  id: string;
+  name: string;
 }
 
 interface BlogContentProps {
@@ -51,32 +55,49 @@ export function BlogContent({ categories: predefinedCategories = [] }: BlogConte
   const [view, setView] = useState<'grid' | 'list'>('grid');
 
   useEffect(() => {
-    fetchArticles();
-  }, []);
+    const fetchArticles = async () => {
+      const { data: rawArticles, error } = await supabase
+        .from('articles')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-  async function fetchArticles() {
-    const { data, error } = await supabase
-      .from('articles')
-      .select('*')
-      .order('created_at', { ascending: false });
+      if (error) {
+        console.error('Erreur lors de la récupération des articles:', error);
+        return;
+      }
 
-    if (error) {
-      console.error('Erreur lors de la récupération des articles:', error);
-      return;
-    }
+      if (!rawArticles) return;
 
-    if (data) {
-      setArticles(data);
-      setFilteredArticles(data);
-      const uniqueCategories = Array.from(new Set(data.map(article => article.category)))
+      const transformedArticles: Article[] = rawArticles.map((article: RawArticle) => ({
+        id: article.id,
+        title: article.title,
+        description: article.description,
+        slug: article.slug,
+        date: article.created_at,
+        coverImage: article.image_url,
+        category: article.category,
+        tags: article.tags,
+        readingTime: '5 min de lecture',
+        author: {
+          name: 'CV Diali',
+          image: '/sundown.png'
+        }
+      }));
+
+      setArticles(transformedArticles);
+      setFilteredArticles(transformedArticles);
+
+      const uniqueCategories = Array.from(new Set(rawArticles.map(article => article.category)))
         .filter(Boolean)
         .map(category => ({
           id: category,
           name: category
         }));
       setCategories([...predefinedCategories, ...uniqueCategories]);
-    }
-  }
+    };
+
+    fetchArticles();
+  }, [predefinedCategories]);
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -158,14 +179,11 @@ export function BlogContent({ categories: predefinedCategories = [] }: BlogConte
               title={article.title}
               description={article.description}
               slug={article.slug}
-              date={article.created_at}
-              coverImage={article.image_url}
+              date={article.date}
+              coverImage={article.coverImage}
               category={article.category}
-              readingTime="5 min de lecture"
-              author={{
-                name: "CV Diali",
-                image: "/images/logo.png"
-              }}
+              readingTime={article.readingTime}
+              author={article.author}
             />
           ))}
         </div>
