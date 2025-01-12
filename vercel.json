@@ -4,14 +4,7 @@
   "devCommand": "next dev",
   "installCommand": "npm install",
   "framework": "nextjs",
-  "functions": {
-    "app/api/interview-prep/route": {
-      "maxDuration": 60
-    },
-    "app/api/analyze-cv/route": {
-      "maxDuration": 60
-    }
-  },
+  "regions": ["iad1"],
   "env": {
     "NEXT_PUBLIC_API_URL": "https://cvdiali.vercel.app",
     "NODE_ENV": "production"
