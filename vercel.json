@@ -6,6 +6,14 @@
       "use": "@vercel/next"
     }
   ],
+  "functions": {
+    "api/interview-prep": {
+      "maxDuration": 60
+    },
+    "api/analyze-cv": {
+      "maxDuration": 60
+    }
+  },
   "env": {
     "NEXT_PUBLIC_API_URL": "https://cvdiali.vercel.app"
   }
