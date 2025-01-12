@@ -12,6 +12,15 @@ const client = new TextToSpeechClient({
   },
 });
 
+function cleanTextForSpeech(text: string): string {
+  // Supprimer les astérisques et le texte entre eux
+  return text
+    .replace(/\*\*.*?\*\*/g, '')  // Supprime le texte entre ** **
+    .replace(/\*/g, '')           // Supprime les astérisques restants
+    .replace(/\s+/g, ' ')         // Normalise les espaces
+    .trim();                      // Supprime les espaces au début et à la fin
+}
+
 export async function POST(request: Request) {
   try {
     const { text, langue = 'fr-FR' } = await request.json();
@@ -23,8 +32,11 @@ export async function POST(request: Request) {
       );
     }
 
+    // Nettoyer le texte avant la synthèse vocale
+    const cleanedText = cleanTextForSpeech(text);
+
     const [response] = await client.synthesizeSpeech({
-      input: { text },
+      input: { text: cleanedText },
       voice: { 
         languageCode: 'fr-FR',
         name: 'fr-FR-Neural2-A',
