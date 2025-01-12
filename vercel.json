@@ -5,10 +5,10 @@
   "installCommand": "npm install",
   "framework": "nextjs",
   "functions": {
-    "api/interview-prep": {
+    "app/api/interview-prep/route": {
       "maxDuration": 60
     },
-    "api/analyze-cv": {
+    "app/api/analyze-cv/route": {
       "maxDuration": 60
     }
   },
