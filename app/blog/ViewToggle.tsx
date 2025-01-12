@@ -1,39 +1,38 @@
-'use client'
+'use client';
 
-import { Grid, LayoutList } from 'lucide-react'
+import { Grid2X2, List } from 'lucide-react';
 
 interface ViewToggleProps {
-  view: 'grid' | 'list'
-  onViewChange: (view: 'grid' | 'list') => void
+  view: 'grid' | 'list';
+  onViewChange: (view: 'grid' | 'list') => void;
 }
 
 export default function ViewToggle({ view, onViewChange }: ViewToggleProps) {
   return (
-    <div className="flex items-center gap-2 bg-base-200/50 backdrop-blur-xl p-1 rounded-lg">
+    <div className="flex items-center gap-2 bg-white rounded-lg border border-gray-200 p-1">
       <button
-        type="button"
         onClick={() => onViewChange('grid')}
-        className={`p-1.5 rounded-md transition-colors ${
+        className={`p-2 rounded-md transition-colors ${
           view === 'grid'
-            ? 'bg-primary text-primary-content'
-            : 'text-base-content/70 hover:bg-base-300'
+            ? 'bg-violet-100 text-violet-700'
+            : 'hover:bg-gray-100 text-gray-600'
         }`}
-        title="Vue en grille"
+        aria-label="Vue en grille"
       >
-        <Grid size={18} />
+        <Grid2X2 className="w-5 h-5" />
       </button>
+      
       <button
-        type="button"
         onClick={() => onViewChange('list')}
-        className={`p-1.5 rounded-md transition-colors ${
+        className={`p-2 rounded-md transition-colors ${
           view === 'list'
-            ? 'bg-primary text-primary-content'
-            : 'text-base-content/70 hover:bg-base-300'
+            ? 'bg-violet-100 text-violet-700'
+            : 'hover:bg-gray-100 text-gray-600'
         }`}
-        title="Vue en liste"
+        aria-label="Vue en liste"
       >
-        <LayoutList size={18} />
+        <List className="w-5 h-5" />
       </button>
     </div>
-  )
+  );
 }

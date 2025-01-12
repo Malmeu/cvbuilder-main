@@ -3,6 +3,9 @@ const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ['pdf-parse', 'pdf2pic', 'canvas']
   },
+  images: {
+    domains: ['i.ibb.co', 'images.pexels.com'],
+  },
   webpack: (config, { isServer }) => {
     if (isServer) {
       config.externals.push({
