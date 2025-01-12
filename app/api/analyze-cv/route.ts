@@ -32,17 +32,6 @@ export async function POST(request: Request) {
     const analysis = await analyzeCV(truncatedContent, langue);
     console.log('Analyse terminée avec succès');
 
-    if (analysis.error) {
-      return NextResponse.json(
-        { 
-          error: userLang === 'fr'
-            ? 'Une erreur est survenue lors de l\'analyse du CV'
-            : 'An error occurred while analyzing the CV'
-        },
-        { status: 500 }
-      );
-    }
-
     return NextResponse.json(analysis);
   } catch (error) {
     console.error('Erreur lors de l\'analyse du CV:', error);
