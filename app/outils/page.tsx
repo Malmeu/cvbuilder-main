@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { FileText, Search, Users, GraduationCap } from 'lucide-react';
+import { FileText, Search, Users, GraduationCap, MessageSquare } from 'lucide-react';
 import Navbar from '../components/Navbar';
 
 const outils = [
@@ -34,6 +34,13 @@ const outils = [
     icon: Users,
     href: "/outils/entretien",
     color: "from-purple-500 to-purple-600"
+  },
+  {
+    titre: "Simulateur Visa Étudiant",
+    description: "Préparez-vous à votre entretien Campus France avec notre simulateur interactif.",
+    icon: MessageSquare,
+    href: "/visa-interview",
+    color: "from-violet-500 to-violet-600"
   }
 ];
 

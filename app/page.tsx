@@ -204,7 +204,7 @@ export default function Home() {
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <h3 className="text-2xl font-semibold mb-4 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
                   Première impression décisive
                 </h3>
@@ -218,7 +218,7 @@ export default function Home() {
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <h3 className="text-2xl font-semibold mb-4 bg-gradient-to-r from-secondary to-secondary/70 bg-clip-text text-transparent">
                   Adapté à votre marché cible
                 </h3>
@@ -549,6 +549,34 @@ export default function Home() {
                   className="inline-flex items-center text-accent hover:text-accent/80 transition-colors relative z-10"
                 >
                   Créer ma lettre
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Link>
+              </motion.div>
+
+              {/* Simulateur d'Entretien Visa */}
+              <motion.div 
+                className="group relative p-8 backdrop-blur-md bg-white/5 rounded-3xl border border-white/20 shadow-xl hover:shadow-accent/20 transition-all duration-300"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.6 }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="mb-6 relative z-10">
+                  <div className="w-12 h-12 rounded-2xl bg-accent/10 flex items-center justify-center">
+                    <Check className="w-6 h-6 text-accent" />
+                  </div>
+                </div>
+                <h3 className="text-2xl font-semibold mb-4 bg-gradient-to-r from-accent to-accent/70 bg-clip-text text-transparent">
+                  Entretien Visa
+                </h3>
+                <p className="text-base-content/80 leading-relaxed mb-6 relative z-10">
+                  Simulez votre entretien de visa étudiant avec notre assistant vocal interactif.
+                </p>
+                <Link 
+                  href="/visa-interview"
+                  className="inline-flex items-center text-accent hover:text-accent/80 transition-colors relative z-10"
+                >
+                  Simuler mon entretien
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Link>
               </motion.div>
