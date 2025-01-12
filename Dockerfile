@@ -1,5 +1,8 @@
-# Utiliser Node.js comme image de base
-FROM node:18-alpine
+# Utiliser Node.js 20 comme image de base
+FROM node:20-alpine
+
+# Installer Python et les outils de build nécessaires
+RUN apk add --no-cache python3 make g++ gcc
 
 # Définir le répertoire de travail
 WORKDIR /app
