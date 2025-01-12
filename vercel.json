@@ -1,4 +1,7 @@
 {
   "version": 2,
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "env": {
+    "DEEPSEEK_API_KEY": "sk-7d4ad95648b6409ba52d939157402b9c"
+  }
 }
