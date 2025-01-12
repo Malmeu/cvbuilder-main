@@ -88,73 +88,27 @@ export async function analyzeCV(
   langue: 'fr' | 'en' = 'fr'
 ): Promise<CVAnalysis> {
   try {
-    console.log('Début de l\'analyse du CV');
-    
-    const apiKey = process.env.DEEPSEEK_API_KEY;
-    if (!apiKey) {
-      console.error('Clé API Deepseek manquante');
-      throw new Error('Configuration API manquante');
-    }
-
-    const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
+    console.log('Envoi de la requête à /api/analyze-cv');
+    const response = await fetch('/api/analyze-cv', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: 'deepseek-chat',
-        messages: [
-          {
-            role: 'system',
-            content: langue === 'fr'
-              ? 'Tu es un expert en recrutement qui analyse des CV.'
-              : 'You are a recruitment expert who analyzes resumes.'
-          },
-          {
-            role: 'user',
-            content: langue === 'fr'
-              ? `Analyse ce CV et fournis :
-                 1. Un score sur 100
-                 2. Une liste de recommandations pour l'améliorer
-
-                 CV à analyser :
-                 ${cvContent}`
-              : `Analyze this resume and provide:
-                 1. A score out of 100
-                 2. A list of recommendations for improvement
-
-                 Resume to analyze:
-                 ${cvContent}`
-          }
-        ],
-        temperature: 0.7,
-        max_tokens: 800
+        cvContent,
+        langue
       })
     });
 
     if (!response.ok) {
       const text = await response.text();
-      console.error('Réponse erreur Deepseek:', text);
-      throw new Error(text);
+      console.error('Réponse erreur:', text);
+      throw new Error(text || 'Erreur lors de l\'analyse du CV');
     }
 
     const data = await response.json();
-    const analysis = data.choices[0].message.content;
-
-    // Extraire le score et les recommandations
-    const scoreMatch = analysis.match(/(\d+)\/100/);
-    const score = scoreMatch ? parseInt(scoreMatch[1]) : 70;
-    
-    const recommendations = analysis
-      .split('\n')
-      .filter((line: string) => line.trim().length > 0 && !line.includes('/100'))
-      .map((line: string) => line.replace(/^[0-9-.\s]+/, '').trim());
-
-    return {
-      score,
-      recommendations
-    };
+    console.log('Données reçues:', data);
+    return data;
   } catch (error) {
     console.error('Erreur lors de l\'analyse du CV:', error);
     return {
