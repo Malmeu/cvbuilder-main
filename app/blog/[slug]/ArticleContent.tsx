@@ -99,17 +99,15 @@ export default function ArticleContent({ article }: { article: Article | null })
           prose-h1:text-4xl prose-h1:font-bold prose-h1:mb-6 
           prose-h2:text-3xl prose-h2:font-semibold prose-h2:mb-4 prose-h2:mt-8
           prose-h3:text-2xl prose-h3:font-medium prose-h3:mb-3 prose-h3:mt-6
-          prose-p:text-lg prose-p:leading-relaxed prose-p:mb-4
-          prose-ul:my-6 prose-ul:list-disc prose-ul:pl-12
-          prose-li:mb-3 prose-li:text-base-content/80 prose-li:text-lg prose-li:ml-4
-          prose-strong:text-base-content prose-strong:font-semibold
-          [&>ul]:pl-12 [&>ul>li]:ml-4 [&>ul>li]:relative [&>ul>li]:pl-2
-          [&>ul>li]:before:content-['•'] [&>ul>li]:before:absolute [&>ul>li]:before:left-[-1rem] [&>ul>li]:before:text-primary"
+          prose-strong:font-semibold prose-strong:text-base-content
+          prose-ul:list-disc prose-ul:pl-6 prose-li:mb-2
+          prose-ol:list-decimal prose-ol:pl-6
+          prose-blockquote:border-l-4 prose-blockquote:border-primary/50 prose-blockquote:pl-4 prose-blockquote:italic"
           dangerouslySetInnerHTML={{ __html: article.content }}
         />
 
         {/* Espace pub en bas */}
-        <div className="w-full h-24 bg-base-200 rounded-lg mt-8 flex items-center justify-center border border-base-300">
+        <div className="w-full h-24 bg-base-200 rounded-lg flex items-center justify-center border border-base-300">
           <span className="text-base-content/50 text-sm">Espace Publicitaire</span>
         </div>
       </div>

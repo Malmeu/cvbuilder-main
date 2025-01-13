@@ -5,7 +5,8 @@ const nextConfig = {
       'images.pexels.com',
       'res.cloudinary.com',
       'i.ibb.co',
-      'img.freepik.com'
+      'img.freepik.com',
+      'images.unsplash.com'
     ],
   },
   experimental: {

@@ -10,9 +10,9 @@ export default function Navbar() {
 
   const navigation = [
     { name: 'Accueil', href: '/' },
-    { name: 'Immigration', href: '/immigration', highlight: true },
+    { name: 'Immigration', href: '/immigration', highlight: false },
     { name: 'Format Canadien', href: '/canadian-builder' },
-    { name: 'TCF', href: '/outils/tcf', highlight: true },
+    { name: 'TCF', href: '/outils/tcf', highlight: false },
     { name: 'Blog', href: '/blog' },
     { name: 'Boîte à outils', href: '/outils' },
     

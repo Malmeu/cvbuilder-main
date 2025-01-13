@@ -18,6 +18,18 @@ interface InterviewPrep {
   error?: string;
 }
 
+interface BlogArticle {
+  title: string;
+  slug: string;
+  description: string;
+  meta_description: string;
+  content: string;
+  tags: string[];
+  category: string;
+  image_url: string;
+  error?: string;
+}
+
 export async function generateCoverLetter(
   secteur: string,
   experience: string,
@@ -267,5 +279,38 @@ export async function generateInterviewPrep(
   } catch (error) {
     console.error('Erreur dans generateInterviewPrep:', error);
     throw error;
+  }
+}
+
+export async function generateBlogArticle(title: string): Promise<BlogArticle> {
+  try {
+    const response = await fetch('/api/blog/generate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ title })
+    });
+
+    const data = await response.json();
+    
+    if (data.error) {
+      throw new Error(data.error);
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Erreur lors de la génération de l\'article:', error);
+    return {
+      title: '',
+      slug: '',
+      description: '',
+      meta_description: '',
+      content: '',
+      tags: [],
+      category: '',
+      image_url: '',
+      error: error instanceof Error ? error.message : 'Erreur inconnue'
+    };
   }
 }

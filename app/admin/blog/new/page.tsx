@@ -7,6 +7,8 @@ import dynamic from 'next/dynamic'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { generateBlogArticle } from '@/app/lib/ai'
+import { Wand2 } from 'lucide-react'
 
 const Editor = dynamic(
   () => import('@tinymce/tinymce-react').then((mod) => {
@@ -42,16 +44,52 @@ export default function NewArticlePage() {
   const [content, setContent] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [generating, setGenerating] = useState(false)
   const router = useRouter()
 
-  const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
+  const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(articleSchema),
     defaultValues: {
       author: 'CV Diali',
       category: 'Conseils CV',
-      tags: 'cv, emploi, carrière'
+      tags: '',
+      title: ''
     }
   })
+
+  const title = watch('title')
+
+  const generateArticle = async () => {
+    if (!title) {
+      setError('Veuillez d\'abord saisir un titre')
+      return
+    }
+
+    try {
+      setGenerating(true)
+      setError('')
+      
+      const article = await generateBlogArticle(title)
+      
+      if (article.error) {
+        throw new Error(article.error)
+      }
+
+      // Mise à jour des champs du formulaire
+      setValue('slug', article.slug)
+      setValue('description', article.description)
+      setValue('meta_description', article.meta_description)
+      setValue('image_url', article.image_url)
+      setValue('category', article.category)
+      setValue('tags', article.tags.join(', '))
+      setContent(article.content)
+
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erreur lors de la génération')
+    } finally {
+      setGenerating(false)
+    }
+  }
 
   async function onSubmit(data: FormData) {
     setLoading(true)
@@ -106,16 +144,31 @@ export default function NewArticlePage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-base-100 via-base-200 to-base-100 p-4 sm:p-6 lg:p-8">
       <div className="max-w-4xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-8">
           <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
             Nouvel Article
           </h1>
-          <button
-            onClick={() => router.push('/admin/blog')}
-            className="btn btn-outline"
-          >
-            Retour
-          </button>
+          <div className="flex items-center gap-4">
+            <button
+              type="button"
+              onClick={generateArticle}
+              disabled={generating || !title}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                generating || !title
+                  ? 'bg-gray-300 cursor-not-allowed'
+                  : 'bg-violet-600 hover:bg-violet-700 text-white'
+              }`}
+            >
+              <Wand2 className="w-5 h-5" />
+              {generating ? 'Génération...' : 'Générer avec l\'IA'}
+            </button>
+            <button
+              onClick={() => router.push('/admin/blog')}
+              className="btn btn-outline"
+            >
+              Retour
+            </button>
+          </div>
         </div>
 
         {error && (
@@ -134,6 +187,7 @@ export default function NewArticlePage() {
                 <label className="label">Titre</label>
                 <input
                   {...register('title')}
+                  type="text"
                   className="input input-bordered w-full"
                   placeholder="Titre de l'article"
                 />
