@@ -165,7 +165,44 @@ npm run test
 
 # Linting
 npm run lint
-Toutes les modifications notables apportées à ce projet seront documentées dans ce fichier.
+
+## [1.1.0] - 2025-01-13
+
+### Ajouté
+- Page de contact avec formulaire interactif
+- Intégration d'EmailJS pour l'envoi de messages
+- Nouvelles animations avec Framer Motion
+- Cartes de contact avec effets de survol
+- Support pour les liens directs (email, téléphone, localisation)
+
+### Modifié
+- Amélioration du design des articles de blog
+- Optimisation des images et des performances
+- Mise à jour des dépendances du projet
+- Refonte du README.md
+
+### Corrigé
+- Correction des problèmes de typage dans les composants blog
+- Résolution des problèmes de rendu des articles
+- Amélioration de la gestion des erreurs
+
+## [1.0.0] - 2025-01-01
+
+### Ajouté
+- Création initiale du projet
+- Système de création de CV
+- Blog avec Supabase
+- Interface utilisateur responsive
+- Support multilingue
+- Intégration de Google Analytics
+- Intégration de Google AdSense
+
+### Caractéristiques principales
+- Création de CV professionnels
+- Articles de blog informatifs
+- Design moderne et responsive
+- Base de données Supabase
+- Optimisation SEO
 
 ## [Non Publié]
 
