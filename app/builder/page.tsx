@@ -127,26 +127,71 @@ export default function Builder() {
     const element = cvPreviewRef.current;
     if (element) {
       try {
-        const canvas = await html2canvas(element, {
+        // Créer une copie de l'élément pour la capture
+        const clone = element.cloneNode(true) as HTMLElement;
+        document.body.appendChild(clone);
+        
+        // Appliquer le même style que la prévisualisation
+        clone.style.position = 'absolute';
+        clone.style.left = '-9999px';
+        clone.style.transform = 'none';
+        clone.style.width = '210mm';
+        clone.style.height = '297mm';
+        clone.style.margin = '0';
+        clone.style.padding = '0';
+        clone.style.backgroundColor = '#ffffff';
+
+        // Attendre que les polices soient chargées
+        await document.fonts.ready;
+
+        const canvas = await html2canvas(clone, {
           scale: 3,
           useCORS: true,
-          logging: true,
           allowTaint: true,
-          backgroundColor: null,
+          backgroundColor: '#ffffff',
+          imageTimeout: 0,
+          removeContainer: true,
+          logging: false,
+          onclone: (clonedDoc) => {
+            const clonedElement = clonedDoc.body.firstChild as HTMLElement;
+            if (clonedElement) {
+              // Copier les styles calculés
+              const styles = window.getComputedStyle(element);
+              Array.from(styles).forEach(key => {
+                clonedElement.style[key as any] = styles.getPropertyValue(key);
+              });
+            }
+          }
         });
+
+        // Supprimer le clone après la capture
+        document.body.removeChild(clone);
         
-        const imgData = canvas.toDataURL('image/png');
+        const imgData = canvas.toDataURL('image/png', 1.0);
 
         const pdf = new jsPDF({
           orientation: "portrait",
           unit: 'mm',
-          format: "A4"
+          format: "a4",
+          compress: true,
+          hotfixes: ["px_scaling"]
         });
-        
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
-        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+
+        // Ajouter l'image avec les dimensions exactes de A4
+        pdf.addImage(
+          imgData,
+          'PNG',
+          0,
+          0,
+          pdfWidth,
+          pdfHeight,
+          undefined,
+          'FAST'
+        );
+        
         pdf.save(`cv.pdf`);
 
         const modal = document.getElementById('my_modal_3') as HTMLDialogElement;
