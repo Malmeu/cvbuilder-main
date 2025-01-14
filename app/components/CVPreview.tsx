@@ -12,8 +12,7 @@ type Props = {
     languages: Language[];
     skills: Skill[];
     hobbies: Hobby[];
-    download?: boolean;
-    ref?: React.ForwardedRef<HTMLDivElement>;
+    download?: boolean ;
 }
 
 function formatDate(dateString: string): string {
@@ -38,256 +37,286 @@ const getStarRating = (proficiency: string) => {
             break;
         default:
             filledStars = 0;
+
     }
     return (
         <>
             {Array.from({ length: filledStars }, (_, index) => (
-                <Star key={index} className="text-primary fill-current" />
+                <Star key={index} className={`text-primary `} />
             ))}
             {Array.from({ length: maxStars - filledStars }, (_, index) => (
                 <Star key={index + filledStars} className="text-gray-300" />
             ))}
         </>
     );
+
+
+
+
 }
+
 
 const CVPreview = React.forwardRef<HTMLDivElement, Props>(({ personalDetails, file, theme, experiences, educations, languages, skills, hobbies, download }, ref) => {
     return (
-        <div ref={ref} className={`relative flex p-16 w-[950px] h-[1200px] shadow-lg ${download ? 'mb-10' : ''}`}>
-            {/* Container avec le thème isolé */}
-            <div data-theme={theme} className="absolute inset-0 bg-base-100">
-                {/* Contenu du CV */}
-                <div className="relative h-full p-16 text-base-content">
-                    <div className='flex'>
-                        <div className='flex flex-col w-1/3'>
-                            {file ? (
-                                <div className={`h-80 overflow-hidden border-8 border-primary ${
+        <div className="relative">
+            <div ref={ref} className={`relative bg-base-100 flex p-16 w-[950px] h-[1200px] shadow-lg print:shadow-none ${download ? 'mb-10' : ''}`} data-theme={theme}>
+                <div className='flex flex-col w-1/3'>
+                    {file && (
+                        <div className={`h-80 overflow-hidden border-8 border-primary ${
+                            personalDetails.frameShape === 'circle' ? 'rounded-full' :
+                            personalDetails.frameShape === 'square' ? '' :
+                            personalDetails.frameShape === 'rounded' ? 'rounded-xl' :
+                            personalDetails.frameShape === 'oval' ? 'rounded-[50%] h-72' :
+                            'rounded-full' // default
+                        }`}>
+                            <Image
+                                src={URL.createObjectURL(file)}
+                                width={300}
+                                height={300}
+                                className={`w-full h-full object-cover ${
                                     personalDetails.frameShape === 'circle' ? 'rounded-full' :
                                     personalDetails.frameShape === 'square' ? '' :
-                                    personalDetails.frameShape === 'oval' ? 'rounded-[45%]' :
-                                    'rounded-2xl'
-                                }`}>
-                                    <Image
-                                        src={URL.createObjectURL(file)}
-                                        width={300}
-                                        height={300}
-                                        className={`w-full h-full object-cover ${
-                                            personalDetails.frameShape === 'circle' ? 'rounded-full' :
-                                            personalDetails.frameShape === 'square' ? '' :
-                                            personalDetails.frameShape === 'oval' ? 'rounded-[45%]' :
-                                            'rounded-xl'
-                                        }`}
-                                        alt="Photo de profil"
-                                        onLoadingComplete={() => {
-                                            if (typeof file !== 'string') {
-                                                URL.revokeObjectURL(URL.createObjectURL(file))
-                                            }
-                                        }}
-                                    />
-                                </div>
-                            ) : (
-                                <div className="h-20" /> /* Espace réduit quand il n'y a pas de photo */
-                            )}
-                            <div className='mt-4 flex-col w-full'>
-                                <div>
-                                    <h1 className='uppercase font-bold my-2'>
-                                        Contact
-                                    </h1>
-                                    <ul className='space-y-2'>
-
-                                        <li className='flex'>
-                                            <div className='break-all text-sm relative'>
-                                                <div className='ml-8'>
-                                                    {personalDetails.phone}
-                                                </div>
-                                                {personalDetails.phone && (
-                                                    <div className='absolute left-0 top-0'>
-                                                        <Phone className='w-5 text-primary' />
-                                                    </div>
-                                                )}
+                                    personalDetails.frameShape === 'rounded' ? 'rounded-xl' :
+                                    personalDetails.frameShape === 'oval' ? 'rounded-[50%]' :
+                                    'rounded-full' // default
+                                }`}
+                                alt="Photo de profil"
+                                priority
+                                onLoadingComplete={() => {
+                                    if (typeof file !== 'string') {
+                                        URL.revokeObjectURL(URL.createObjectURL(file))
+                                    }
+                                }}
+                            />
+                        </div>
+                    )}
+                    <div className='mt-4 flex-col w-full'>
+                        <div>
+                            <h1 className='uppercase font-bold my-2'>
+                                Contact
+                            </h1>
+                            <ul className='space-y-2'>
+                                <li className='flex'>
+                                    <div className='text-sm relative w-full' style={{
+                                        wordBreak: 'break-word',
+                                        overflowWrap: 'break-word',
+                                        hyphens: 'auto'
+                                    }}>
+                                        <div className='ml-8'>
+                                            {personalDetails.phone}
+                                        </div>
+                                        {personalDetails.phone && (
+                                            <div className='absolute left-0 top-0'>
+                                                <Phone className='w-5 text-primary' />
                                             </div>
-                                        </li>
-                                        <li className='flex'>
-                                            <div className='break-all text-sm relative'>
-                                                <div className='ml-8'>
-                                                    {personalDetails.email}
-                                                </div>
-                                                {personalDetails.email && (
-                                                    <div className='absolute left-0 top-0'>
-                                                        <Mail className='w-5 text-primary' />
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </li>
-                                        <li className='flex'>
-                                            <div className='break-all text-sm relative'>
-                                                <div className='ml-8'>
-                                                    {personalDetails.address}
-                                                </div>
-                                                {personalDetails.address && (
-                                                    <div className='absolute left-0 top-0'>
-                                                        <MapPinCheckInside className='w-5 text-primary' />
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-
-                                <div className='mt-6'>
-                                    <h1 className='uppercase font-bold my-2'>
-                                        Compétences
-                                    </h1>
-                                    <div className='flex flex-wrap gap-2'>
-                                        {skills.map((skill, index) => (
-                                            <p key={index} className='badge badge-primary uppercase'>
-                                                {skill.name}
-                                            </p>
-                                        ))}
+                                        )}
                                     </div>
-                                </div>
-
-                                <div className='mt-6'>
-                                    <h1 className='uppercase font-bold my-2'>
-                                        Langues
-                                    </h1>
-                                    <div className='flex flex-col space-y-2'>
-                                        {languages.map((lang, index) => (
-                                            <div key={index}>
-                                                <span
-                                                    className='capitalize font-semibold'
-                                                >
-                                                    {lang.language}
-                                                </span>
-                                                <div className='flex mt-2 '>
-                                                    {getStarRating(lang.proficiency)}
-                                                </div>
+                                </li>
+                                <li className='flex'>
+                                    <div className='text-sm relative w-full' style={{
+                                        wordBreak: 'break-word',
+                                        overflowWrap: 'break-word',
+                                        hyphens: 'auto'
+                                    }}>
+                                        <div className='ml-8'>
+                                            {personalDetails.email}
+                                        </div>
+                                        {personalDetails.email && (
+                                            <div className='absolute left-0 top-0'>
+                                                <Mail className='w-5 text-primary' />
                                             </div>
-                                        ))}
+                                        )}
                                     </div>
-                                </div>
-
-                                <div className='mt-6'>
-                                    <h1 className='uppercase font-bold my-2'>
-                                    Hobies
-                                    </h1>
-                                    <div className='flex flex-col space-y-2'>
-                                        {hobbies.map((hobby, index) => (
-                                            <div key={index}>
-                                               <span className='capitalize'>
-                                                {hobby.name}
-                                               </span>
+                                </li>
+                                <li className='flex'>
+                                    <div className='text-sm relative w-full' style={{
+                                        wordBreak: 'break-word',
+                                        overflowWrap: 'break-word',
+                                        hyphens: 'auto'
+                                    }}>
+                                        <div className='ml-8'>
+                                            {personalDetails.address}
+                                        </div>
+                                        {personalDetails.address && (
+                                            <div className='absolute left-0 top-0'>
+                                                <MapPinCheckInside className='w-5 text-primary' />
                                             </div>
-                                        ))}
+                                        )}
                                     </div>
-                                </div>
-                            </div>
-
+                                </li>
+                            </ul>
                         </div>
 
-                        <div className='w-2/3 ml-8'>
+                        <div className='mt-6'>
+                            <h1 className='uppercase font-bold my-2'>
+                                Compétences
+                            </h1>
+                            <div className='flex flex-wrap gap-2'>
+                                {skills.map((skill, index) => (
+                                    <p key={index} className='badge !bg-primary !text-primary-content uppercase' style={{ backgroundColor: 'var(--primary)', color: 'var(--primary-content)' }}>
+                                        {skill.name}
+                                    </p>
+                                ))}
+                            </div>
+                        </div>
 
-                            <div className='w-full flex flex-col space-y-4'>
-                                <h1 className='uppercase text-xl'>
-                                    {personalDetails.fullName}
-                                </h1>
-                                <h2 className='uppercase text-5xl text-primary font-bold'>
-                                    {personalDetails.postSeeking}
-                                </h2>
-                                <p className='break-all  w-full text-sm'>
+                        <div className='mt-6'>
+                            <h1 className='uppercase font-bold my-2'>
+                                Langues
+                            </h1>
+                            <div className='flex flex-col space-y-2'>
+                                {languages.map((lang, index) => (
+                                    <div key={index}>
+                                        <span
+                                            className='capitalize font-semibold'
+                                        >
+                                            {lang.language}
+                                        </span>
+                                        <div className='flex mt-2'>
+                                            {getStarRating(lang.proficiency)}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className='mt-6'>
+                            <h1 className='uppercase font-bold my-2'>
+                            Hobies
+                            </h1>
+                            <div className='flex flex-col space-y-2'>
+                                {hobbies.map((hobby, index) => (
+                                    <div key={index}>
+                                       <span className='capitalize'>
+                                        {hobby.name}
+                                       </span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div className='w-2/3 ml-8'>
+
+                    <div className='w-full flex flex-col space-y-4'>
+                        <h1 className='uppercase text-xl font-bold'>
+                            {personalDetails.fullName}
+                        </h1>
+                        <h2 className='uppercase text-5xl !text-primary font-bold' style={{ color: 'var(--primary)' }}>
+                            {personalDetails.postSeeking}
+                        </h2>
+                        {personalDetails.description && (
+                            <div className="text-sm mb-8">
+                                <p style={{
+                                    hyphens: 'auto',
+                                    wordBreak: 'break-word',
+                                    overflowWrap: 'break-word',
+                                    textAlign: 'justify',
+                                    lineHeight: '1.5',
+                                }}>
                                     {personalDetails.description}
                                 </p>
                             </div>
+                        )}
+                    </div>
 
-                            <section
-                                className='w-full h-fit p-5'
-                            >
-                                <div>
-                                    <h1
-                                        className='uppercase font-bold mb-2'
-                                    >Experiences
-                                    </h1>
-                                    <ul className='steps steps-vertical space-y-3'>
-                                        {experiences.map((exp, index) => (
-                                            <li className='step step-primary' key={index}>
-                                                <div className='text-left'>
-                                                    <h2
-                                                        className='flex text-md uppercase font-bold'>
-                                                        <BriefcaseBusiness className='w-5' />
-                                                        <span className='ml-2'>{exp.jobTitle}</span>
-                                                    </h2>
-                                                    <div
-                                                        className='text-sm my-2'
-                                                    >
-                                                        <span
-                                                            className='badge badge-primary'
-                                                        >
-                                                            {exp.companyName}
-                                                        </span>
-                                                        <span
-                                                            className='italic ml-2'
-                                                        >
-                                                            {formatDate(exp.startDate)} {" "}au {" "}
-                                                            {formatDate(exp.endDate)}
-                                                        </span>
+                    <section
+                        className='w-full h-fit p-5'
+                    >
+                        <div>
+                            <h1
+                                className='uppercase font-bold mb-2'
+                            >Experiences
+                            </h1>
+                            <ul className='steps steps-vertical space-y-3'>
+                                {experiences.map((exp, index) => (
+                                    <li className='step step-primary' key={index}>
+                                        <div className='text-left'>
+                                            <h2
+                                                className='flex text-md uppercase font-bold'>
+                                                <BriefcaseBusiness className='w-5' />
+                                                <span className='ml-2'>{exp.jobTitle}</span>
+                                            </h2>
+                                            <div
+                                                className='text-sm my-2'
+                                            >
+                                                <span className='badge !bg-primary !text-primary-content' style={{ backgroundColor: 'var(--primary)', color: 'var(--primary-content)' }}>
+                                                    {exp.companyName}
+                                                </span>
+                                                <span
+                                                    className='italic ml-2'
+                                                >
+                                                    {formatDate(exp.startDate)} {" "}au {" "}
+                                                    {formatDate(exp.endDate)}
+                                                </span>
 
-                                                    </div>
-                                                    <p className='text-sm'>
-                                                        {exp.description}
-                                                    </p>
-                                                </div>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-
-                                <div className='mt-6'>
-                                    <h1
-                                        className='uppercase font-bold mb-2'
-                                    >Formations
-                                    </h1>
-                                    <ul className='steps steps-vertical space-y-3'>
-                                        {educations.map((edu, index) => (
-                                            <li className='step step-primary' key={index}>
-                                                <div className='text-left'>
-                                                    <h2
-                                                        className='flex text-md uppercase font-bold'>
-                                                        <GraduationCap className='w-5' />
-                                                        <span className='ml-2'>{edu.degree}</span>
-                                                    </h2>
-                                                    <div
-                                                        className='text-sm my-2'
-                                                    >
-                                                        <span
-                                                            className='badge badge-primary'
-                                                        >
-                                                            {edu.school}
-                                                        </span>
-                                                        <span
-                                                            className='italic ml-2'
-                                                        >
-                                                            {formatDate(edu.startDate)}{" "} au {" "}
-                                                            {formatDate(edu.endDate)}
-                                                        </span>
-
-                                                    </div>
-                                                    <p className='text-sm'>
-                                                        {edu.description}
-                                                    </p>
-                                                </div>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-
-
-
-                            </section>
+                                            </div>
+                                            <p className='text-sm'>
+                                                {exp.description}
+                                            </p>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
                         </div>
 
-                    </div>
+                        <div className='mt-6'>
+                            <h1
+                                className='uppercase font-bold mb-2'
+                            >Formations
+                            </h1>
+                            <ul className='steps steps-vertical space-y-3'>
+                                {educations.map((edu, index) => (
+                                    <li className='step step-primary' key={index}>
+                                        <div className='text-left'>
+                                            <h2
+                                                className='flex text-md uppercase font-bold'>
+                                                <GraduationCap className='w-5' />
+                                                <span className='ml-2'>{edu.degree}</span>
+                                            </h2>
+                                            <div
+                                                className='text-sm my-2'
+                                            >
+                                                <span
+                                                    className='badge badge-primary'
+                                                >
+                                                    {edu.school}
+                                                </span>
+                                                <span
+                                                    className='italic ml-2'
+                                                >
+                                                    {formatDate(edu.startDate)}{" "} au {" "}
+                                                    {formatDate(edu.endDate)}
+                                                </span>
+
+                                            </div>
+                                            <p className='text-sm'>
+                                                {edu.description}
+                                            </p>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+
+
+
+                    </section>
                 </div>
+
             </div>
+            {/* Div pour la marge colorée en bas */}
+            <div 
+                className="absolute bottom-0 left-0 right-0 h-[297mm]" 
+                style={{ 
+                    backgroundColor: 'var(--b1)',
+                    zIndex: -1,
+                    marginTop: '-297mm'
+                }} 
+                data-theme={theme}
+            />
         </div>
     )
 });

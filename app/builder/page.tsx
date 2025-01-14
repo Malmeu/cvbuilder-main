@@ -125,92 +125,101 @@ export default function Builder() {
 
   const handleDownloadPdf = async () => {
     const element = cvPreviewRef.current;
-    if (element) {
-      try {
-        // Créer une copie de l'élément pour la capture
-        const clone = element.cloneNode(true) as HTMLElement;
-        document.body.appendChild(clone);
-        
-        // Appliquer le même style que la prévisualisation
-        clone.style.position = 'absolute';
-        clone.style.left = '-9999px';
-        clone.style.transform = 'none';
-        clone.style.width = '210mm';
-        clone.style.height = '297mm';
-        clone.style.margin = '0';
-        clone.style.padding = '0';
-        clone.style.backgroundColor = '#ffffff';
+    if (!element) return;
 
-        // Attendre que les polices soient chargées
-        await document.fonts.ready;
+    try {
+      // Créer un conteneur temporaire
+      const container = document.createElement('div');
+      container.style.position = 'absolute';
+      container.style.left = '-9999px';
+      container.style.top = '-9999px';
+      document.body.appendChild(container);
 
-        const canvas = await html2canvas(clone, {
-          scale: 3,
-          useCORS: true,
-          allowTaint: true,
-          backgroundColor: '#ffffff',
-          imageTimeout: 0,
-          removeContainer: true,
-          logging: false,
-          onclone: (clonedDoc) => {
-            const clonedElement = clonedDoc.body.firstChild as HTMLElement;
-            if (clonedElement) {
-              // Copier les styles calculés
-              const styles = window.getComputedStyle(element);
-              Array.from(styles).forEach(key => {
-                clonedElement.style[key as any] = styles.getPropertyValue(key);
-              });
-            }
+      // Cloner l'élément
+      const clone = element.cloneNode(true) as HTMLElement;
+      container.appendChild(clone);
+
+      // Attendre le chargement des polices et images
+      await Promise.all([
+        document.fonts.ready,
+        ...Array.from(clone.getElementsByTagName('img')).map(
+          img => new Promise((resolve) => {
+            if (img.complete) resolve(null);
+            else img.onload = () => resolve(null);
+          })
+        )
+      ]);
+
+      // Configurer html2canvas avec une haute qualité
+      const canvas = await html2canvas(clone, {
+        scale: 3,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        imageTimeout: 15000,
+        onclone: (clonedDoc) => {
+          const clonedElement = clonedDoc.body.firstChild as HTMLElement;
+          if (clonedElement) {
+            clonedElement.setAttribute('data-theme', theme);
           }
-        });
+        },
+        logging: false
+      });
 
-        // Supprimer le clone après la capture
-        document.body.removeChild(clone);
-        
-        const imgData = canvas.toDataURL('image/png', 1.0);
+      // Nettoyer
+      document.body.removeChild(container);
 
-        const pdf = new jsPDF({
-          orientation: "portrait",
-          unit: 'mm',
-          format: "a4",
-          compress: true,
-          hotfixes: ["px_scaling"]
-        });
+      // Créer le PDF
+      const imgData = canvas.toDataURL('image/png', 1.0);
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4',
+        compress: true,
+        putOnlyUsedFonts: true,
+        floatPrecision: 16
+      });
 
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = pdf.internal.pageSize.getHeight();
-
-        // Ajouter l'image avec les dimensions exactes de A4
-        pdf.addImage(
-          imgData,
-          'PNG',
-          0,
-          0,
-          pdfWidth,
-          pdfHeight,
-          undefined,
-          'FAST'
-        );
-        
-        pdf.save(`cv.pdf`);
-
-        const modal = document.getElementById('my_modal_3') as HTMLDialogElement;
-        if (modal) {
-          modal.close();
-        }
-
-        confetti({
-          particleCount: 100,
-          spread: 70,
-          origin: { y: 0.6 },
-          zIndex: 9999
-        });
-
-      } catch (error) {
-        console.error('Erreur lors de la génération du PDF :', error);
+      // Calculer les dimensions en préservant le ratio
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      
+      // Calculer le ratio d'aspect de l'original
+      const originalRatio = canvas.width / canvas.height;
+      const pdfRatio = pdfWidth / pdfHeight;
+      
+      let finalWidth = pdfWidth;
+      let finalHeight = pdfWidth / originalRatio;
+      
+      // Si la hauteur calculée dépasse la page, ajuster en fonction de la hauteur
+      if (finalHeight > pdfHeight) {
+        finalHeight = pdfHeight;
+        finalWidth = pdfHeight * originalRatio;
       }
+      
+      // Centrer horizontalement si nécessaire
+      const xOffset = (pdfWidth - finalWidth) / 2;
+      
+      // Ajouter l'image en préservant le ratio
+      pdf.addImage(imgData, 'PNG', xOffset, 0, finalWidth, finalHeight, undefined, 'MEDIUM');
+      pdf.save('cv.pdf');
+
+      const modal = document.getElementById('my_modal_3') as HTMLDialogElement;
+      if (modal) {
+        modal.close();
+      }
+
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        zIndex: 9999
+      });
+
+    } catch (error) {
+      console.error('Erreur lors de la génération du PDF :', error);
     }
-  }
+  };
 
 
   return (
