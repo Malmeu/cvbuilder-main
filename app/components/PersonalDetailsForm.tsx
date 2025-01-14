@@ -73,10 +73,10 @@ const PersonalDetailsForm: React.FC<Props> = ({ personalDetails, setPersonalDeta
                         onChange={(e) => setPersonalDetails({ ...personalDetails, frameShape: e.target.value as PersonalDetails['frameShape'] })}
                         className='select select-bordered'
                     >
-                        <option value="circle">Cercle</option>
+                        <option value="circle">Ovale</option>
                         <option value="square">Carré</option>
                         <option value="rounded">Arrondi</option>
-                        <option value="oval">Ovale</option>
+                        <option value="oval">Cercle</option>
                     </select>
                 </div>
 

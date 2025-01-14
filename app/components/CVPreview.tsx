@@ -57,9 +57,20 @@ const getStarRating = (proficiency: string) => {
 
 
 const CVPreview = React.forwardRef<HTMLDivElement, Props>(({ personalDetails, file, theme, experiences, educations, languages, skills, hobbies, download }, ref) => {
+    // Calculer la hauteur en fonction du ratio A4 (1:1.4142)
+    const width = 950;
+    const height = Math.round(width * 1.4142);
+
     return (
-        <div className="relative">
-            <div ref={ref} className={`relative bg-base-100 flex p-16 w-[950px] h-[1200px] shadow-lg print:shadow-none ${download ? 'mb-10' : ''}`} data-theme={theme}>
+        <div className={`relative`} data-theme={theme}>
+            <div ref={ref} 
+                className={`relative bg-base-100 flex p-16 w-[950px] shadow-lg print:shadow-none ${download ? 'mb-10' : ''}`}
+                style={{ 
+                    width: `${width}px`,
+                    height: `${height}px`,
+                    minHeight: `${height}px`
+                }}
+            >
                 <div className='flex flex-col w-1/3'>
                     {file && (
                         <div className={`h-80 overflow-hidden border-8 border-primary ${
@@ -309,13 +320,12 @@ const CVPreview = React.forwardRef<HTMLDivElement, Props>(({ personalDetails, fi
             </div>
             {/* Div pour la marge colorée en bas */}
             <div 
-                className="absolute bottom-0 left-0 right-0 h-[297mm]" 
+                className="absolute bottom-0 left-0 right-0 bg-base-100" 
                 style={{ 
-                    backgroundColor: 'var(--b1)',
+                    height: `${height}px`,
                     zIndex: -1,
-                    marginTop: '-297mm'
-                }} 
-                data-theme={theme}
+                    marginTop: `-${height}px`
+                }}
             />
         </div>
     )

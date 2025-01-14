@@ -121,22 +121,28 @@ export default function Builder() {
     setZoom(163);
   }
 
-  const cvPreviewRef = useRef<HTMLDivElement>(null);
+  const cvRef = useRef<HTMLDivElement>(null);
 
   const handleDownloadPdf = async () => {
-    const element = cvPreviewRef.current;
+    const element = cvRef.current;
     if (!element) return;
 
     try {
+      // Obtenir l'élément parent qui contient la marge
+      const parentElement = element.parentElement;
+      if (!parentElement) return;
+
       // Créer un conteneur temporaire
       const container = document.createElement('div');
       container.style.position = 'absolute';
       container.style.left = '-9999px';
       container.style.top = '-9999px';
+      container.setAttribute('data-theme', theme);
+      container.style.backgroundColor = getComputedStyle(parentElement).backgroundColor;
       document.body.appendChild(container);
 
-      // Cloner l'élément
-      const clone = element.cloneNode(true) as HTMLElement;
+      // Cloner l'élément parent complet (qui inclut la marge)
+      const clone = parentElement.cloneNode(true) as HTMLElement;
       container.appendChild(clone);
 
       // Attendre le chargement des polices et images
@@ -155,12 +161,12 @@ export default function Builder() {
         scale: 3,
         useCORS: true,
         allowTaint: true,
-        backgroundColor: '#ffffff',
+        backgroundColor: getComputedStyle(parentElement).backgroundColor,
         imageTimeout: 15000,
         onclone: (clonedDoc) => {
           const clonedElement = clonedDoc.body.firstChild as HTMLElement;
           if (clonedElement) {
-            clonedElement.setAttribute('data-theme', theme);
+            clonedElement.style.backgroundColor = getComputedStyle(parentElement).backgroundColor;
           }
         },
         logging: false
@@ -562,7 +568,7 @@ export default function Builder() {
                   hobbies={hobbies}
                   skills={skills}
                   download={true}
-                  ref={cvPreviewRef}
+                  ref={cvRef}
 
                 />
               </div>
