@@ -170,32 +170,6 @@ export default function ExperienceForm({ experiences, onChange, language }: Prop
 
                 <div className="form-control">
                   <label className="label">
-                    <span className="label-text">{text.startDate}</span>
-                  </label>
-                  <input
-                    type="month"
-                    className="input input-bordered w-full"
-                    value={experience.startDate}
-                    onChange={(e) => handleExperienceChange(index, 'startDate', e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">{text.company}</span>
-                  </label>
-                  <input
-                    type="text"
-                    className="input input-bordered w-full"
-                    value={experience.company}
-                    onChange={(e) => handleExperienceChange(index, 'company', e.target.value)}
-                  />
-                </div>
-
-                <div className="form-control">
-                  <label className="label">
                     <span className="label-text">{text.endDate}</span>
                   </label>
                   <div className="flex flex-col gap-2">
@@ -221,6 +195,32 @@ export default function ExperienceForm({ experiences, onChange, language }: Prop
                       <span className="label-text text-sm">{text.current}</span>
                     </label>
                   </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">{text.company}</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="input input-bordered w-full"
+                    value={experience.company}
+                    onChange={(e) => handleExperienceChange(index, 'company', e.target.value)}
+                  />
+                </div>
+
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">{text.startDate}</span>
+                  </label>
+                  <input
+                    type="month"
+                    className="input input-bordered w-full"
+                    value={experience.startDate}
+                    onChange={(e) => handleExperienceChange(index, 'startDate', e.target.value)}
+                  />
                 </div>
               </div>
             </div>
