@@ -130,7 +130,7 @@ export default function RootLayout({
       </head>
       <body className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased min-h-screen flex flex-col bg-gray-50`}>
         <Navbar />
-        <main className="flex-grow pt-24">
+        <main className="flex-grow pt-20">
           {children}
         </main>
         <Footer />

@@ -165,14 +165,14 @@ export default function CanadianBuilder() {
   }
 
   return (
-    <div className="container mx-auto p-4 space-y-8">
+    <div className="container mx-auto px-2 sm:px-4 space-y-6">
       <div className="flex flex-col space-y-4">
         <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
           {cv.language === 'fr' ? '' : ''}
         </h1>
         
         {/* Navigation et contrôles */}
-        <div className="flex flex-col space-y-4 md:flex-row md:justify-between md:items-center pt-4">
+        <div className="flex flex-col space-y-3 sm:space-y-4 md:flex-row md:justify-between md:items-center pt-2">
           <button
             className="btn btn-ghost gap-2 hover:bg-base-200/50 w-full md:w-auto"
             onClick={() => setCV(prev => ({
@@ -184,9 +184,9 @@ export default function CanadianBuilder() {
             {cv.language === 'fr' ? 'English' : 'Français'}
           </button>
 
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-col sm:flex-row flex-wrap items-center gap-2">
             <select 
-              className="select select-bordered flex-grow md:flex-grow-0"
+              className="select select-bordered w-full sm:w-auto"
               value={theme}
               onChange={(e) => setTheme(e.target.value)}
             >
@@ -197,38 +197,40 @@ export default function CanadianBuilder() {
               ))}
             </select>
 
-            <button
-              onClick={() => {
-                const modal = document.getElementById('preview_modal') as HTMLDialogElement
-                modal?.showModal()
-              }}
-              className="btn btn-primary gap-2 flex-grow md:flex-grow-0"
-            >
-              <Eye className="w-4 h-4" />
-              {cv.language === 'fr' ? 'Prévisualiser' : 'Preview'}
-            </button>
+            <div className="flex gap-2 w-full sm:w-auto">
+              <button
+                onClick={() => {
+                  const modal = document.getElementById('preview_modal') as HTMLDialogElement
+                  modal?.showModal()
+                }}
+                className="btn btn-primary gap-2 flex-1 sm:flex-initial"
+              >
+                <Eye className="w-4 h-4" />
+                {cv.language === 'fr' ? 'Prévisualiser' : 'Preview'}
+              </button>
 
-            <button
-              onClick={handleDownloadPdf}
-              disabled={isGenerating}
-              className="btn btn-primary gap-2 flex-grow md:flex-grow-0"
-            >
-              <FileText className="w-4 h-4" />
-              {cv.language === 'fr' ? 'Télécharger PDF' : 'Download PDF'}
-            </button>
+              <button
+                onClick={handleDownloadPdf}
+                disabled={isGenerating}
+                className="btn btn-primary gap-2 flex-1 sm:flex-initial"
+              >
+                <FileText className="w-4 h-4" />
+                {cv.language === 'fr' ? 'Télécharger PDF' : 'Download PDF'}
+              </button>
 
-            <Link 
-              href="/"
-              className="btn btn-ghost gap-2 flex-grow md:flex-grow-0"
-            >
-              <Home className="w-4 h-4" />
-              {cv.language === 'fr' ? 'Accueil' : 'Home'}
-            </Link>
+              <Link 
+                href="/"
+                className="btn btn-ghost gap-2 flex-1 sm:flex-initial"
+              >
+                <Home className="w-4 h-4" />
+                {cv.language === 'fr' ? 'Accueil' : 'Home'}
+              </Link>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="grid lg:grid-cols-[350px_1fr] gap-8">
+      <div className="grid lg:grid-cols-[350px_1fr] gap-4 sm:gap-8">
         <div className="space-y-6 order-2 lg:order-1">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
@@ -237,7 +239,7 @@ export default function CanadianBuilder() {
           </div>
 
           {/* Tabs avec effet de verre */}
-          <div className="flex gap-2 mb-6 overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0">
+          <div className="flex gap-2 mb-6 overflow-x-auto pb-2 -mx-2 px-2 sm:-mx-4 sm:px-4 md:mx-0 md:px-0 scrollbar-none">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
@@ -306,12 +308,12 @@ export default function CanadianBuilder() {
       </div>
 
       <dialog id="preview_modal" className="modal">
-        <div className="modal-box w-11/12 max-w-5xl">
+        <div className="modal-box w-[95%] max-w-5xl max-h-[90vh] p-2 sm:p-6">
           <h3 className="font-bold text-lg mb-4">
             {cv.language === 'fr' ? 'Prévisualisation de votre CV' : 'Preview your Resume'}
           </h3>
           <div 
-            className="bg-base-100 w-full lg:w-[210mm] mx-auto overflow-x-auto"
+            className="bg-base-100 w-full overflow-x-auto max-h-[calc(90vh-12rem)] overflow-y-auto"
             data-theme={theme}
           >
             <CVPreview cv={cv} theme={theme} />
