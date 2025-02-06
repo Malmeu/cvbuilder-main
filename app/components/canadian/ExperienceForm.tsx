@@ -141,7 +141,7 @@ export default function ExperienceForm({ experiences, onChange, language }: Prop
               </button>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid md:grid-cols-2 gap-4 md:gap-8">
               <div className="space-y-4">
                 <div className="form-control">
                   <label className="label">
@@ -149,9 +149,21 @@ export default function ExperienceForm({ experiences, onChange, language }: Prop
                   </label>
                   <input
                     type="text"
-                    className="input input-bordered w-full"
+                    className="input input-bordered w-full md:w-[120%]"
                     value={experience.position}
                     onChange={(e) => handleExperienceChange(index, 'position', e.target.value)}
+                  />
+                </div>
+
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">{text.company}</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="input input-bordered w-full md:w-[120%]"
+                    value={experience.company}
+                    onChange={(e) => handleExperienceChange(index, 'company', e.target.value)}
                   />
                 </div>
 
@@ -161,10 +173,24 @@ export default function ExperienceForm({ experiences, onChange, language }: Prop
                   </label>
                   <input
                     type="text"
-                    className="input input-bordered w-full"
+                    className="input input-bordered w-full md:w-[120%]"
                     value={experience.address}
                     onChange={(e) => handleExperienceChange(index, 'address', e.target.value)}
                     placeholder={language === 'fr' ? 'Ex: Montréal, Canada' : 'Ex: Montreal, Canada'}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">{text.startDate}</span>
+                  </label>
+                  <input
+                    type="month"
+                    className="input input-bordered w-full md:w-[120%]"
+                    value={experience.startDate}
+                    onChange={(e) => handleExperienceChange(index, 'startDate', e.target.value)}
                   />
                 </div>
 
@@ -175,52 +201,21 @@ export default function ExperienceForm({ experiences, onChange, language }: Prop
                   <div className="flex flex-col gap-2">
                     <input
                       type="month"
-                      className="input input-bordered w-full"
+                      className="input input-bordered w-full md:w-[120%]"
                       value={experience.endDate}
                       onChange={(e) => handleExperienceChange(index, 'endDate', e.target.value)}
                       disabled={experience.current}
                     />
-                    <label className="flex items-center gap-2 cursor-pointer">
+                    <label className="label cursor-pointer justify-start gap-2">
                       <input
                         type="checkbox"
-                        className="checkbox checkbox-sm"
+                        className="checkbox checkbox-primary"
                         checked={experience.current}
-                        onChange={(e) => {
-                          handleExperienceChange(index, 'current', e.target.checked)
-                          if (e.target.checked) {
-                            handleExperienceChange(index, 'endDate', '')
-                          }
-                        }}
+                        onChange={(e) => handleExperienceChange(index, 'current', e.target.checked)}
                       />
-                      <span className="label-text text-sm">{text.current}</span>
+                      <span className="label-text">{text.current}</span>
                     </label>
                   </div>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">{text.company}</span>
-                  </label>
-                  <input
-                    type="text"
-                    className="input input-bordered w-full"
-                    value={experience.company}
-                    onChange={(e) => handleExperienceChange(index, 'company', e.target.value)}
-                  />
-                </div>
-
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">{text.startDate}</span>
-                  </label>
-                  <input
-                    type="month"
-                    className="input input-bordered w-full"
-                    value={experience.startDate}
-                    onChange={(e) => handleExperienceChange(index, 'startDate', e.target.value)}
-                  />
                 </div>
               </div>
             </div>
