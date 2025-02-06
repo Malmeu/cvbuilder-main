@@ -421,7 +421,7 @@ export default function Builder() {
             <select
               value={theme}
               onChange={(e) => handleThemeChange(e.target.value)}
-              className="select select-bordered z-[9999]"
+              className="select select-bordered"
             >
               {themes.map((t) => (
                 <option key={t} value={t}>{t}</option>
