@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { LogIn, LogOut, Menu, User } from 'lucide-react'
+import { LogIn, LogOut, Menu, User, Briefcase } from 'lucide-react'
 import AuthModal from './auth/AuthModal'
 import { useToast } from '../hooks/useToast'
 
@@ -60,8 +60,17 @@ export default function Navbar() {
     { name: 'Jobs', href: '/jobs' },
     { name: 'Outils', href: '/outils' },
     { name: 'Blog', href: '/blog' },
-    ...(user ? [{ name: 'Favoris', href: '/favoris' }] : []),
-    ...(user ? [{ name: 'Tableau de bord', href: '/dashboard' }] : []),
+    ...(user ? [
+      { name: 'Favoris', href: '/favoris' },
+      { name: 'Tableau de bord', href: '/dashboard' },
+      ...(user.email === 'admin@cvdiali.com' ? [
+        { 
+          name: 'Admin', 
+          href: '/admin/jobs',
+          icon: Briefcase 
+        }
+      ] : [])
+    ] : []),
   ]
 
   return (
@@ -80,12 +89,13 @@ export default function Navbar() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg ${
+                  className={`inline-flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg ${
                     pathname === item.href
                       ? 'bg-primary/10 text-primary'
                       : 'text-base-content hover:bg-base-200 hover:text-primary'
                   }`}
                 >
+                  {item.icon && <item.icon className="w-4 h-4" />}
                   {item.name}
                 </Link>
               ))}
@@ -101,7 +111,7 @@ export default function Navbar() {
                   text-base-content hover:bg-base-200 focus:outline-none focus:ring-2 
                   focus:ring-offset-2 focus:ring-primary"
               >
-                <LogOut className="w-5 h-5 mr-2" />
+                <LogOut className="w-4 h-4 mr-2" />
                 Déconnexion
               </button>
             ) : (
@@ -112,16 +122,16 @@ export default function Navbar() {
                     text-base-content hover:bg-base-200 focus:outline-none focus:ring-2 
                     focus:ring-offset-2 focus:ring-primary"
                 >
-                  <LogIn className="w-5 h-5 mr-2" />
+                  <LogIn className="w-4 h-4 mr-2" />
                   Connexion
                 </button>
                 <button
                   onClick={() => openAuthModal('signup')}
                   className="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium 
-                    bg-primary text-primary-content hover:bg-primary/90 focus:outline-none 
+                    bg-primary text-primary-content hover:opacity-90 focus:outline-none 
                     focus:ring-2 focus:ring-offset-2 focus:ring-primary"
                 >
-                  <User className="w-5 h-5 mr-2" />
+                  <User className="w-4 h-4 mr-2" />
                   Inscription
                 </button>
               </>
@@ -132,9 +142,8 @@ export default function Navbar() {
           <div className="flex items-center sm:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-base-content 
-                hover:text-primary hover:bg-base-200 focus:outline-none focus:ring-2 
-                focus:ring-inset focus:ring-primary"
+              className="inline-flex items-center justify-center p-2 rounded-lg text-base-content 
+                hover:bg-base-200 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary"
             >
               <Menu className="w-6 h-6" />
             </button>
@@ -142,7 +151,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Menu mobile déroulant */}
+      {/* Menu mobile */}
       {isMenuOpen && (
         <div className="sm:hidden">
           <div className="pt-2 pb-3 space-y-1">
@@ -150,53 +159,55 @@ export default function Navbar() {
               <Link
                 key={item.name}
                 href={item.href}
-                className={`block pl-3 pr-4 py-2 text-base font-medium ${
+                className={`block px-3 py-2 text-base font-medium ${
                   pathname === item.href
-                    ? 'bg-primary/10 border-l-4 border-primary text-primary'
-                    : 'text-base-content hover:bg-base-200 hover:border-l-4 hover:border-primary hover:text-primary'
+                    ? 'bg-primary/10 text-primary'
+                    : 'text-base-content hover:bg-base-200 hover:text-primary'
                 }`}
+                onClick={() => setIsMenuOpen(false)}
               >
-                {item.name}
+                <div className="flex items-center gap-2">
+                  {item.icon && <item.icon className="w-4 h-4" />}
+                  {item.name}
+                </div>
               </Link>
             ))}
           </div>
-          <div className="pt-4 pb-3 border-t border-base-200">
-            <div className="space-y-1">
-              {user ? (
+          {!user && (
+            <div className="pt-4 pb-3 border-t border-base-200">
+              <div className="space-y-1">
                 <button
-                  onClick={handleSignOut}
-                  className="flex items-center w-full pl-3 pr-4 py-2 text-base font-medium 
-                    text-base-content hover:bg-base-200 hover:text-primary"
+                  onClick={() => {
+                    setIsMenuOpen(false)
+                    openAuthModal('signin')
+                  }}
+                  className="block w-full px-3 py-2 text-base font-medium text-left 
+                    text-base-content hover:bg-base-200"
                 >
-                  <LogOut className="w-5 h-5 mr-3" />
-                  Déconnexion
-                </button>
-              ) : (
-                <>
-                  <button
-                    onClick={() => openAuthModal('signin')}
-                    className="flex items-center w-full pl-3 pr-4 py-2 text-base font-medium 
-                      text-base-content hover:bg-base-200 hover:text-primary"
-                  >
+                  <div className="flex items-center">
                     <LogIn className="w-5 h-5 mr-3" />
                     Connexion
-                  </button>
-                  <button
-                    onClick={() => openAuthModal('signup')}
-                    className="flex items-center w-full pl-3 pr-4 py-2 text-base font-medium 
-                      text-base-content hover:bg-base-200 hover:text-primary"
-                  >
+                  </div>
+                </button>
+                <button
+                  onClick={() => {
+                    setIsMenuOpen(false)
+                    openAuthModal('signup')
+                  }}
+                  className="block w-full px-3 py-2 text-base font-medium text-left 
+                    text-base-content hover:bg-base-200"
+                >
+                  <div className="flex items-center">
                     <User className="w-5 h-5 mr-3" />
                     Inscription
-                  </button>
-                </>
-              )}
+                  </div>
+                </button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       )}
 
-      {/* Modal d'authentification */}
       <AuthModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}

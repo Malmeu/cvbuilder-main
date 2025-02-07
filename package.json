@@ -15,7 +15,7 @@
     "@heroicons/react": "^2.2.0",
     "@hookform/resolvers": "^3.10.0",
     "@radix-ui/react-alert-dialog": "^1.1.4",
-    "@radix-ui/react-dialog": "^1.1.4",
+    "@radix-ui/react-dialog": "^1.1.6",
     "@radix-ui/react-label": "^2.1.1",
     "@radix-ui/react-progress": "^1.1.1",
     "@radix-ui/react-radio-group": "^1.2.2",
@@ -58,6 +58,7 @@
     "sonner": "^1.7.4",
     "tailwind-merge": "^2.6.0",
     "tesseract.js": "^6.0.0",
+    "tinymce": "^7.6.1",
     "uuid": "^11.0.5",
     "zod": "^3.24.1"
   },

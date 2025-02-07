@@ -281,15 +281,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Premier emplacement publicitaire */}
-        <div className="max-w-4xl mx-auto px-4 mb-16">
-          <div className="bg-gray-50 rounded-xl p-4 min-h-[90px] flex items-center justify-center">
-            <div id="accueil-banner-1" className="text-center text-gray-400">
-              Emplacement publicitaire
-            </div>
-          </div>
-        </div>
-
+        
         {/* Section Importance du CV avec design amélioré */}
         <section className="relative py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-secondary/5 to-primary/5" />

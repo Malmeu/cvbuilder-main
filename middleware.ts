@@ -10,6 +10,28 @@ export async function middleware(req: NextRequest) {
     data: { session },
   } = await supabase.auth.getSession()
 
+  // Protection de la route admin
+  if (req.nextUrl.pathname.startsWith('/admin')) {
+    console.log('Tentative d\'accès à /admin')
+    
+    if (!session) {
+      console.log('Pas de session, redirection vers signin')
+      return NextResponse.redirect(new URL('/auth/signin', req.url))
+    }
+    
+    // Vérifier si l'utilisateur est admin
+    const { data: { user } } = await supabase.auth.getUser()
+    console.log('Email utilisateur:', user?.email)
+    
+    if (!user || user.email !== 'admin@cvdiali.com') {
+      console.log('Utilisateur non admin, redirection vers accueil')
+      return NextResponse.redirect(new URL('/', req.url))
+    }
+    
+    console.log('Accès admin autorisé')
+    return res
+  }
+
   // Si l'utilisateur n'est pas connecté et essaie d'accéder à une route protégée
   if (!session && (
     req.nextUrl.pathname.startsWith('/dashboard') ||
@@ -35,5 +57,6 @@ export const config = {
     '/favoris/:path*',
     '/auth/signin',
     '/auth/signup',
+    '/admin/:path*',
   ],
 }
