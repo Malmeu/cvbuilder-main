@@ -7,6 +7,7 @@ import Script from 'next/script';
 import Navbar from './components/Navbar';
 import CookieConsent from './components/CookieConsent';
 import { Footer } from './components/Footer';
+import { Toaster } from '@/components/ui/toaster';
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -136,6 +137,7 @@ export default function RootLayout({
         <Footer />
         <CookieConsent language="fr" />
         <Analytics />
+        <Toaster />
       </body>
     </html>
   );

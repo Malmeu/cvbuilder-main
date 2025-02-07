@@ -2,12 +2,12 @@ import { Experience } from '@/type';
 import { Edit2, Plus, Trash2 } from 'lucide-react';
 import React, { useState } from 'react'
 
-type Props = {
-    experience: Experience[];
-    setExperiences: (experience: Experience[]) => void
+interface Props {
+    experiences: Experience[];
+    setExperiences: (experiences: Experience[]) => void
 }
 
-const ExperienceForm: React.FC<Props> = ({ experience, setExperiences }) => {
+const ExperienceForm: React.FC<Props> = ({ experiences, setExperiences }) => {
     const [editIndex, setEditIndex] = useState<number>(-1);
     const [newExperience, setNewExperience] = useState<Experience>({
         jobTitle: '',
@@ -23,12 +23,12 @@ const ExperienceForm: React.FC<Props> = ({ experience, setExperiences }) => {
 
     const handleAddExperience = () => {
         if (editIndex >= 0) {
-            const updatedExperiences = [...experience];
+            const updatedExperiences = [...experiences];
             updatedExperiences[editIndex] = newExperience;
             setExperiences(updatedExperiences);
             setEditIndex(-1);
         } else {
-            setExperiences([...experience, newExperience]);
+            setExperiences([...experiences, newExperience]);
         }
         setNewExperience({
             jobTitle: '',
@@ -41,11 +41,11 @@ const ExperienceForm: React.FC<Props> = ({ experience, setExperiences }) => {
 
     const handleEdit = (index: number) => {
         setEditIndex(index);
-        setNewExperience(experience[index]);
+        setNewExperience(experiences[index]);
     }
 
     const handleDelete = (index: number) => {
-        const updatedExperiences = experience.filter((_, i) => i !== index);
+        const updatedExperiences = experiences.filter((_, i) => i !== index);
         setExperiences(updatedExperiences);
     }
 
@@ -111,7 +111,7 @@ const ExperienceForm: React.FC<Props> = ({ experience, setExperiences }) => {
             </button>
 
             <div className='mt-6'>
-                {experience.map((exp, index) => (
+                {experiences.map((exp, index) => (
                     <div key={index} className='bg-base-200 p-4 rounded-lg mb-4'>
                         <div className='flex justify-between items-start'>
                             <div>

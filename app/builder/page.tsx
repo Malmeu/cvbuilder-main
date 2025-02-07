@@ -14,19 +14,80 @@ import HobbyForm from "../components/HobbyForm";
 import html2canvas from "html2canvas-pro";
 import jsPDF from "jspdf";
 import confetti from "canvas-confetti"
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { useRouter } from "next/navigation";
+import { useToast } from '@/hooks/use-toast';
 
 export default function Builder() {
+  const supabase = createClientComponentClient()
+  const router = useRouter()
+  const { toast } = useToast()
+  
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [user, setUser] = useState<any>(null)
+
   const [personalDetails, setPersonalDetails] = useState<PersonalDetails>(personalDetailsPreset)
   const [file, setFile] = useState<File | null>(null)
   const [theme, setTheme] = useState<string>('cupcake')
   const [zoom, setZoom] = useState<number>(163)
-  const [experiences, setExperience] = useState<Experience[]>(experiencesPreset)
+  const [experiences, setExperiences] = useState<Experience[]>(experiencesPreset)
   const [educations, setEducations] = useState<Education[]>(educationsPreset)
   const [languages, setLanguages] = useState<Language[]>(languagesPreset)
   const [skills, setSkills] = useState<Skill[]>(skillsPreset)
   const [hobbies, setHobbies] = useState<Hobby[]>(hobbiesPreset);
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
   const [windowWidth, setWindowWidth] = useState<number>(0);
+
+  useEffect(() => {
+    const checkUser = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession()
+        
+        if (error) {
+          console.error('Erreur de session:', error)
+          toast({
+            title: 'Erreur',
+            description: 'Veuillez vous connecter pour continuer',
+            variant: 'destructive',
+          })
+          router.push('/login')
+          return
+        }
+
+        if (!session?.user) {
+          toast({
+            title: 'Erreur',
+            description: 'Veuillez vous connecter pour continuer',
+            variant: 'destructive',
+          })
+          router.push('/login')
+          return
+        }
+
+        setUser(session.user)
+        setLoading(false)
+      } catch (error) {
+        console.error('Erreur lors de la vérification de la session:', error)
+        router.push('/login')
+      }
+    }
+
+    checkUser()
+
+    // Écouter les changements d'authentification
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) {
+        router.push('/login')
+      } else {
+        setUser(session.user)
+      }
+    })
+
+    return () => {
+      subscription.unsubscribe()
+    }
+  }, [])
 
   useEffect(() => {
     const handleResize = () => {
@@ -51,6 +112,67 @@ export default function Builder() {
 
       })
   }, [])
+
+  const loadExistingCV = async () => {
+    try {
+      if (!user) return
+
+      // Récupérer l'ID du CV depuis l'URL
+      const params = new URLSearchParams(window.location.search)
+      const cvId = params.get('id')
+      
+      if (!cvId) return
+
+      // Récupérer les données du CV
+      const { data: cv, error } = await supabase
+        .from('user_cvs')
+        .select('*')
+        .eq('id', cvId)
+        .single()
+
+      if (error) {
+        console.error('Erreur lors du chargement du CV:', error)
+        toast({
+          title: 'Erreur',
+          description: 'Impossible de charger le CV',
+          variant: 'destructive',
+        })
+        return
+      }
+
+      if (!cv) {
+        toast({
+          title: 'Erreur',
+          description: 'CV non trouvé',
+          variant: 'destructive',
+        })
+        return
+      }
+
+      // Mettre à jour l'état avec les données du CV
+      setPersonalDetails(cv.data.personalInfo)
+      setExperiences(cv.data.experience || [])
+      setEducations(cv.data.education || [])
+      setSkills(cv.data.skills || [])
+      setLanguages(cv.data.languages || [])
+      setHobbies(cv.data.hobbies || [])
+
+      console.log('CV chargé avec succès:', cv)
+    } catch (error: any) {
+      console.error('Erreur lors du chargement:', error)
+      toast({
+        title: 'Erreur',
+        description: error.message || 'Impossible de charger le CV',
+        variant: 'destructive',
+      })
+    }
+  }
+
+  useEffect(() => {
+    if (user) {
+      loadExistingCV()
+    }
+  }, [user])
 
   const handleThemeChange = (newTheme: string) => {
     setTheme(newTheme);
@@ -104,7 +226,7 @@ export default function Builder() {
     }
   )
 
-  const handleResetExperiences = () => setExperience([])
+  const handleResetExperiences = () => setExperiences([])
   const handleResetEducations = () => setEducations([])
   const handleResetLanguages = () => setLanguages([])
   const handleResetSkills = () => setSkills([])
@@ -227,6 +349,111 @@ export default function Builder() {
     }
   };
 
+  const handleSave = async () => {
+    try {
+      if (!user) {
+        toast({
+          title: 'Erreur',
+          description: 'Vous devez être connecté pour sauvegarder un CV',
+          variant: 'destructive',
+        })
+        return
+      }
+
+      setSaving(true)
+
+      // Préparer les données du CV
+      const cvData = {
+        personalInfo: {
+          fullName: personalDetails.fullName,
+          email: personalDetails.email,
+          phone: personalDetails.phone,
+          address: personalDetails.address,
+          photoUrl: personalDetails.photoUrl,
+          postSeeking: personalDetails.postSeeking,
+          description: personalDetails.description,
+        },
+        experience: experiences.map(exp => ({
+          ...exp,
+          startDate: exp.startDate,
+          endDate: exp.endDate,
+        })),
+        education: educations.map(edu => ({
+          ...edu,
+          startDate: edu.startDate,
+          endDate: edu.endDate,
+        })),
+        skills: skills,
+        languages: languages,
+        hobbies: hobbies,
+      }
+
+      // Vérifier si on modifie un CV existant
+      const params = new URLSearchParams(window.location.search)
+      const cvId = params.get('id')
+
+      let savedCv
+      if (cvId) {
+        // Mettre à jour le CV existant
+        const { data, error: updateError } = await supabase
+          .from('user_cvs')
+          .update({
+            title: `CV de ${personalDetails.fullName || 'Sans titre'}`,
+            data: cvData,
+          })
+          .eq('id', cvId)
+          .eq('user_id', user.id)  // Vérification supplémentaire
+          .select('*')
+          .single()
+
+        if (updateError) throw updateError
+        savedCv = data
+      } else {
+        // Vérifier si c'est le premier CV de l'utilisateur
+        const { data: existingCVs } = await supabase
+          .from('user_cvs')
+          .select('id')
+          .eq('user_id', user.id)
+
+        const isFirstCV = !existingCVs || existingCVs.length === 0
+
+        // Créer un nouveau CV
+        const { data, error: insertError } = await supabase
+          .from('user_cvs')
+          .insert([{
+            user_id: user.id,
+            title: `CV de ${personalDetails.fullName || 'Sans titre'}`,
+            type: 'classic',
+            data: cvData,
+            is_primary: isFirstCV
+          }])
+          .select('*')
+          .single()
+
+        if (insertError) throw insertError
+        savedCv = data
+      }
+
+      console.log('CV sauvegardé avec succès:', savedCv)
+
+      toast({
+        title: 'Succès',
+        description: 'Votre CV a été sauvegardé',
+      })
+
+      // Rediriger vers le tableau de bord
+      router.push('/dashboard/cvs')
+    } catch (error: any) {
+      console.error('Erreur complète lors de la sauvegarde:', error)
+      toast({
+        title: 'Erreur',
+        description: error.message || "Impossible de sauvegarder le CV",
+        variant: 'destructive',
+      })
+    } finally {
+      setSaving(false)
+    }
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -282,8 +509,8 @@ export default function Builder() {
             </div>
 
             <ExperienceForm
-              experience={experiences}
-              setExperiences={setExperience}
+              experiences={experiences}
+              setExperiences={setExperiences}
             />
 
 
@@ -388,6 +615,16 @@ export default function Builder() {
                 <Save className="w-4 h-4" />
                 PDF
               </button>
+
+              <button
+                onClick={handleSave}
+                disabled={saving}
+                className="btn btn-primary gap-2"
+                title="Sauvegarder"
+              >
+                <Save className="w-4 h-4" />
+                {saving ? 'Sauvegarde...' : 'Sauvegarder'}
+              </button>
             </div>
           </div>
 
@@ -459,7 +696,10 @@ export default function Builder() {
             </button>
           </div>
 
-          <ExperienceForm experience={experiences} setExperiences={setExperience} />
+          <ExperienceForm
+            experiences={experiences}
+            setExperiences={setExperiences}
+          />
 
           <div className="flex justify-between items-center">
             <h1 className="badge badge-primary badge-outline">Éducations</h1>
@@ -468,7 +708,10 @@ export default function Builder() {
             </button>
           </div>
 
-          <EducationForm educations={educations} setEducations={setEducations} />
+          <EducationForm
+            educations={educations}
+            setEducations={setEducations}
+          />
 
           <div className="flex justify-between items-center">
             <h1 className="badge badge-primary badge-outline">Langues</h1>
@@ -477,7 +720,10 @@ export default function Builder() {
             </button>
           </div>
 
-          <LanguageForm languages={languages} setLanguages={setLanguages} />
+          <LanguageForm
+            languages={languages}
+            setLanguages={setLanguages}
+          />
 
           <div className="flex flex-col gap-4">
             <div className="flex justify-between items-center">
@@ -578,6 +824,20 @@ export default function Builder() {
         </div>
       </dialog>
 
+      {/* Bouton de sauvegarde fixe */}
+      <div className="fixed top-4 right-4 z-50 lg:hidden">
+        <button
+          onClick={handleSave}
+          disabled={saving}
+          className="inline-flex items-center px-6 py-3 rounded-xl text-base font-medium 
+            bg-primary text-primary-content hover:bg-primary/90 transition-colors
+            disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+        >
+          <Save className="w-5 h-5 mr-2" />
+          {saving ? 'Sauvegarde...' : 'Sauvegarder'}
+        </button>
+      </div>
+
     </div>
-  );
+  )
 }

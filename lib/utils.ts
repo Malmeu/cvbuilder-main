@@ -7,6 +7,10 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+export function cnForStyles(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
+
 export const formatDate = (date: string) => {
   return format(new Date(date), 'dd MMMM yyyy', { locale: fr });
 };
