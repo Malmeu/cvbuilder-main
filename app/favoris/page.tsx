@@ -1,98 +1,167 @@
 'use client'
 
-import { useState } from 'react'
-import { motion } from 'framer-motion'
-import { MapPin, Building2, Briefcase } from 'lucide-react'
-import { useFavorites } from '../hooks/useFavorites'
+import { useState, useEffect } from 'react'
+import { supabase } from '@/lib/supabase'
+import { Job } from '@/app/types/job'
+import { Building2, MapPin } from 'lucide-react'
+import Image from 'next/image'
 import JobDetailsModal from '../components/JobDetailsModal'
-import { Job } from '../types/job'
 
-export default function FavoritesPage() {
-  const { favorites, loading } = useFavorites()
+export default function FavorisPage() {
+  const [favoris, setFavoris] = useState<Job[]>([])
   const [selectedJob, setSelectedJob] = useState<Job | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
 
-  if (loading) {
+  useEffect(() => {
+    const fetchFavoris = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (!session) return
+
+        // Récupérer d'abord les favoris
+        const { data: favorisData, error: favorisError } = await supabase
+          .from('job_favorites')
+          .select('job_id')
+          .eq('user_id', session.user.id)
+
+        if (favorisError) throw favorisError
+
+        if (favorisData && favorisData.length > 0) {
+          // Récupérer les détails des jobs favoris
+          const jobIds = favorisData.map(f => f.job_id)
+          const { data: jobsData, error: jobsError } = await supabase
+            .from('jobs')
+            .select('*')
+            .in('id', jobIds)
+
+          if (jobsError) throw jobsError
+          setFavoris(jobsData || [])
+        }
+      } catch (error) {
+        console.error('Erreur lors de la récupération des favoris:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchFavoris()
+  }, [])
+
+  const removeFavorite = async (jobId: string) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) return
+
+      const { error } = await supabase
+        .from('job_favorites')
+        .delete()
+        .match({ user_id: session.user.id, job_id: jobId })
+
+      if (error) throw error
+
+      setFavoris(prev => prev.filter(job => job.id !== jobId))
+    } catch (error) {
+      console.error('Erreur lors de la suppression du favori:', error)
+    }
+  }
+
+  if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      <div className="container py-8">
+        <h1 className="text-2xl font-bold mb-6">Mes Favoris</h1>
+        <p>Chargement...</p>
       </div>
     )
   }
 
   return (
-    <main className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold mb-8">Mes Offres Sauvegardées</h1>
+    <div className="container py-8">
+      <h1 className="text-2xl font-bold mb-6">Mes Favoris</h1>
 
-      {favorites.length === 0 ? (
-        <div className="text-center py-12">
-          <h2 className="text-2xl font-semibold mb-4">Aucune offre sauvegardée</h2>
-          <p className="text-base-content/70">
-            Les offres que vous sauvegardez apparaîtront ici.
-          </p>
-        </div>
+      {favoris.length === 0 ? (
+        <p>Vous n'avez pas encore de favoris.</p>
       ) : (
-        <div className="grid gap-6">
-          {favorites.map(({ job }) => (
-            <motion.div
+        <div className="grid gap-4">
+          {favoris.map(job => (
+            <div
               key={job.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="group p-6 rounded-xl backdrop-blur-sm border transition-all duration-300
-                bg-white/5 border-white/10 hover:border-primary/30 hover:shadow-lg"
+              className="bg-white rounded-xl border border-gray-200 p-6"
             >
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div className="flex-1">
-                  <div className="flex items-center gap-4 mb-2">
-                    {job.logo && (
-                      <div className="w-12 h-12 rounded-lg bg-white/10 p-2">
-                        <img src={job.logo} alt={job.company} className="w-full h-full object-contain" />
-                      </div>
-                    )}
-                    <div>
-                      <h3 className="text-xl font-semibold">{job.title}</h3>
-                      <p className="text-base-content/70">{job.company}</p>
+              <div className="flex items-start gap-4">
+                {/* Logo */}
+                <div className="w-12 h-12 rounded-xl bg-gray-100 overflow-hidden flex-shrink-0">
+                  {job.company_logo ? (
+                    <Image
+                      src={job.company_logo}
+                      alt={job.company}
+                      width={48}
+                      height={48}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <Building2 className="w-6 h-6 text-gray-400" />
                     </div>
-                  </div>
-                  <div className="flex flex-wrap gap-4 mt-4">
-                    <div className="flex items-center gap-2 text-sm text-base-content/70">
-                      <MapPin className="w-4 h-4" />
-                      {job.wilaya}
-                    </div>
-                    {job.salary && (
-                      <div className="flex items-center gap-2 text-sm text-base-content/70">
-                        <span className="font-medium">{job.salary}</span>
-                      </div>
-                    )}
-                    {job.workType && (
-                      <div className="flex items-center gap-2 text-sm">
-                        <span className="px-2 py-1 rounded-full bg-primary/10 text-primary text-xs">
-                          {job.workType === 'remote' ? 'À distance' :
-                           job.workType === 'hybrid' ? 'Hybride' : 'Sur site'}
-                        </span>
-                      </div>
-                    )}
-                  </div>
+                  )}
                 </div>
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <button 
-                    onClick={() => setSelectedJob(job as Job)}
-                    className="px-6 py-2 rounded-xl bg-primary text-primary-content 
-                      hover:opacity-90 transition-opacity duration-300"
-                  >
-                    Voir les détails
-                  </button>
+
+                {/* Contenu */}
+                <div className="flex-1">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                        {job.title}
+                      </h3>
+                      <p className="text-gray-600">{job.company}</p>
+                    </div>
+
+                    <div className="text-right">
+                      <p className="text-lg font-medium text-gray-900">
+                        {job.salary ? `${job.salary.toLocaleString()} DZD` : 'Non spécifié'}
+                      </p>
+                      <p className="text-sm text-gray-500">{job.job_type}</p>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 flex items-center gap-4">
+                    <div className="flex items-center gap-1.5 text-sm text-gray-500">
+                      <MapPin className="w-4 h-4" />
+                      {job.location}
+                    </div>
+
+                    {job.remote_type && (
+                      <span className="px-2 py-0.5 rounded-full bg-violet-100 text-violet-600 text-sm">
+                        {job.remote_type}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="mt-4 flex flex-col sm:flex-row gap-4">
+                    <button
+                      onClick={() => setSelectedJob(job)}
+                      className="px-6 py-2 rounded-lg bg-violet-600 text-white hover:bg-violet-700 transition-colors"
+                    >
+                      Voir les détails
+                    </button>
+                    <button
+                      onClick={() => removeFavorite(job.id)}
+                      className="px-6 py-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
+                    >
+                      Retirer des favoris
+                    </button>
+                  </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       )}
 
       <JobDetailsModal
         job={selectedJob}
-        isOpen={selectedJob !== null}
+        isOpen={!!selectedJob}
         onClose={() => setSelectedJob(null)}
       />
-    </main>
+    </div>
   )
 }
