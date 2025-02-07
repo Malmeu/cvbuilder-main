@@ -16,11 +16,6 @@ export default function JobDetailsModal({
   isOpen,
   onClose,
 }: JobDetailsModalProps) {
-  const formatSalary = (salary?: number) => {
-    if (!salary) return 'Non spécifié'
-    return `${salary.toLocaleString()} DZD`
-  }
-
   if (!job) return null
 
   return (
@@ -86,13 +81,28 @@ export default function JobDetailsModal({
             </div>
           </div>
 
-          {/* Salaire et contact */}
-          <div className="grid sm:grid-cols-2 gap-4 p-6 rounded-2xl bg-gray-50 border border-gray-100 mb-8">
-            <div>
-              <h3 className="text-gray-500 font-medium mb-1">Salaire</h3>
-              <p className="text-2xl font-semibold text-gray-900">{formatSalary(job.salary)}</p>
+          {/* Description */}
+          <div className="mb-8">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Description du poste</h3>
+            <div className="prose prose-gray prose-sm max-w-none">
+              {job.description.split('\n').map((paragraph, index) => (
+                <p key={index} className="text-gray-600">{paragraph}</p>
+              ))}
             </div>
+          </div>
 
+          {/* Exigences */}
+          <div className="mb-8">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Prérequis</h3>
+            <div className="prose prose-gray prose-sm max-w-none">
+              {job.requirements.split('\n').map((paragraph, index) => (
+                <p key={index} className="text-gray-600">{paragraph}</p>
+              ))}
+            </div>
+          </div>
+
+          {/* Contact */}
+          <div className="grid sm:grid-cols-2 gap-4 p-6 rounded-2xl bg-gray-50 border border-gray-100 mb-8">
             <div className="space-y-3">
               {job.contact_email && (
                 <a
@@ -117,26 +127,6 @@ export default function JobDetailsModal({
                   {job.contact_phone}
                 </a>
               )}
-            </div>
-          </div>
-
-          {/* Description */}
-          <div className="mb-8">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Description du poste</h3>
-            <div className="prose prose-gray prose-sm max-w-none">
-              {job.description.split('\n').map((paragraph, index) => (
-                <p key={index} className="text-gray-600">{paragraph}</p>
-              ))}
-            </div>
-          </div>
-
-          {/* Exigences */}
-          <div className="mb-8">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Prérequis</h3>
-            <div className="prose prose-gray prose-sm max-w-none">
-              {job.requirements.split('\n').map((paragraph, index) => (
-                <p key={index} className="text-gray-600">{paragraph}</p>
-              ))}
             </div>
           </div>
 

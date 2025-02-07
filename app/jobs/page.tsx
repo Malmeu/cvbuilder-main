@@ -6,18 +6,21 @@ import { motion } from 'framer-motion'
 import { Search, MapPin, Building2 } from 'lucide-react'
 import { Job } from '../types/job'
 import JobDetailsModal from '../components/JobDetailsModal'
+import JobCard from '../components/JobCard'
 import { useToast } from '../hooks/use-toast'
 
 export default function JobsPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedJob, setSelectedJob] = useState<Job | null>(null)
   const [jobs, setJobs] = useState<Job[]>([])
+  const [favorites, setFavorites] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const supabase = createClientComponentClient()
   const { toast } = useToast()
 
   useEffect(() => {
     loadJobs()
+    loadFavorites()
   }, [])
 
   const loadJobs = async () => {
@@ -42,6 +45,64 @@ export default function JobsPage() {
     }
   }
 
+  const loadFavorites = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) return
+
+      const { data, error } = await supabase
+        .from('job_favorites')
+        .select('job_id')
+        .eq('user_id', session.user.id)
+
+      if (error) throw error
+
+      setFavorites(data?.map(f => f.job_id) || [])
+    } catch (error) {
+      console.error('Erreur favoris:', error)
+    }
+  }
+
+  const toggleFavorite = async (jobId: string) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        toast({
+          title: 'Connexion requise',
+          description: 'Veuillez vous connecter pour ajouter aux favoris',
+          variant: 'destructive',
+        })
+        return
+      }
+
+      if (favorites.includes(jobId)) {
+        // Supprimer des favoris
+        const { error } = await supabase
+          .from('job_favorites')
+          .delete()
+          .match({ user_id: session.user.id, job_id: jobId })
+
+        if (error) throw error
+        setFavorites(prev => prev.filter(id => id !== jobId))
+      } else {
+        // Ajouter aux favoris
+        const { error } = await supabase
+          .from('job_favorites')
+          .insert({ user_id: session.user.id, job_id: jobId })
+
+        if (error) throw error
+        setFavorites(prev => [...prev, jobId])
+      }
+    } catch (error) {
+      console.error('Erreur favoris:', error)
+      toast({
+        title: 'Erreur',
+        description: 'Impossible de mettre à jour les favoris',
+        variant: 'destructive',
+      })
+    }
+  }
+
   const handleSearch = (query: string) => {
     setSearchQuery(query)
   }
@@ -54,34 +115,6 @@ export default function JobsPage() {
 
     return searchTerms.every(term => jobText.includes(term))
   })
-
-  const getJobTypeLabel = (type: string) => {
-    switch (type) {
-      case 'full_time':
-        return 'Temps plein'
-      case 'part_time':
-        return 'Temps partiel'
-      case 'contract':
-        return 'Freelance'
-      case 'internship':
-        return 'Stage'
-      default:
-        return type
-    }
-  }
-
-  const getRemoteTypeLabel = (type: string) => {
-    switch (type) {
-      case 'onsite':
-        return 'Sur site'
-      case 'hybrid':
-        return 'Hybride'
-      case 'remote':
-        return 'À distance'
-      default:
-        return type
-    }
-  }
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-base-100 via-base-200 to-base-100">
@@ -150,31 +183,13 @@ export default function JobsPage() {
           ) : (
             <div className="space-y-4">
               {filteredJobs.map((job) => (
-                <div
+                <JobCard
                   key={job.id}
-                  onClick={() => setSelectedJob(job)}
-                  className="p-6 rounded-xl border border-base-200 hover:border-base-300 transition-colors cursor-pointer"
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <h2 className="text-xl font-semibold mb-2">{job.title}</h2>
-                      <div className="flex flex-wrap gap-4 text-sm text-base-content/70">
-                        <div className="flex items-center gap-1.5">
-                          <Building2 className="w-4 h-4" />
-                          {job.company}
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                          <MapPin className="w-4 h-4" />
-                          {job.location}
-                        </div>
-                        <span>•</span>
-                        <span>{getJobTypeLabel(job.job_type)}</span>
-                        <span>•</span>
-                        <span>{getRemoteTypeLabel(job.remote_type)}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                  job={job}
+                  onViewDetails={() => setSelectedJob(job)}
+                  onToggleFavorite={() => toggleFavorite(job.id)}
+                  isFavorite={favorites.includes(job.id)}
+                />
               ))}
 
               {filteredJobs.length === 0 && (

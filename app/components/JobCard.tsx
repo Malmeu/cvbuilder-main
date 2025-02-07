@@ -1,21 +1,26 @@
 'use client'
 
 import { Job } from '@/app/types/job'
-import { Building2, MapPin, Clock } from 'lucide-react'
+import { Building2, MapPin, Clock, Briefcase, Heart } from 'lucide-react'
 import Image from 'next/image'
 import { formatDistanceToNow } from 'date-fns'
 import { fr } from 'date-fns/locale'
+import { useState } from 'react'
 
 interface JobCardProps {
   job: Job
-  onViewDetails: () => void
+  onViewDetails?: () => void
+  onToggleFavorite?: () => void
+  isFavorite?: boolean
 }
 
-export default function JobCard({ job, onViewDetails }: JobCardProps) {
-  const formatSalary = (salary?: number) => {
-    if (!salary) return 'Non spécifié'
-    return `${salary.toLocaleString()} DZD`
-  }
+export default function JobCard({ 
+  job, 
+  onViewDetails,
+  onToggleFavorite,
+  isFavorite = false 
+}: JobCardProps) {
+  const [isHovered, setIsHovered] = useState(false)
 
   const formatDate = (date: string) => {
     return formatDistanceToNow(new Date(date), {
@@ -26,67 +31,112 @@ export default function JobCard({ job, onViewDetails }: JobCardProps) {
 
   return (
     <div
-      className="bg-white rounded-xl border border-gray-200 p-6 hover:border-violet-500 transition-colors cursor-pointer"
-      onClick={onViewDetails}
+      className="group relative bg-white rounded-xl border border-gray-100 hover:border-violet-200 transition-all duration-300 
+                 shadow-sm hover:shadow-md overflow-hidden"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="flex gap-4">
-        {/* Logo */}
-        <div className="w-12 h-12 rounded-xl bg-gray-100 overflow-hidden flex-shrink-0">
-          {job.company_logo ? (
-            <Image
-              src={job.company_logo}
-              alt={job.company}
-              width={48}
-              height={48}
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <Building2 className="w-6 h-6 text-gray-400" />
-            </div>
-          )}
-        </div>
+      {/* Gradient overlay on hover */}
+      <div 
+        className={`absolute inset-0 bg-gradient-to-b from-violet-50/0 to-violet-50/20 opacity-0 
+                    transition-opacity duration-300 ${isHovered ? 'opacity-100' : ''}`}
+      />
 
-        {/* Contenu */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                {job.title}
-              </h3>
-              <p className="text-gray-600">{job.company}</p>
-            </div>
-
-            <div className="text-right">
-              <p className="text-lg font-medium text-gray-900">
-                {formatSalary(job.salary)}
-              </p>
-              <p className="text-sm text-gray-500">{job.job_type}</p>
-            </div>
+      {/* Content */}
+      <div className="relative p-6">
+        <div className="flex gap-4">
+          {/* Logo */}
+          <div className="w-16 h-16 rounded-xl bg-gray-50 overflow-hidden flex-shrink-0 
+                        border-2 border-gray-100 group-hover:border-violet-100 transition-colors">
+            {job.company_logo ? (
+              <Image
+                src={job.company_logo}
+                alt={job.company}
+                width={64}
+                height={64}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-violet-50 to-indigo-50">
+                <Building2 className="w-8 h-8 text-violet-400" />
+              </div>
+            )}
           </div>
 
-          <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-gray-500">
-            <div className="flex items-center gap-1.5">
-              <MapPin className="w-4 h-4" />
-              {job.location}
+          {/* Main Content */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-1 group-hover:text-violet-700 transition-colors">
+                  {job.title}
+                </h3>
+                <p className="text-gray-600">{job.company}</p>
+              </div>
+
+              {/* Favorite Button */}
+              {onToggleFavorite && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onToggleFavorite()
+                  }}
+                  className={`p-2 rounded-full transition-colors ${
+                    isFavorite 
+                      ? 'text-rose-600 bg-rose-50 hover:bg-rose-100' 
+                      : 'text-gray-400 hover:text-rose-600 hover:bg-rose-50'
+                  }`}
+                >
+                  <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
+                </button>
+              )}
             </div>
 
-            <div className="flex items-center gap-1.5">
-              <Clock className="w-4 h-4" />
-              {formatDate(job.created_at)}
+            {/* Job Details */}
+            <div className="mt-4 flex flex-wrap items-center gap-4">
+              <div className="flex items-center gap-1.5 text-sm text-gray-500">
+                <div className="p-1.5 rounded-lg bg-violet-50 text-violet-500">
+                  <MapPin className="w-4 h-4" />
+                </div>
+                {job.location}
+              </div>
+
+              <div className="flex items-center gap-1.5 text-sm text-gray-500">
+                <div className="p-1.5 rounded-lg bg-violet-50 text-violet-500">
+                  <Briefcase className="w-4 h-4" />
+                </div>
+                {job.job_type}
+              </div>
+
+              <div className="flex items-center gap-1.5 text-sm text-gray-500">
+                <div className="p-1.5 rounded-lg bg-violet-50 text-violet-500">
+                  <Clock className="w-4 h-4" />
+                </div>
+                {formatDate(job.created_at)}
+              </div>
+
+              {job.remote_type && (
+                <span className="px-3 py-1 rounded-full bg-violet-100 text-violet-600 text-sm font-medium">
+                  {job.remote_type}
+                </span>
+              )}
+
+              {job.is_urgent && (
+                <span className="px-3 py-1 rounded-full bg-rose-100 text-rose-600 text-sm font-medium">
+                  Urgent
+                </span>
+              )}
             </div>
 
-            {job.remote_type && (
-              <span className="px-2 py-0.5 rounded-full bg-violet-100 text-violet-600 text-sm">
-                {job.remote_type}
-              </span>
-            )}
-
-            {job.is_urgent && (
-              <span className="px-2 py-0.5 rounded-full bg-rose-100 text-rose-600 text-sm">
-                Urgent
-              </span>
-            )}
+            {/* Action */}
+            <div className="mt-6 flex items-center justify-end">
+              <button
+                onClick={onViewDetails}
+                className="px-6 py-2.5 rounded-lg bg-violet-600 text-white hover:bg-violet-700 
+                         transition-colors transform hover:translate-x-1 duration-200"
+              >
+                Voir les détails
+              </button>
+            </div>
           </div>
         </div>
       </div>
