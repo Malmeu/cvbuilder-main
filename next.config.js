@@ -2,14 +2,12 @@
 const nextConfig = {
   images: {
     domains: [
-      'images.pexels.com',
-      'res.cloudinary.com',
-      'i.ibb.co',
-      'img.freepik.com',
-      'images.unsplash.com'
+      'lh3.googleusercontent.com',
+      'avatars.githubusercontent.com'
     ],
   },
   experimental: {
+    serverActions: true,
     optimizeFonts: true,
     optimizeImages: true,
     serverComponentsExternalPackages: ['pdf-parse', 'pdf2pic', 'canvas']
