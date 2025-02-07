@@ -6,7 +6,11 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useToast } from '@/hooks/use-toast'
 
-export default function SignInForm() {
+interface SignInFormProps {
+  onClose?: () => void
+}
+
+export default function SignInForm({ onClose }: SignInFormProps) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -35,6 +39,7 @@ export default function SignInForm() {
 
       router.refresh()
       router.push('/dashboard')
+      onClose?.()
     } catch (error) {
       console.error('Erreur de connexion:', error)
       toast({
