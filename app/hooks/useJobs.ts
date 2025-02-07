@@ -1,55 +1,75 @@
 import { useState, useEffect } from 'react'
-import { Job, JobFilters } from '../types/job'
+import { Job } from '@/app/types/job'
+import { supabase } from '@/lib/supabase'
 
-export const useJobs = (initialFilters?: Partial<JobFilters>) => {
+interface UseJobsFilters {
+  category?: string
+  wilaya?: string
+  workType?: string
+  salary?: number
+  skills?: string[]
+}
+
+export function useJobs(filters: UseJobsFilters = {}) {
   const [jobs, setJobs] = useState<Job[]>([])
-  const [loading, setLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [filters, setFilters] = useState<Partial<JobFilters>>(initialFilters || {})
 
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        setLoading(true)
-        const queryParams = new URLSearchParams()
-        
-        // Ajout des filtres à l'URL
-        Object.entries(filters).forEach(([key, value]) => {
-          if (value) queryParams.append(key, value.toString())
-        })
-
-        const response = await fetch(`/api/jobs?${queryParams.toString()}`)
-        if (!response.ok) throw new Error('Erreur lors du chargement des offres')
-        
-        const data = await response.json()
-        setJobs(data)
+        setIsLoading(true)
         setError(null)
+
+        let query = supabase
+          .from('jobs')
+          .select('*')
+          .order('created_at', { ascending: false })
+
+        // Appliquer les filtres
+        if (filters.category) {
+          query = query.eq('category', filters.category)
+        }
+
+        if (filters.wilaya) {
+          query = query.eq('wilaya', filters.wilaya)
+        }
+
+        if (filters.workType) {
+          query = query.eq('work_type', filters.workType)
+        }
+
+        if (filters.salary) {
+          query = query.gte('salary', filters.salary)
+        }
+
+        const { data, error } = await query
+
+        if (error) throw error
+
+        // Filtrer par compétences si nécessaire (côté client car plus complexe)
+        let filteredJobs = data as Job[]
+        if (filters.skills?.length) {
+          filteredJobs = filteredJobs.filter(job =>
+            filters.skills!.some(skill =>
+              job.requirements.toLowerCase().includes(skill.toLowerCase())
+            )
+          )
+        }
+
+        setJobs(filteredJobs)
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Une erreur est survenue')
+        console.error('Error fetching jobs:', err)
+        setError("Une erreur s'est produite lors de la récupération des offres d'emploi")
       } finally {
-        setLoading(false)
+        setIsLoading(false)
       }
     }
 
     fetchJobs()
   }, [filters])
 
-  const updateFilters = (newFilters: Partial<JobFilters>) => {
-    setFilters(prev => ({ ...prev, ...newFilters }))
-  }
-
-  const clearFilters = () => {
-    setFilters({})
-  }
-
-  return {
-    jobs,
-    loading,
-    error,
-    filters,
-    updateFilters,
-    clearFilters
-  }
+  return { jobs, isLoading, error }
 }
 
 // Liste des wilayas d'Algérie pour les filtres
