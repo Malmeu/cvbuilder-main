@@ -79,39 +79,37 @@ export default function SignUpForm({ onClose }: SignUpFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6 text-black">
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label htmlFor="firstName" className="block text-sm font-medium mb-2">
+          <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
             Prénom
           </label>
           <div className="relative">
-            <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-base-content/50" />
+            <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-700" />
             <input
               id="firstName"
               name="firstName"
               type="text"
               required
-              className="w-full pl-10 pr-4 py-2 rounded-lg border border-base-content/10 bg-base-200/50 
-                focus:outline-none focus:ring-2 focus:ring-primary/50"
+              className="mt-1 block w-full pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
               placeholder="Votre prénom"
             />
           </div>
         </div>
         
         <div>
-          <label htmlFor="lastName" className="block text-sm font-medium mb-2">
+          <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">
             Nom
           </label>
           <div className="relative">
-            <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-base-content/50" />
+            <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-700" />
             <input
               id="lastName"
               name="lastName"
               type="text"
               required
-              className="w-full pl-10 pr-4 py-2 rounded-lg border border-base-content/10 bg-base-200/50 
-                focus:outline-none focus:ring-2 focus:ring-primary/50"
+              className="mt-1 block w-full pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
               placeholder="Votre nom"
             />
           </div>
@@ -119,71 +117,67 @@ export default function SignUpForm({ onClose }: SignUpFormProps) {
       </div>
 
       <div>
-        <label htmlFor="email" className="block text-sm font-medium mb-2">
+        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
           Email
         </label>
         <div className="relative">
-          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-base-content/50" />
+          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-700" />
           <input
             id="email"
             name="email"
             type="email"
             required
-            className="w-full pl-10 pr-4 py-2 rounded-lg border border-base-content/10 bg-base-200/50 
-              focus:outline-none focus:ring-2 focus:ring-primary/50"
+            className="mt-1 block w-full pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
             placeholder="votre@email.com"
           />
         </div>
       </div>
 
       <div>
-        <label htmlFor="password" className="block text-sm font-medium mb-2">
+        <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
           Mot de passe
         </label>
         <div className="relative">
-          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-base-content/50" />
+          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-700" />
           <input
             id="password"
             name="password"
             type="password"
             required
             minLength={6}
-            className="w-full pl-10 pr-4 py-2 rounded-lg border border-base-content/10 bg-base-200/50 
-              focus:outline-none focus:ring-2 focus:ring-primary/50"
+            className="mt-1 block w-full pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
             placeholder="Minimum 6 caractères"
           />
         </div>
       </div>
 
       <div>
-        <label htmlFor="phone" className="block text-sm font-medium mb-2">
+        <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
           Téléphone
         </label>
         <div className="relative">
-          <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-base-content/50" />
+          <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-700" />
           <input
             id="phone"
             name="phone"
             type="tel"
-            className="w-full pl-10 pr-4 py-2 rounded-lg border border-base-content/10 bg-base-200/50 
-              focus:outline-none focus:ring-2 focus:ring-primary/50"
+            className="mt-1 block w-full pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
             placeholder="Votre numéro de téléphone"
           />
         </div>
       </div>
 
       <div>
-        <label htmlFor="wilaya" className="block text-sm font-medium mb-2">
+        <label htmlFor="wilaya" className="block text-sm font-medium text-gray-700 mb-2">
           Wilaya
         </label>
         <div className="relative">
-          <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-base-content/50" />
+          <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-700" />
           <select
             id="wilaya"
             name="wilaya"
             required
-            className="w-full pl-10 pr-4 py-2 rounded-lg border border-base-content/10 bg-base-200/50 
-              focus:outline-none focus:ring-2 focus:ring-primary/50"
+            className="mt-1 block w-full pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
           >
             <option value="">Sélectionnez votre wilaya</option>
             {wilayas.map((wilaya) => (

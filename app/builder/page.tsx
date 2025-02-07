@@ -1,7 +1,7 @@
 "use client"
 import { Eye, RotateCw, Save } from "lucide-react";
 import PersonalDetailsForm from "../components/PersonalDetailsForm";
-import AdBanner from '../components/AdBanner';
+
 import { useEffect, useRef, useState } from "react";
 import { Education, Experience, Hobby, Language, PersonalDetails, Skill } from "@/type";
 import { educationsPreset, experiencesPreset, hobbiesPreset, languagesPreset, personalDetailsPreset, skillsPreset } from "@/presets";
@@ -40,66 +40,71 @@ export default function Builder() {
   const [windowWidth, setWindowWidth] = useState<number>(0);
 
   useEffect(() => {
-    const checkUser = async () => {
+    const checkAuth = async () => {
       try {
         const { data: { session }, error } = await supabase.auth.getSession()
         
         if (error) {
-          console.error('Erreur de session:', error)
-          toast({
-            title: 'Erreur',
-            description: 'Veuillez vous connecter pour continuer',
-            variant: 'destructive',
-          })
-          router.push('/login')
+          console.error('Erreur lors de la vérification de la session:', error)
+          router.push('/auth/signin?from=/builder')
           return
         }
 
-        if (!session?.user) {
-          toast({
-            title: 'Erreur',
-            description: 'Veuillez vous connecter pour continuer',
-            variant: 'destructive',
-          })
-          router.push('/login')
+        if (!session) {
+          router.push('/auth/signin?from=/builder')
           return
         }
 
         setUser(session.user)
         setLoading(false)
+
+        // Charger le CV existant si on a un ID
+        const params = new URLSearchParams(window.location.search)
+        const cvId = params.get('id')
+        if (cvId) {
+          const { data: cv, error: cvError } = await supabase
+            .from('user_cvs')
+            .select('*')
+            .eq('id', cvId)
+            .single()
+
+          if (cvError) {
+            console.error('Erreur lors du chargement du CV:', cvError)
+            toast({
+              title: 'Erreur',
+              description: 'Impossible de charger le CV',
+              variant: 'destructive',
+            })
+            return
+          }
+
+          if (cv) {
+            setPersonalDetails(cv.data.personalInfo)
+            setExperiences(cv.data.experience || [])
+            setEducations(cv.data.education || [])
+            setSkills(cv.data.skills || [])
+            setLanguages(cv.data.languages || [])
+            setHobbies(cv.data.hobbies || [])
+          }
+        }
       } catch (error) {
         console.error('Erreur lors de la vérification de la session:', error)
-        router.push('/login')
+        router.push('/auth/signin?from=/builder')
       }
     }
 
-    checkUser()
+    checkAuth()
 
-    // Écouter les changements d'authentification
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!session) {
-        router.push('/login')
-      } else {
-        setUser(session.user)
-      }
-    })
-
-    return () => {
-      subscription.unsubscribe()
-    }
-  }, [])
-
-  useEffect(() => {
+    // Gestionnaire pour la largeur de la fenêtre
     const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
-    
-    // Initialiser la largeur
-    handleResize();
+      setWindowWidth(window.innerWidth)
+    }
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+    window.addEventListener('resize', handleResize)
+    handleResize()
+
+    return () => window.removeEventListener('resize', handleResize)
+  }, [router])
 
   useEffect(() => {
     const defaultImageUrl = '/profile.jpg'
@@ -169,10 +174,53 @@ export default function Builder() {
   }
 
   useEffect(() => {
-    if (user) {
-      loadExistingCV()
+    const checkUser = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession()
+        
+        if (error) {
+          console.error('Erreur de session:', error)
+          toast({
+            title: 'Erreur',
+            description: 'Veuillez vous connecter pour continuer',
+            variant: 'destructive',
+          })
+          router.push('/login')
+          return
+        }
+
+        if (!session?.user) {
+          toast({
+            title: 'Erreur',
+            description: 'Veuillez vous connecter pour continuer',
+            variant: 'destructive',
+          })
+          router.push('/login')
+          return
+        }
+
+        setUser(session.user)
+      } catch (error) {
+        console.error('Erreur lors de la vérification de la session:', error)
+        router.push('/login')
+      }
     }
-  }, [user])
+
+    checkUser()
+
+    // Écouter les changements d'authentification
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) {
+        router.push('/login')
+      } else {
+        setUser(session.user)
+      }
+    })
+
+    return () => {
+      subscription.unsubscribe()
+    }
+  }, [])
 
   const handleThemeChange = (newTheme: string) => {
     setTheme(newTheme);
@@ -455,17 +503,19 @@ export default function Builder() {
     }
   }
 
+  if (loading) {
+    return <div className="flex items-center justify-center min-h-screen">
+      <div className="loading loading-spinner loading-lg"></div>
+    </div>;
+  }
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* Version Desktop */}
       <section className="hidden lg:flex flex-1">
         <div className="w-1/3 bg-base-100 p-8 overflow-y-auto">
           {/* Première publicité en haut du formulaire */}
-          <AdBanner 
-            slot="1234567890"
-            format="auto"
-            className="mb-8"
-          />
+          
           <div className="mb-4 flex justify-between items-center">
             <h1 className="text-2xl font-bold italic">
               CV
@@ -652,98 +702,134 @@ export default function Builder() {
       </section>
 
       {/* Version Mobile */}
-      <section className="lg:hidden flex flex-col flex-1 p-4">
-        <div className="flex justify-between items-center mb-4">
-          <div className="flex items-center gap-4">
-            <select
-              value={theme}
-              onChange={(e) => handleThemeChange(e.target.value)}
-              className="select select-bordered"
-            >
-              {themes.map((t) => (
-                <option key={t} value={t}>{t}</option>
-              ))}
-            </select>
-          </div>
-        </div>
+      <div className="lg:hidden">
+        <div className="fixed bottom-0 left-0 right-0 bg-base-100 border-t border-base-300 p-4 flex justify-between items-center z-40">
+          <button
+            onClick={() => (document.getElementById('preview_modal') as HTMLDialogElement)?.showModal()}
+            className="btn btn-circle btn-ghost"
+          >
+            <Eye className="w-6 h-6" />
+          </button>
 
-        <div className="tabs tabs-boxed mb-4">
-          <button className="tab tab-active">Éditer</button>
-          <button className="tab" onClick={() => (document.getElementById('preview_modal') as HTMLDialogElement)?.showModal()}>
-            Aperçu
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="btn btn-primary"
+          >
+            {saving ? (
+              <div className="loading loading-spinner loading-sm" />
+            ) : (
+              <>
+                <Save className="w-5 h-5" />
+                Sauvegarder
+              </>
+            )}
+          </button>
+
+          <button
+            onClick={handleResetAll}
+            className="btn btn-circle btn-ghost"
+          >
+            <RotateCw className="w-6 h-6" />
           </button>
         </div>
+        
+        {/* Ajouter un espace en bas pour éviter que le contenu ne soit caché par la barre fixe */}
+        <div className="h-20"></div>
 
-        <div className="bg-base-100 rounded-box p-4 flex flex-col gap-4 overflow-y-auto">
-          <div className="flex justify-between items-center">
-            <h1 className="badge badge-primary badge-outline">Infos personnelles</h1>
-            <button onClick={handleResetPersonalDetails} className="btn btn-primary">
-              <RotateCw className="w-4" />
+        <div className="flex flex-col flex-1 p-4">
+          <div className="flex justify-between items-center mb-4">
+            <div className="flex items-center gap-4">
+              <select
+                value={theme}
+                onChange={(e) => handleThemeChange(e.target.value)}
+                className="select select-bordered"
+              >
+                {themes.map((t) => (
+                  <option key={t} value={t}>{t}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="tabs tabs-boxed mb-4">
+            <button className="tab tab-active">Éditer</button>
+            <button className="tab" onClick={() => (document.getElementById('preview_modal') as HTMLDialogElement)?.showModal()}>
+              Aperçu
             </button>
           </div>
 
-          <PersonalDetailsForm
-            personalDetails={personalDetails}
-            setPersonalDetails={setPersonalDetails}
-            file={file}
-            setFile={setFile}
-          />
-
-          <div className="flex justify-between items-center">
-            <h1 className="badge badge-primary badge-outline">Expériences</h1>
-            <button onClick={handleResetExperiences} className="btn btn-primary">
-              <RotateCw className="w-4" />
-            </button>
-          </div>
-
-          <ExperienceForm
-            experiences={experiences}
-            setExperiences={setExperiences}
-          />
-
-          <div className="flex justify-between items-center">
-            <h1 className="badge badge-primary badge-outline">Éducations</h1>
-            <button onClick={handleResetEducations} className="btn btn-primary">
-              <RotateCw className="w-4" />
-            </button>
-          </div>
-
-          <EducationForm
-            educations={educations}
-            setEducations={setEducations}
-          />
-
-          <div className="flex justify-between items-center">
-            <h1 className="badge badge-primary badge-outline">Langues</h1>
-            <button onClick={handleResetLanguages} className="btn btn-primary">
-              <RotateCw className="w-4" />
-            </button>
-          </div>
-
-          <LanguageForm
-            languages={languages}
-            setLanguages={setLanguages}
-          />
-
-          <div className="flex flex-col gap-4">
+          <div className="bg-base-100 rounded-box p-4 flex flex-col gap-4 overflow-y-auto">
             <div className="flex justify-between items-center">
-              <h1 className="badge badge-primary badge-outline">Compétences</h1>
-              <button onClick={handleResetSkills} className="btn btn-primary">
+              <h1 className="badge badge-primary badge-outline">Infos personnelles</h1>
+              <button onClick={handleResetPersonalDetails} className="btn btn-primary">
                 <RotateCw className="w-4" />
               </button>
             </div>
-            <SkillForm skills={skills} setSkills={setSkills} />
+
+            <PersonalDetailsForm
+              personalDetails={personalDetails}
+              setPersonalDetails={setPersonalDetails}
+              file={file}
+              setFile={setFile}
+            />
 
             <div className="flex justify-between items-center">
-              <h1 className="badge badge-primary badge-outline">Loisirs</h1>
-              <button onClick={handleResetHobbies} className="btn btn-primary">
+              <h1 className="badge badge-primary badge-outline">Expériences</h1>
+              <button onClick={handleResetExperiences} className="btn btn-primary">
                 <RotateCw className="w-4" />
               </button>
             </div>
-            <HobbyForm hobbies={hobbies} setHobbies={setHobbies} />
+
+            <ExperienceForm
+              experiences={experiences}
+              setExperiences={setExperiences}
+            />
+
+            <div className="flex justify-between items-center">
+              <h1 className="badge badge-primary badge-outline">Éducations</h1>
+              <button onClick={handleResetEducations} className="btn btn-primary">
+                <RotateCw className="w-4" />
+              </button>
+            </div>
+
+            <EducationForm
+              educations={educations}
+              setEducations={setEducations}
+            />
+
+            <div className="flex justify-between items-center">
+              <h1 className="badge badge-primary badge-outline">Langues</h1>
+              <button onClick={handleResetLanguages} className="btn btn-primary">
+                <RotateCw className="w-4" />
+              </button>
+            </div>
+
+            <LanguageForm
+              languages={languages}
+              setLanguages={setLanguages}
+            />
+
+            <div className="flex flex-col gap-4">
+              <div className="flex justify-between items-center">
+                <h1 className="badge badge-primary badge-outline">Compétences</h1>
+                <button onClick={handleResetSkills} className="btn btn-primary">
+                  <RotateCw className="w-4" />
+                </button>
+              </div>
+              <SkillForm skills={skills} setSkills={setSkills} />
+
+              <div className="flex justify-between items-center">
+                <h1 className="badge badge-primary badge-outline">Loisirs</h1>
+                <button onClick={handleResetHobbies} className="btn btn-primary">
+                  <RotateCw className="w-4" />
+                </button>
+              </div>
+              <HobbyForm hobbies={hobbies} setHobbies={setHobbies} />
+            </div>
           </div>
         </div>
-      </section>
+      </div>
 
       {/* Modal d'aperçu pour mobile */}
       <dialog id="preview_modal" className="modal">
@@ -823,20 +909,6 @@ export default function Builder() {
           </div>
         </div>
       </dialog>
-
-      {/* Bouton de sauvegarde fixe */}
-      <div className="fixed top-4 right-4 z-50 lg:hidden">
-        <button
-          onClick={handleSave}
-          disabled={saving}
-          className="inline-flex items-center px-6 py-3 rounded-xl text-base font-medium 
-            bg-primary text-primary-content hover:bg-primary/90 transition-colors
-            disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
-        >
-          <Save className="w-5 h-5 mr-2" />
-          {saving ? 'Sauvegarde...' : 'Sauvegarder'}
-        </button>
-      </div>
 
     </div>
   )

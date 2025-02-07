@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { FileText, Search, Users, GraduationCap, MessageSquare } from 'lucide-react';
-import Navbar from '../components/Navbar';
+
 
 const outils = [
   {
@@ -47,7 +47,7 @@ const outils = [
 export default function Outils() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      <Navbar />
+
       <main className="container mx-auto px-4 py-16">
         <div className="max-w-6xl mx-auto">
           <motion.div

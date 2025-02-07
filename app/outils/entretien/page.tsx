@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import Navbar from '@/app/components/Navbar';
 import Link from 'next/link';
 import { ArrowLeft, Loader2, BookOpen, Building2, BriefcaseIcon, Wand2 } from 'lucide-react';
 
@@ -59,7 +58,6 @@ export default function Entretien() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      <Navbar />
       <main className="container mx-auto px-4 py-16">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
