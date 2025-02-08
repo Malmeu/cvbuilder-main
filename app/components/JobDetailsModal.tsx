@@ -8,7 +8,8 @@ import {
   Briefcase, 
   Mail, 
   Phone, 
-  ExternalLink 
+  ExternalLink,
+  X 
 } from 'lucide-react'
 import Image from 'next/image'
 import { formatDistanceToNow } from 'date-fns'
@@ -184,13 +185,23 @@ Cordialement,
           <p className="text-sm text-gray-500">
             Vous êtes intéressé par cette offre ?
           </p>
-          <Button 
-            variant="default" 
-            className="bg-violet-600 hover:bg-violet-700"
-            onClick={handleApply}
-          >
-            Postuler
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button 
+              variant="outline"
+              className="text-gray-600 hover:bg-gray-100"
+              onClick={onClose}
+            >
+              <X className="w-4 h-4 mr-2" />
+              Fermer
+            </Button>
+            <Button 
+              variant="default" 
+              className="bg-violet-600 hover:bg-violet-700"
+              onClick={handleApply}
+            >
+              Postuler
+            </Button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>
