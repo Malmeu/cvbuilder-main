@@ -44,14 +44,9 @@ export default function Builder() {
       try {
         const { data: { session }, error } = await supabase.auth.getSession()
         
-        if (error) {
+        if (error || !session) {
           console.error('Erreur lors de la vérification de la session:', error)
-          router.push('/auth/signin?from=/builder')
-          return
-        }
-
-        if (!session) {
-          router.push('/auth/signin?from=/builder')
+          router.push('/auth/signin')
           return
         }
 
@@ -89,7 +84,7 @@ export default function Builder() {
         }
       } catch (error) {
         console.error('Erreur lors de la vérification de la session:', error)
-        router.push('/auth/signin?from=/builder')
+        router.push('/auth/signin')
       }
     }
 
@@ -178,31 +173,21 @@ export default function Builder() {
       try {
         const { data: { session }, error } = await supabase.auth.getSession()
         
-        if (error) {
+        if (error || !session) {
           console.error('Erreur de session:', error)
           toast({
             title: 'Erreur',
             description: 'Veuillez vous connecter pour continuer',
             variant: 'destructive',
           })
-          router.push('/login')
-          return
-        }
-
-        if (!session?.user) {
-          toast({
-            title: 'Erreur',
-            description: 'Veuillez vous connecter pour continuer',
-            variant: 'destructive',
-          })
-          router.push('/login')
+          router.push('/auth/signin')
           return
         }
 
         setUser(session.user)
       } catch (error) {
         console.error('Erreur lors de la vérification de la session:', error)
-        router.push('/login')
+        router.push('/auth/signin')
       }
     }
 
@@ -211,7 +196,7 @@ export default function Builder() {
     // Écouter les changements d'authentification
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!session) {
-        router.push('/login')
+        router.push('/auth/signin')
       } else {
         setUser(session.user)
       }

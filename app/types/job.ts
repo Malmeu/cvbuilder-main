@@ -1,7 +1,7 @@
 export type JobCategory = 'normal' | 'seasonal' | 'internship' | 'remote'
 
 export type JobType = 'full_time' | 'part_time' | 'contract' | 'internship'
-export type RemoteType = 'onsite' | 'hybrid' | 'remote'
+export type RemoteType = 'Sur le site' | 'hybrid' | 'remote'
 export type WorkType = 'remote' | 'on-site' | 'hybrid'
 
 export interface Job {

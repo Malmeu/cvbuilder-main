@@ -38,7 +38,17 @@ export default function SignInForm({ onClose }: SignInFormProps) {
       }
 
       router.refresh()
-      router.push('/dashboard')
+      
+      // Vérifier le paramètre 'from' pour la redirection
+      const searchParams = new URLSearchParams(window.location.search)
+      const fromParam = searchParams.get('from')
+      
+      if (fromParam === '/builder') {
+        router.push('/builder')
+      } else {
+        router.push('/dashboard')
+      }
+      
       onClose?.()
     } catch (error) {
       console.error('Erreur de connexion:', error)

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { Building2, MapPin } from 'lucide-react'
 import Image from 'next/image'
+import { JOB_TYPE_TRANSLATIONS, REMOTE_TYPE_TRANSLATIONS } from '@/app/data/job-translations'
 
 export default function CreateJobPage() {
   const router = useRouter()
@@ -17,7 +18,7 @@ export default function CreateJobPage() {
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) {
-        router.push('/auth/login')
+        router.push('/auth/signin')
         return
       }
       
@@ -190,7 +191,7 @@ export default function CreateJobPage() {
             <input
               type="number"
               name="salary"
-              required
+              
               className="input input-bordered w-full"
               placeholder="ex: 150000"
             />
@@ -201,11 +202,9 @@ export default function CreateJobPage() {
               Type de contrat *
             </label>
             <select name="job_type" required className="select select-bordered w-full">
-              <option value="">Sélectionner</option>
-              <option value="full_time">Temps plein</option>
-              <option value="part_time">Temps partiel</option>
-              <option value="contract">Freelance</option>
-              <option value="internship">Stage</option>
+              {Object.entries(JOB_TYPE_TRANSLATIONS).map(([key, label]) => (
+                <option key={key} value={key}>{label}</option>
+              ))}
             </select>
           </div>
 
@@ -214,10 +213,9 @@ export default function CreateJobPage() {
               Type de travail *
             </label>
             <select name="remote_type" required className="select select-bordered w-full">
-              <option value="">Sélectionner</option>
-              <option value="onsite">Sur site</option>
-              <option value="hybrid">Hybride</option>
-              <option value="remote">À distance</option>
+              {Object.entries(REMOTE_TYPE_TRANSLATIONS).map(([key, label]) => (
+                <option key={key} value={key}>{label}</option>
+              ))}
             </select>
           </div>
 

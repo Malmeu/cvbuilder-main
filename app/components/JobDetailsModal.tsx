@@ -18,6 +18,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
 import { Button } from './ui/button'
 import { formatCompanyLogoUrl, sanitizeImageUrl } from '@/lib/supabase-helpers'
 import { toast } from 'sonner'
+import { translateJobType, translateRemoteType } from '@/app/data/job-translations'
 
 interface JobDetailsModalProps {
   job: Job | null
@@ -111,7 +112,7 @@ Cordialement,
               <div className="p-1.5 rounded-lg bg-violet-50 text-violet-500">
                 <Briefcase className="w-4 h-4" />
               </div>
-              Type de poste : {job.job_type}
+              Type de poste : {translateJobType(job.job_type)}
             </div>
 
             <div className="flex items-center gap-2 text-sm text-gray-600">
@@ -126,7 +127,7 @@ Cordialement,
                 <div className="p-1.5 rounded-lg bg-violet-50 text-violet-500">
                   <MapPin className="w-4 h-4" />
                 </div>
-                Type de travail : {job.remote_type}
+                Type de travail : {translateRemoteType(job.remote_type)}
               </div>
             )}
 

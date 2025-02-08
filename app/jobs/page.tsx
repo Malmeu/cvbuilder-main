@@ -6,8 +6,8 @@ import { motion } from 'framer-motion'
 import { Search, MapPin, Building2 } from 'lucide-react'
 import { Job } from '../types/job'
 import JobDetailsModal from '../components/JobDetailsModal'
-import JobCard from '../components/JobCard'
 import { useToast } from '../hooks/use-toast'
+import { translateJobType, translateRemoteType } from '@/app/data/job-translations'
 
 export default function JobsPage() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -181,30 +181,82 @@ export default function JobsPage() {
               ))}
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {filteredJobs.map((job) => (
-                <JobCard
+                <motion.div
                   key={job.id}
-                  job={job}
-                  onViewDetails={() => setSelectedJob(job)}
-                  onToggleFavorite={() => toggleFavorite(job.id)}
-                  isFavorite={favorites.includes(job.id)}
-                />
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3 }}
+                  className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:-translate-y-2 border border-gray-100 overflow-hidden"
+                >
+                  <div className="p-6">
+                    <div className="flex items-center mb-4">
+                      <div className="w-16 h-16 rounded-xl bg-gray-100 flex items-center justify-center mr-4">
+                        {job.company_logo ? (
+                          <img 
+                            src={job.company_logo} 
+                            alt={`${job.company} logo`} 
+                            className="w-full h-full object-contain"
+                          />
+                        ) : (
+                          <Building2 className="w-8 h-8 text-gray-400" />
+                        )}
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900 line-clamp-1">
+                          {job.title}
+                        </h3>
+                        <p className="text-sm text-gray-500 line-clamp-1">
+                          {job.company}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center text-sm text-gray-600 mb-4">
+                      <MapPin className="w-4 h-4 mr-2 text-primary" />
+                      <span className="line-clamp-1">{job.location}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs px-3 py-1 bg-primary/10 text-primary rounded-full">
+                        {translateJobType(job.job_type)}
+                      </span>
+                      <div className="flex space-x-2">
+                        <button 
+                          onClick={() => setSelectedJob(job)}
+                          className="text-xs bg-primary/10 text-primary hover:bg-primary/20 px-3 py-1.5 rounded-full transition-colors"
+                        >
+                          Détails
+                        </button>
+                        <button
+                          onClick={() => toggleFavorite(job.id)}
+                          className={`text-xs px-3 py-1.5 rounded-full transition-colors ${
+                            favorites.includes(job.id) 
+                              ? 'bg-red-100 text-red-600 hover:bg-red-200' 
+                              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                          }`}
+                        >
+                          {favorites.includes(job.id) ? '❤️' : '♡'}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
               ))}
+            </div>
+          )
+          }
 
-              {filteredJobs.length === 0 && (
-                <div className="text-center py-12 text-base-content/70">
-                  {searchQuery ? (
-                    <>
-                      Aucune offre ne correspond à votre recherche
-                      <p className="mt-2 text-sm">
-                        Essayez avec d&apos;autres mots-clés ou supprimez des filtres
-                      </p>
-                    </>
-                  ) : (
-                    'Aucune offre d&apos;emploi pour le moment'
-                  )}
-                </div>
+          {filteredJobs.length === 0 && (
+            <div className="text-center py-12 text-base-content/70">
+              {searchQuery ? (
+                <>
+                  Aucune offre ne correspond à votre recherche
+                  <p className="mt-2 text-sm">
+                    Essayez avec d&apos;autres mots-clés ou supprimez des filtres
+                  </p>
+                </>
+              ) : (
+                'Aucune offre d&apos;emploi pour le moment'
               )}
             </div>
           )}

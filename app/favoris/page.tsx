@@ -17,7 +17,15 @@ export default function FavorisPage() {
     const fetchFavoris = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession()
-        if (!session) return
+        
+        console.log('Session utilisateur:', session)
+        
+        if (!session) {
+          console.warn('Aucune session utilisateur')
+          return
+        }
+
+        console.log('ID utilisateur:', session.user.id)
 
         // Récupérer d'abord les favoris
         const { data: favorisData, error: favorisError } = await supabase
@@ -25,15 +33,23 @@ export default function FavorisPage() {
           .select('job_id')
           .eq('user_id', session.user.id)
 
+        console.log('Données favoris:', favorisData)
+        console.log('Erreur favoris:', favorisError)
+
         if (favorisError) throw favorisError
 
         if (favorisData && favorisData.length > 0) {
           // Récupérer les détails des jobs favoris
           const jobIds = favorisData.map(f => f.job_id)
+          console.log('IDs des jobs favoris:', jobIds)
+
           const { data: jobsData, error: jobsError } = await supabase
             .from('jobs')
             .select('*')
             .in('id', jobIds)
+
+          console.log('Données des jobs favoris:', jobsData)
+          console.log('Erreur jobs:', jobsError)
 
           if (jobsError) throw jobsError
 
@@ -44,6 +60,8 @@ export default function FavorisPage() {
           })) || []
 
           setFavoris(sanitizedJobs)
+        } else {
+          console.warn('Aucun favori trouvé pour cet utilisateur')
         }
       } catch (error) {
         console.error('Erreur lors de la récupération des favoris:', error)
