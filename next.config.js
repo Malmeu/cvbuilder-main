@@ -5,7 +5,8 @@ const nextConfig = {
       'lh3.googleusercontent.com',
       'avatars.githubusercontent.com',
       'images.pexels.com',
-      'images.unsplash.com'
+      'images.unsplash.com',
+      'vcslmteyblvtxzrywvdm.supabase.co'
     ],
   },
   experimental: {

@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { formatDistanceToNow } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import { useState } from 'react'
+import { formatCompanyLogoUrl, sanitizeImageUrl } from '@/lib/supabase-helpers'
 
 interface JobCardProps {
   job: Job
@@ -29,6 +30,8 @@ export default function JobCard({
     })
   }
 
+  const companyLogoUrl = sanitizeImageUrl(job.company_logo)
+
   return (
     <div
       className="group relative bg-white rounded-xl border border-gray-100 hover:border-violet-200 transition-all duration-300 
@@ -48,9 +51,9 @@ export default function JobCard({
           {/* Logo */}
           <div className="w-16 h-16 rounded-xl bg-gray-50 overflow-hidden flex-shrink-0 
                         border-2 border-gray-100 group-hover:border-violet-100 transition-colors">
-            {job.company_logo ? (
+            {companyLogoUrl ? (
               <Image
-                src={job.company_logo}
+                src={companyLogoUrl}
                 alt={job.company}
                 width={64}
                 height={64}

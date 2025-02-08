@@ -6,6 +6,7 @@ import { Job } from '@/app/types/job'
 import { Building2, MapPin } from 'lucide-react'
 import Image from 'next/image'
 import JobDetailsModal from '../components/JobDetailsModal'
+import { sanitizeImageUrl } from '@/lib/supabase-helpers'
 
 export default function FavorisPage() {
   const [favoris, setFavoris] = useState<Job[]>([])
@@ -35,7 +36,14 @@ export default function FavorisPage() {
             .in('id', jobIds)
 
           if (jobsError) throw jobsError
-          setFavoris(jobsData || [])
+
+          // Sanitize company logos
+          const sanitizedJobs = jobsData?.map(job => ({
+            ...job,
+            company_logo: sanitizeImageUrl(job.company_logo)
+          })) || []
+
+          setFavoris(sanitizedJobs)
         }
       } catch (error) {
         console.error('Erreur lors de la récupération des favoris:', error)
