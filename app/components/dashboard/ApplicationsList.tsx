@@ -145,96 +145,37 @@ export default function ApplicationsList() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-semibold">Mes candidatures</h2>
-        <Link
-          href="/jobs"
-          className="inline-flex items-center px-4 py-2 rounded-xl text-sm font-medium 
-            bg-primary text-primary-content hover:bg-primary/90 transition-colors"
-        >
-          <Plus className="w-5 h-5 mr-2" />
-          Nouvelle candidature
-        </Link>
       </div>
 
-      {applications.length === 0 ? (
-        <div className="text-center py-12">
-          <Briefcase className="w-12 h-12 mx-auto text-base-content/30" />
-          <h3 className="mt-4 text-lg font-medium">Aucune candidature</h3>
-          <p className="mt-2 text-base-content/60">
-            Commencez à postuler aux offres d'emploi
+      <div className="bg-white rounded-xl shadow-lg p-8 text-center space-y-6">
+        <div className="bg-primary/10 p-4 rounded-xl">
+          <h3 className="text-xl font-semibold text-primary mb-4">
+            Fonctionnalité en développement
+          </h3>
+          <p className="text-base-content/70 mb-6">
+            Le suivi de vos candidatures sera disponible très prochainement. 
+            Nous travaillons actuellement à améliorer cette fonctionnalité pour 
+            vous offrir la meilleure expérience possible.
+          </p>
+          <div className="flex justify-center items-center space-x-4">
+            <Briefcase className="w-12 h-12 text-primary/50" />
+          </div>
+        </div>
+        
+        <div>
+          <p className="text-base-content/60">
+            En attendant, continuez à postuler et à explorer de nouvelles opportunités !
           </p>
           <Link
             href="/jobs"
-            className="inline-flex items-center px-4 py-2 mt-4 rounded-xl text-sm font-medium 
+            className="inline-flex items-center px-6 py-3 mt-4 rounded-xl text-sm font-medium 
               bg-primary text-primary-content hover:bg-primary/90 transition-colors"
           >
             <Plus className="w-5 h-5 mr-2" />
-            Voir les offres
+            Voir les offres d'emploi
           </Link>
         </div>
-      ) : (
-        <div className="space-y-4">
-          {applications.map((application) => (
-            <div
-              key={application.id}
-              className="bg-base-100 rounded-xl shadow-sm hover:shadow-md transition-shadow p-6"
-            >
-              <div className="flex items-start justify-between">
-                <div>
-                  <h3 className="font-medium">{application.job.title}</h3>
-                  <p className="text-sm text-base-content/60 mt-1">
-                    {application.job.company}
-                  </p>
-                  {application.cv && (
-                    <p className="text-sm text-base-content/60 mt-1 flex items-center">
-                      <FileText className="w-4 h-4 mr-1" />
-                      CV utilisé : {application.cv.title}
-                    </p>
-                  )}
-                  <div className="flex items-center mt-4 space-x-4">
-                    <select
-                      value={application.status}
-                      onChange={(e) => handleStatusChange(application.id, e.target.value as Application['status'])}
-                      className={`px-3 py-1 rounded-lg text-sm font-medium ${statusColors[application.status]}`}
-                    >
-                      {Object.entries(statusLabels).map(([value, label]) => (
-                        <option key={value} value={value}>
-                          {label}
-                        </option>
-                      ))}
-                    </select>
-                    <p className="text-sm text-base-content/60">
-                      Postulé le {new Date(application.applied_at).toLocaleDateString()}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex space-x-2">
-                  <Link
-                    href={`/jobs/${application.job.id}`}
-                    className="p-2 rounded-lg hover:bg-base-200 text-base-content/60 
-                      hover:text-primary transition-colors"
-                    title="Voir l'offre"
-                  >
-                    <Eye className="w-5 h-5" />
-                  </Link>
-                  <button
-                    onClick={() => handleDelete(application.id)}
-                    className="p-2 rounded-lg hover:bg-base-200 text-base-content/60 
-                      hover:text-red-500 transition-colors"
-                    title="Supprimer"
-                  >
-                    <Trash2 className="w-5 h-5" />
-                  </button>
-                </div>
-              </div>
-              {application.notes && (
-                <p className="mt-4 text-sm text-base-content/80 bg-base-200 p-4 rounded-lg">
-                  {application.notes}
-                </p>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
+      </div>
     </div>
   )
 }

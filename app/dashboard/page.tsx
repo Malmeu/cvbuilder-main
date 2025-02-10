@@ -4,11 +4,20 @@ import { useEffect, useState } from 'react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { FileText, Briefcase, Star } from 'lucide-react'
 import Link from 'next/link'
+import { motion } from 'framer-motion'
 
 interface DashboardStats {
   totalCVs: number
   totalApplications: number
   totalFavorites: number
+}
+
+interface CV {
+  id: number
+  title: string
+  type: string
+  is_primary: boolean
+  created_at: string
 }
 
 export default function DashboardPage() {
@@ -18,6 +27,7 @@ export default function DashboardPage() {
     totalFavorites: 0
   })
   const [loading, setLoading] = useState(true)
+  const [cvs, setCvs] = useState<CV[]>([])
   const supabase = createClientComponentClient()
 
   useEffect(() => {
@@ -53,7 +63,28 @@ export default function DashboardPage() {
       }
     }
 
+    const fetchCvs = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return
+
+        const { data, error } = await supabase
+          .from('user_cvs')
+          .select('id, title, type, is_primary, created_at')
+          .eq('user_id', user.id)
+
+        if (error) {
+          console.error('Erreur lors du chargement des CV:', error)
+        } else {
+          setCvs(data)
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des CV:', error)
+      }
+    }
+
     fetchStats()
+    fetchCvs()
   }, [supabase])
 
   const stats_cards = [
@@ -77,11 +108,15 @@ export default function DashboardPage() {
       name: 'Offres sauvegardées',
       value: stats.totalFavorites,
       icon: Star,
-      href: '/dashboard/favorites',
+      href: '/favoris',
       color: 'text-amber-500',
       bgColor: 'bg-amber-500/10'
     }
   ]
+
+  const downloadCV = async (id: number) => {
+    // Implement CV download logic here
+  }
 
   if (loading) {
     return (
@@ -127,15 +162,97 @@ export default function DashboardPage() {
         ))}
       </div>
 
-      {/* Section des CV récents */}
       <div className="mt-12">
-        <h2 className="text-xl font-semibold mb-6">CV récents</h2>
-        {/* Liste des CV à implémenter */}
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-semibold">CV récents</h2>
+          <Link 
+            href="/dashboard/cvs" 
+            className="text-sm text-primary hover:underline"
+          >
+            Voir tous les CV
+          </Link>
+        </div>
+
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[1, 2, 3].map((i) => (
+              <div 
+                key={i} 
+                className="bg-base-200 rounded-xl animate-pulse h-40"
+              />
+            ))}
+          </div>
+        ) : cvs.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {cvs.slice(0, 3).map((cv) => (
+              <motion.div
+                key={cv.id}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3 }}
+                className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow p-6"
+              >
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h3 className="font-semibold text-base-content mb-1">
+                      {cv.title}
+                    </h3>
+                    <p className="text-sm text-base-content/60">
+                      {cv.type}
+                    </p>
+                  </div>
+                  <span 
+                    className={`px-3 py-1 rounded-full text-xs ${
+                      cv.is_primary 
+                        ? 'bg-green-100 text-green-800' 
+                        : 'bg-gray-100 text-gray-800'
+                    }`}
+                  >
+                    {cv.is_primary ? 'Principal' : 'Secondaire'}
+                  </span>
+                </div>
+                
+                <div className="flex justify-between items-center mt-4">
+                  <p className="text-sm text-base-content/60">
+                    Créé le {new Date(cv.created_at).toLocaleDateString('fr-FR')}
+                  </p>
+                  <div className="flex space-x-2">
+                    <Link
+                      href={`/builder?id=${cv.id}`}
+                      className="text-xs px-3 py-1.5 bg-primary/10 text-primary rounded-full hover:bg-primary/20 transition-colors"
+                    >
+                      Modifier
+                    </Link>
+                    <button
+                      onClick={() => downloadCV(cv.id)}
+                      className="text-xs px-3 py-1.5 bg-gray-100 text-gray-600 rounded-full hover:bg-gray-200 transition-colors"
+                    >
+                      Télécharger
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        ) : (
+          <div className="bg-base-200 rounded-xl p-6 text-center">
+            <p className="text-base-content/60 mb-4">
+              Vous n'avez pas encore créé de CV
+            </p>
+            <Link
+              href="/builder"
+              className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors"
+            >
+              Créer mon premier CV
+            </Link>
+          </div>
+        )}
       </div>
 
       {/* Section des candidatures récentes */}
       <div className="mt-12">
         <h2 className="text-xl font-semibold mb-6">Candidatures récentes</h2>
+         <p>A venir ...</p>
         {/* Liste des candidatures à implémenter */}
       </div>
     </div>

@@ -162,11 +162,12 @@ export default function JobsPage() {
             <p className="text-center text-base-content">
               Vous souhaitez publier gratuitement votre annonce ? 
               <a 
-                href="mailto:contact@cvdiali.com" 
+                href="mailto:cvdiali.contact@gmail.com" 
                 className="ml-2 text-primary hover:underline"
               >
-                Contactez-nous !
+                Contactez-nous
               </a>
+              
             </p>
           </div>
 
@@ -280,7 +281,7 @@ export default function JobsPage() {
                 <>
                   Aucune offre ne correspond à votre recherche
                   <p className="mt-2 text-sm">
-                    Essayez avec d&apos;autres mots-clés ou supprimez des filtres
+                    Essayez avec d&apos;autres mots-clés
                   </p>
                 </>
               ) : (
