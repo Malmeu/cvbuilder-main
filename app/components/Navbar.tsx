@@ -55,7 +55,7 @@ export default function Navbar() {
   }
 
   const navigation = [
-    { name: 'CV Builder', href: '/builder' },
+    { name: 'CV Classique', href: '/builder' },
     { name: 'CV Canadien', href: '/canadian-builder' },
     { name: 'Jobs', href: '/jobs' },
     { name: 'Outils', href: '/outils' },
