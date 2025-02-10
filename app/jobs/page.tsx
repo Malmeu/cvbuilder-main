@@ -6,10 +6,12 @@ import { motion } from 'framer-motion'
 import { Search, MapPin, Building2 } from 'lucide-react'
 import { Job } from '../types/job'
 import JobDetailsModal from '../components/JobDetailsModal'
+import JobCard from '../components/JobCard'
 import { useToast } from '../hooks/use-toast'
 import { translateJobType, translateRemoteType } from '@/app/data/job-translations'
 import Image from 'next/image'
 import { sanitizeImageUrl } from '@/lib/supabase-helpers'
+import { useRouter } from 'next/navigation'
 
 export default function JobsPage() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -19,6 +21,7 @@ export default function JobsPage() {
   const [isLoading, setIsLoading] = useState(true)
   const supabase = createClientComponentClient()
   const { toast } = useToast()
+  const router = useRouter()
 
   useEffect(() => {
     loadJobs()
@@ -74,6 +77,7 @@ export default function JobsPage() {
           description: 'Veuillez vous connecter pour ajouter aux favoris',
           variant: 'destructive',
         })
+        router.push('/auth/signin')
         return
       }
 
@@ -256,14 +260,14 @@ export default function JobsPage() {
                             Détails
                           </button>
                           <button
-                            onClick={() => toggleFavorite(job.id)}
+                            onClick={() => toggleFavorite(job.id.toString())}
                             className={`text-xs px-3 py-1.5 rounded-full transition-colors ${
-                              favorites.includes(job.id) 
+                              favorites.includes(job.id.toString()) 
                                 ? 'bg-red-100 text-red-600 hover:bg-red-200' 
                                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                             }`}
                           >
-                            {favorites.includes(job.id) ? '❤️' : '♡'}
+                            {favorites.includes(job.id.toString()) ? '❤️' : '♡'}
                           </button>
                         </div>
                       </div>

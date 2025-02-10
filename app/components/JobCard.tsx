@@ -7,6 +7,9 @@ import { formatDistanceToNow } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import { useState } from 'react'
 import { formatCompanyLogoUrl, sanitizeImageUrl } from '@/lib/supabase-helpers'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { useRouter } from 'next/navigation'
+import { useToast } from '@/app/hooks/use-toast'
 
 interface JobCardProps {
   job: Job
@@ -22,12 +25,36 @@ export default function JobCard({
   isFavorite = false 
 }: JobCardProps) {
   const [isHovered, setIsHovered] = useState(false)
+  const supabase = createClientComponentClient()
+  const router = useRouter()
+  const { toast } = useToast()
 
   const formatDate = (date: string) => {
     return formatDistanceToNow(new Date(date), {
       addSuffix: true,
       locale: fr,
     })
+  }
+
+  const handleToggleFavorite = async () => {
+    // Vérifier si l'utilisateur est connecté
+    const { data: { session } } = await supabase.auth.getSession()
+    
+    if (!session) {
+      // Rediriger vers la page de connexion
+      toast({
+        title: 'Connexion requise',
+        description: 'Veuillez vous connecter pour ajouter aux favoris',
+        variant: 'default'
+      })
+      router.push('/auth/signin')
+      return
+    }
+
+    // Appeler la fonction de toggle des favoris si l'utilisateur est connecté
+    if (onToggleFavorite) {
+      onToggleFavorite()
+    }
   }
 
   const companyLogoUrl = sanitizeImageUrl(job.company_logo)
@@ -81,7 +108,7 @@ export default function JobCard({
                 <button
                   onClick={(e) => {
                     e.stopPropagation()
-                    onToggleFavorite()
+                    handleToggleFavorite()
                   }}
                   className={`p-2 rounded-full transition-colors ${
                     isFavorite 

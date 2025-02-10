@@ -47,7 +47,7 @@ export default function AuthModal({ isOpen, onClose, defaultView = 'signin' }: A
                 >
                   <SignInForm onClose={onClose} />
                   <p className="text-center mt-6 text-sm">
-                    Pas encore de compte ?{' '}
+                    <span className="text-gray-500">Pas encore de compte ?</span>{' '}
                     <button
                       onClick={() => setView('signup')}
                       className="text-primary hover:underline font-medium"
@@ -65,7 +65,7 @@ export default function AuthModal({ isOpen, onClose, defaultView = 'signin' }: A
                 >
                   <SignUpForm onClose={onClose} />
                   <p className="text-center mt-6 text-sm">
-                    Déjà un compte ?{' '}
+                    Pas encore de compte ?{' '}
                     <button
                       onClick={() => setView('signin')}
                       className="text-primary hover:underline font-medium"

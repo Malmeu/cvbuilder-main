@@ -142,12 +142,7 @@ export default function SignInForm({ onClose }: SignInFormProps) {
         </button>
       </div>
 
-      <div className="text-center text-sm">
-        <span className="text-gray-500">Vous n'avez pas de compte ?</span>{' '}
-        <a href="/auth/signup" className="font-medium text-primary hover:text-primary/80">
-          Inscrivez-vous
-        </a>
-      </div>
+      {/* Suppression du message d'inscription */}
     </form>
   )
 }
