@@ -45,8 +45,9 @@ export default function Builder() {
         const { data: { session }, error } = await supabase.auth.getSession()
         
         if (error || !session) {
-          console.error('Erreur lors de la vérification de la session:', error)
-          router.push('/auth/signin')
+          console.log('Utilisateur non connecté, accès au builder autorisé')
+          setUser(null)
+          setLoading(false)
           return
         }
 
@@ -84,7 +85,8 @@ export default function Builder() {
         }
       } catch (error) {
         console.error('Erreur lors de la vérification de la session:', error)
-        router.push('/auth/signin')
+        setUser(null)
+        setLoading(false)
       }
     }
 
@@ -174,37 +176,32 @@ export default function Builder() {
         const { data: { session }, error } = await supabase.auth.getSession()
         
         if (error || !session) {
-          console.error('Erreur de session:', error)
-          toast({
-            title: 'Erreur',
-            description: 'Veuillez vous connecter pour continuer',
-            variant: 'destructive',
-          })
-          router.push('/auth/signin')
+          console.log('Utilisateur non connecté, accès au builder autorisé')
+          setUser(null)
           return
         }
 
         setUser(session.user)
+
+        // Écouter les changements d'authentification
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+          if (!session) {
+            setUser(null)
+          } else {
+            setUser(session.user)
+          }
+        })
+
+        return () => {
+          subscription.unsubscribe()
+        }
       } catch (error) {
         console.error('Erreur lors de la vérification de la session:', error)
-        router.push('/auth/signin')
+        setUser(null)
       }
     }
 
     checkUser()
-
-    // Écouter les changements d'authentification
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!session) {
-        router.push('/auth/signin')
-      } else {
-        setUser(session.user)
-      }
-    })
-
-    return () => {
-      subscription.unsubscribe()
-    }
   }, [])
 
   const handleThemeChange = (newTheme: string) => {
@@ -382,7 +379,20 @@ export default function Builder() {
     }
   };
 
-  const handleSave = async () => {
+  const saveCV = async () => {
+    // Vérifier si l'utilisateur est connecté avant de sauvegarder
+    const { data: { session } } = await supabase.auth.getSession()
+    
+    if (!session) {
+      toast({
+        title: 'Connexion requise',
+        description: 'Veuillez vous connecter pour sauvegarder votre CV',
+        variant: 'destructive'
+      })
+      router.push('/auth/signin')
+      return
+    }
+
     try {
       if (!user) {
         toast({
@@ -652,7 +662,7 @@ export default function Builder() {
               </button>
 
               <button
-                onClick={handleSave}
+                onClick={saveCV}
                 disabled={saving}
                 className="btn btn-primary gap-2"
                 title="Sauvegarder"
@@ -697,7 +707,7 @@ export default function Builder() {
           </button>
 
           <button
-            onClick={handleSave}
+            onClick={saveCV}
             disabled={saving}
             className="btn btn-primary"
           >
