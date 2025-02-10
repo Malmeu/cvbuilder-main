@@ -8,6 +8,8 @@ import { Job } from '../types/job'
 import JobDetailsModal from '../components/JobDetailsModal'
 import { useToast } from '../hooks/use-toast'
 import { translateJobType, translateRemoteType } from '@/app/data/job-translations'
+import Image from 'next/image'
+import { sanitizeImageUrl } from '@/lib/supabase-helpers'
 
 export default function JobsPage() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -188,55 +190,81 @@ export default function JobsPage() {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.3 }}
-                  className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:-translate-y-2 border border-gray-100 overflow-hidden"
+                  className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out transform hover:-translate-y-2 border border-gray-100 overflow-hidden group"
                 >
-                  <div className="p-6">
-                    <div className="flex items-center mb-4">
-                      <div className="w-16 h-16 rounded-xl bg-gray-100 flex items-center justify-center mr-4">
+                  <div className="p-6 relative">
+                    {job.is_urgent && (
+                      <div className="absolute top-4 right-4 z-10">
+                        <span className="px-3 py-1 rounded-full bg-red-100 text-red-600 text-xs font-semibold uppercase tracking-wider">
+                          Urgent
+                        </span>
+                      </div>
+                    )}
+                    
+                    <div className="flex items-center mb-4 space-x-4">
+                      <div className="w-16 h-16 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center p-2 flex-shrink-0">
                         {job.company_logo ? (
-                          <img 
-                            src={job.company_logo} 
+                          <Image 
+                            src={sanitizeImageUrl(job.company_logo) || ''} 
                             alt={`${job.company} logo`} 
-                            className="w-full h-full object-contain"
+                            width={64} 
+                            height={64} 
+                            className="w-full h-full object-contain rounded-lg"
                           />
                         ) : (
-                          <Building2 className="w-8 h-8 text-gray-400" />
+                          <div className="w-full h-full flex items-center justify-center">
+                            <Building2 className="w-8 h-8 text-gray-400" />
+                          </div>
                         )}
                       </div>
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900 line-clamp-1">
+                      
+                      <div className="flex-1">
+                        <h3 className="text-lg font-bold text-gray-900 group-hover:text-primary transition-colors mb-1 line-clamp-1">
                           {job.title}
                         </h3>
-                        <p className="text-sm text-gray-500 line-clamp-1">
+                        <p className="text-sm text-gray-600 line-clamp-1">
                           {job.company}
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center text-sm text-gray-600 mb-4">
-                      <MapPin className="w-4 h-4 mr-2 text-primary" />
-                      <span className="line-clamp-1">{job.location}</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs px-3 py-1 bg-primary/10 text-primary rounded-full">
-                        {translateJobType(job.job_type)}
-                      </span>
-                      <div className="flex space-x-2">
-                        <button 
-                          onClick={() => setSelectedJob(job)}
-                          className="text-xs bg-primary/10 text-primary hover:bg-primary/20 px-3 py-1.5 rounded-full transition-colors"
-                        >
-                          Détails
-                        </button>
-                        <button
-                          onClick={() => toggleFavorite(job.id)}
-                          className={`text-xs px-3 py-1.5 rounded-full transition-colors ${
-                            favorites.includes(job.id) 
-                              ? 'bg-red-100 text-red-600 hover:bg-red-200' 
-                              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                          }`}
-                        >
-                          {favorites.includes(job.id) ? '❤️' : '♡'}
-                        </button>
+
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center space-x-2 text-sm text-gray-600">
+                          <MapPin className="w-4 h-4 text-gray-500" />
+                          <span className="line-clamp-1">{job.location}</span>
+                        </div>
+                        
+                        {job.salary && job.salary > 0 && (
+                          <div className="text-sm font-semibold text-gray-800">
+                            {job.salary.toLocaleString()} DZD
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs px-3 py-1 bg-primary/10 text-primary rounded-full">
+                          {translateRemoteType(job.remote_type)}
+                        </span>
+
+                        <div className="flex space-x-2">
+                          <button 
+                            onClick={() => setSelectedJob(job)}
+                            className="text-xs px-3 py-1.5 bg-primary/10 text-primary rounded-full hover:bg-primary/20 transition-colors"
+                          >
+                            Détails
+                          </button>
+                          <button
+                            onClick={() => toggleFavorite(job.id)}
+                            className={`text-xs px-3 py-1.5 rounded-full transition-colors ${
+                              favorites.includes(job.id) 
+                                ? 'bg-red-100 text-red-600 hover:bg-red-200' 
+                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            }`}
+                          >
+                            {favorites.includes(job.id) ? '❤️' : '♡'}
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>

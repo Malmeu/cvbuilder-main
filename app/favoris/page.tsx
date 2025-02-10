@@ -130,11 +130,10 @@ export default function FavorisPage() {
                   className="bg-white rounded-xl border border-gray-200 p-6"
                 >
                   <div className="flex items-start gap-4">
-                    {/* Logo */}
                     <div className="w-12 h-12 rounded-xl bg-gray-100 overflow-hidden flex-shrink-0">
                       {job.company_logo ? (
                         <Image
-                          src={job.company_logo}
+                          src={sanitizeImageUrl(job.company_logo) || ''}
                           alt={job.company}
                           width={48}
                           height={48}
@@ -158,10 +157,19 @@ export default function FavorisPage() {
                         </div>
 
                         <div className="text-right">
-                          <p className="text-lg font-medium text-gray-900">
-                            {job.salary ? `${job.salary.toLocaleString()} DZD` : 'Non spécifié'}
-                          </p>
-                          <p className="text-sm text-gray-500">{job.job_type}</p>
+                          {job.salary && job.salary > 0 && (
+                            <p className="text-lg font-medium text-gray-900 mb-1">
+                              {job.salary.toLocaleString()} DZD
+                            </p>
+                          )}
+                          <div className="flex items-center justify-end gap-2">
+                            <p className="text-sm text-gray-500">{job.job_type}</p>
+                            {job.is_urgent && (
+                              <span className="px-2 py-0.5 rounded-full bg-red-100 text-red-600 text-xs font-medium">
+                                Urgent
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
 
