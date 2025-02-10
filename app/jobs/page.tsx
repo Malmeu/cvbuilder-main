@@ -289,7 +289,7 @@ export default function JobsPage() {
                   </p>
                 </>
               ) : (
-                'Aucune offre d&apos;emploi pour le moment'
+                "Aucune offre d'emploi pour le moment"
               )}
             </div>
           )}
