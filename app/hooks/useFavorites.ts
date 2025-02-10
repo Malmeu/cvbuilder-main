@@ -14,16 +14,24 @@ export function useFavorites() {
   // Charger les favoris
   const loadFavorites = async () => {
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
+      const { data, error } = await supabase.auth.getSession()
+      
+      console.log('Données de session complètes:', data)
+      console.log('Erreur de session:', error)
+
+      const user = data?.session?.user
+
+      console.log('Utilisateur connecté:', user)
 
       if (!user) {
+        console.warn('Aucun utilisateur connecté')
         setLoading(false)
         return
       }
 
-      const { data, error } = await supabase
+      console.log('ID utilisateur:', user.id)
+
+      const { data: favoriteData, error: favoriteError } = await supabase
         .from('job_favorites')
         .select(`
           *,
@@ -40,9 +48,13 @@ export function useFavorites() {
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
 
-      if (error) throw error
+      console.log('Données favoris brutes:', favoriteData)
+      console.log('Erreur favoris:', favoriteError)
 
-      setFavorites(data || [])
+      if (favoriteError) throw favoriteError
+
+      setFavorites(favoriteData || [])
+      console.log('Favoris mis à jour:', favoriteData || [])
     } catch (error) {
       console.error('Erreur lors du chargement des favoris:', error)
       toast({
