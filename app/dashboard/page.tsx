@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { FileText, Briefcase, Star } from 'lucide-react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
+import { useToolResults, ToolResult } from '@/hooks/useToolResults';
 
 interface DashboardStats {
   totalCVs: number
@@ -29,6 +30,8 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true)
   const [cvs, setCvs] = useState<CV[]>([])
   const supabase = createClientComponentClient()
+  const { getToolResults } = useToolResults();
+  const [coverLetters, setCoverLetters] = useState<ToolResult[]>([]);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -83,8 +86,14 @@ export default function DashboardPage() {
       }
     }
 
+    const fetchCoverLetters = async () => {
+      const results = await getToolResults('Lettre de motivation');
+      setCoverLetters(results);
+    };
+
     fetchStats()
     fetchCvs()
+    fetchCoverLetters()
   }, [supabase])
 
   const stats_cards = [
@@ -245,6 +254,49 @@ export default function DashboardPage() {
             >
               Créer mon premier CV
             </Link>
+          </div>
+        )}
+      </div>
+
+      <div className="mt-12">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-semibold">Lettres de Motivation</h2>
+          {coverLetters.length > 0 && (
+            <Link 
+              href="/outils/resultats" 
+              className="text-blue-600 hover:underline text-sm"
+            >
+              Voir tous les résultats
+            </Link>
+          )}
+        </div>
+        {coverLetters.length === 0 ? (
+          <p className="text-gray-500">Aucune lettre sauvegardée</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {coverLetters.slice(0, 3).map((letter) => (
+              <div 
+                key={letter.id} 
+                className="bg-white border rounded-lg p-4 shadow-sm"
+              >
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-sm text-gray-500">
+                    {new Date(letter.created_at).toLocaleDateString()}
+                  </span>
+                  <button
+                    onClick={() => navigator.clipboard.writeText(letter.result_data)}
+                    className="text-blue-500 hover:text-blue-600 text-sm"
+                  >
+                    Copier
+                  </button>
+                </div>
+                <p className="text-sm text-gray-700 line-clamp-3">
+                  {letter.result_data.length > 150 
+                    ? letter.result_data.substring(0, 150) + '...' 
+                    : letter.result_data}
+                </p>
+              </div>
+            ))}
           </div>
         )}
       </div>

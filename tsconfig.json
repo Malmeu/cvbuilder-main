@@ -19,7 +19,8 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@/hooks/*": ["./hooks/*"]
     },
     "typeRoots": ["./node_modules/@types", "./types"]
   },

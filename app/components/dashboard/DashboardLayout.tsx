@@ -10,7 +10,8 @@ import {
   Settings, 
   ChevronRight,
   Menu,
-  X
+  X,
+  Wrench
 } from 'lucide-react'
 
 interface DashboardLayoutProps {
@@ -32,6 +33,11 @@ const navigation = [
     name: 'Mes candidatures',
     href: '/dashboard/applications',
     icon: Briefcase
+  },
+  {
+    name: 'Résultats Outils',
+    href: '/outils/resultats',
+    icon: Wrench
   },
   {
     name: 'Paramètres',

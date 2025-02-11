@@ -4,11 +4,13 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { v4 as uuidv4 } from 'uuid';
 import Link from 'next/link';
-import { ArrowLeft, Upload, Loader2, FileText } from 'lucide-react';
+import { ArrowLeft, Upload, Loader2, FileText, Save } from 'lucide-react';
 import { analyzeCV } from '@/app/lib/ai';
 import AnalysisReport from '@/app/components/AnalysisReport';
 import CVHistory from '@/app/components/CVHistory';
 import ATSTemplates from '@/app/components/ATSTemplates';
+import { useToolResults } from '@/hooks/useToolResults';
+import { useToast } from '@/hooks/use-toast';
 
 interface AnalysisResult {
   score: number;
@@ -23,6 +25,8 @@ export default function AnalyseurCV() {
   const [error, setError] = useState('');
   const [fileName, setFileName] = useState('');
   const [activeTab, setActiveTab] = useState<'analyzer' | 'history' | 'templates'>('analyzer');
+  const { saveToolResult } = useToolResults();
+  const { toast } = useToast();
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -113,6 +117,27 @@ export default function AnalyseurCV() {
       console.log('Résultat reçu:', result);
       setAnalysis(result);
       saveToHistory(result);
+
+      // Sauvegarde automatique du résultat
+      const resultToSave = JSON.stringify({
+        score: result.score,
+        recommendations: result.recommendations,
+        fileName: fileName || 'CV sans nom'
+      });
+
+      console.log('Tentative de sauvegarde automatique:', {
+        toolName: 'Analyse de CV',
+        resultData: resultToSave
+      });
+
+      saveToolResult(
+        'Analyse de CV', 
+        resultToSave
+      ).then(savedResult => {
+        console.log('Résultat sauvegardé automatiquement:', savedResult);
+      }).catch(error => {
+        console.error('Erreur de sauvegarde automatique:', error);
+      });
     } catch (err) {
       console.error('Erreur lors de l\'analyse:', err);
       setError(err instanceof Error ? err.message : 'Une erreur est survenue lors de l\'analyse');
@@ -265,22 +290,21 @@ export default function AnalyseurCV() {
                 </button>
 
                 {analysis && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="mt-8 space-y-6"
-                  >
-                    <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-8 rounded-xl">
-                      <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-2xl font-semibold text-gray-800">
-                          Résultats de l'analyse
-                        </h2>
-                        <AnalysisReport
-                          analysis={analysis}
-                          fileName={fileName}
-                        />
-                      </div>
-                      
+                  <div className="mt-8">
+                    <div className="flex justify-between items-center mb-6">
+                      <h2 className="text-2xl font-semibold text-gray-800">
+                        Résultats de l'analyse
+                      </h2>
+                      <AnalysisReport 
+                        analysis={{
+                          score: analysis.score,
+                          recommendations: analysis.recommendations
+                        }}
+                        fileName={fileName}
+                      />
+                    </div>
+                    
+                    <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-8 rounded-xl space-y-6">
                       <div className="mb-8">
                         <div className="flex items-center justify-between mb-2">
                           <span className="text-lg font-medium text-gray-700">Score ATS</span>
@@ -309,7 +333,42 @@ export default function AnalyseurCV() {
                         </ul>
                       </div>
                     </div>
-                  </motion.div>
+
+                    <div className="flex justify-end mt-4 space-x-4">
+                      <button
+                        onClick={() => {
+                          const resultToSave = JSON.stringify({
+                            score: analysis.score,
+                            recommendations: analysis.recommendations,
+                            fileName: fileName || 'CV sans nom'
+                          });
+                          
+                          console.log('Tentative de sauvegarde:', {
+                            toolName: 'Analyse de CV',
+                            resultData: resultToSave
+                          });
+
+                          saveToolResult(
+                            'Analyse de CV',
+                            resultToSave
+                          ).then(savedResult => {
+                            console.log('Résultat sauvegardé:', savedResult);
+                          }).catch(error => {
+                            console.error('Erreur de sauvegarde:', error);
+                          });
+
+                          toast({
+                            title: 'Résultat sauvegardé',
+                            description: 'Votre analyse de CV a été sauvegardée dans vos résultats d\'outils',
+                          });
+                        }}
+                        className="inline-flex items-center px-4 py-2 text-sm font-medium text-emerald-600 hover:text-emerald-700 transition-colors"
+                      >
+                        <Save className="w-4 h-4 mr-2" />
+                        Sauvegarder l'analyse
+                      </button>
+                    </div>
+                  </div>
                 )}
               </div>
             </div>

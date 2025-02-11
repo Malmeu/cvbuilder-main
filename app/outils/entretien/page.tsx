@@ -3,7 +3,9 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { ArrowLeft, Loader2, BookOpen, Building2, BriefcaseIcon, Wand2 } from 'lucide-react';
+import { ArrowLeft, Loader2, BookOpen, Building2, BriefcaseIcon, Wand2, Save } from 'lucide-react';
+import { useToolResults } from '@/hooks/useToolResults';
+import { useToast } from '@/hooks/use-toast';
 
 interface PrepData {
   questions_techniques: string[];
@@ -20,6 +22,8 @@ export default function Entretien() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [prepData, setPrepData] = useState<PrepData | null>(null);
+  const { saveToolResult } = useToolResults();
+  const { toast } = useToast();
 
   const genererPreparation = async () => {
     if (!poste || !entreprise) {
@@ -48,6 +52,31 @@ export default function Entretien() {
       }
 
       setPrepData(data);
+
+      // Sauvegarde automatique du résultat
+      const resultToSave = JSON.stringify({
+        poste,
+        entreprise,
+        questions_techniques: data.questions_techniques,
+        questions_culture: data.questions_culture,
+        questions_pieges: data.questions_pieges,
+        conseils_preparation: data.conseils_preparation,
+        points_cles: data.points_cles
+      });
+
+      console.log('Tentative de sauvegarde:', {
+        toolName: 'Préparation Entretien',
+        resultData: resultToSave
+      });
+
+      saveToolResult(
+        'Préparation Entretien', 
+        resultToSave
+      ).then(savedResult => {
+        console.log('Résultat sauvegardé automatiquement:', savedResult);
+      }).catch(error => {
+        console.error('Erreur de sauvegarde automatique:', error);
+      });
     } catch (err) {
       console.error('Erreur complète:', err);
       setError(err instanceof Error ? err.message : 'Une erreur est survenue lors de la génération de la préparation');
@@ -199,7 +228,7 @@ export default function Entretien() {
                 <ul className="space-y-3">
                   {prepData.questions_culture.map((q, i) => (
                     <li key={i} className="flex items-start">
-                      <span className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mr-3 mt-1">
+                      <span className="flex-shrink-0 w-6 h-6 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mr-3 mt-1">
                         {i + 1}
                       </span>
                       <span className="text-gray-700">{q}</span>
@@ -208,55 +237,65 @@ export default function Entretien() {
                 </ul>
               </div>
 
-              {/* Questions pièges */}
-              <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-                <h3 className="text-xl font-semibold text-gray-800 mb-4">
-                  Questions Pièges
-                </h3>
-                <ul className="space-y-3">
-                  {prepData.questions_pieges.map((q, i) => (
-                    <li key={i} className="flex items-start">
-                      <span className="flex-shrink-0 w-6 h-6 bg-red-100 text-red-600 rounded-full flex items-center justify-center mr-3 mt-1">
-                        !
-                      </span>
-                      <span className="text-gray-700">{q}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Conseils et points clés */}
-              <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-                <div className="mb-6">
-                  <h3 className="text-xl font-semibold text-gray-800 mb-4">
-                    Conseils de Préparation
+              {/* Autres sections de préparation */}
+              <div className="md:col-span-2 bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-xl font-semibold text-gray-800">
+                    Préparation Complète
                   </h3>
-                  <ul className="space-y-3">
-                    {prepData.conseils_preparation.map((conseil, i) => (
-                      <li key={i} className="flex items-start">
-                        <span className="flex-shrink-0 w-6 h-6 bg-green-100 text-green-600 rounded-full flex items-center justify-center mr-3 mt-1">
-                          ✓
-                        </span>
-                        <span className="text-gray-700">{conseil}</span>
-                      </li>
-                    ))}
-                  </ul>
+                  <button
+                    onClick={() => {
+                      const resultToSave = JSON.stringify({
+                        poste,
+                        entreprise,
+                        questions_techniques: prepData.questions_techniques,
+                        questions_culture: prepData.questions_culture,
+                        questions_pieges: prepData.questions_pieges,
+                        conseils_preparation: prepData.conseils_preparation,
+                        points_cles: prepData.points_cles
+                      });
+
+                      saveToolResult(
+                        'Préparation Entretien', 
+                        resultToSave
+                      );
+
+                      toast({
+                        title: 'Résultat sauvegardé',
+                        description: 'Votre préparation d\'entretien a été sauvegardée dans vos résultats d\'outils',
+                      });
+                    }}
+                    className="inline-flex items-center px-4 py-2 text-sm font-medium text-purple-600 hover:text-purple-700 transition-colors"
+                  >
+                    <Save className="w-4 h-4 mr-2" />
+                    Sauvegarder la préparation
+                  </button>
                 </div>
 
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-800 mb-4">
-                    Points Clés à Mettre en Avant
-                  </h3>
-                  <ul className="space-y-3">
-                    {prepData.points_cles.map((point, i) => (
-                      <li key={i} className="flex items-start">
-                        <span className="flex-shrink-0 w-6 h-6 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center mr-3 mt-1">
-                          ★
-                        </span>
-                        <span className="text-gray-700">{point}</span>
-                      </li>
-                    ))}
-                  </ul>
+                {/* Autres sections */}
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <h4 className="font-semibold mb-2">Questions Pièges</h4>
+                    <ul className="space-y-2">
+                      {prepData.questions_pieges.map((q, i) => (
+                        <li key={i} className="text-gray-700 flex items-start">
+                          <span className="text-purple-600 mr-2">•</span>
+                          {q}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold mb-2">Conseils de Préparation</h4>
+                    <ul className="space-y-2">
+                      {prepData.conseils_preparation.map((conseil, i) => (
+                        <li key={i} className="text-gray-700 flex items-start">
+                          <span className="text-purple-600 mr-2">•</span>
+                          {conseil}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
               </div>
             </motion.div>
