@@ -2,9 +2,27 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { ArrowRight, MapPin, Clock, Wand2, Download, Check, GraduationCap } from 'lucide-react'
-import Image from 'next/image'
+import { cn } from '@/lib/utils'
+import { buttonVariants } from '@/components/ui/button'
+import dynamic from 'next/dynamic'
 
+const Lottie = dynamic(() => import('lottie-react'), { ssr: false })
+
+import { 
+  ArrowRight, 
+  MapPin, 
+  Clock, 
+  Wand2, 
+  Download, 
+  Check, 
+  GraduationCap,
+  Heart,
+  Coffee,
+  Sparkles,
+  ShieldCheck,
+  Rocket,
+  Users
+} from 'lucide-react'
 
 export default function Home() {
   return (
@@ -73,13 +91,11 @@ export default function Home() {
               {/* Preview du CV avec effet minimal */}
               <div className="relative w-full h-[600px]">
                 <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 to-secondary/5 rounded-3xl" />
-                <div className="relative w-full h-[600px] rounded-3xl shadow-2xl overflow-hidden backdrop-blur-sm bg-white/5 border border-white/10">
-                  <Image
-                    src="/cvhero.png"
-                    alt="Modèle de CV"
-                    fill
-                    className="object-contain p-8"
-                    priority
+                <div className="relative w-full h-[600px] rounded-3xl shadow-2xl overflow-hidden backdrop-blur-sm bg-white/5 border border-white/10 flex items-center justify-center">
+                  <Lottie 
+                    animationData={require('@/public/lottie/resume.json')} 
+                    loop 
+                    className="w-3/4 max-w-[500px]"
                   />
                 </div>
               </div>
@@ -228,10 +244,10 @@ export default function Home() {
             </h2>
             <div className="grid md:grid-cols-2 gap-12">
               <div 
-                className="group relative p-8 backdrop-blur-md bg-white/80 rounded-3xl border border-white/20 shadow-xl hover:shadow-primary/20 transition-all duration-300"
+                className="group relative p-8 backdrop-blur-md bg-white/80 rounded-3xl border border-primary/10 hover:border-primary/30 transition-all duration-300"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <h3 className="text-2xl font-semibold mb-4 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                <h3 className="text-2xl font-bold mb-4 text-base-content">
                   Première impression décisive
                 </h3>
                 <p className="text-base-content/80 leading-relaxed relative z-10">
@@ -239,10 +255,10 @@ export default function Home() {
                 </p>
               </div>
               <div 
-                className="group relative p-8 backdrop-blur-md bg-white/80 rounded-3xl border border-secondary/20 shadow-xl hover:shadow-secondary/20 transition-all duration-300"
+                className="group relative p-8 backdrop-blur-md bg-white/80 rounded-3xl border border-secondary/10 hover:border-secondary/30 transition-all duration-300"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <h3 className="text-2xl font-semibold mb-4 bg-gradient-to-r from-secondary to-secondary/70 bg-clip-text text-transparent">
+                <h3 className="text-2xl font-bold mb-4 text-base-content">
                   Adapté à votre marché cible
                 </h3>
                 <p className="text-base-content/80 leading-relaxed relative z-10">
@@ -329,7 +345,7 @@ export default function Home() {
               Pourquoi utiliser notre créateur de CV
             </h2>
             
-            <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <div className="grid md:grid-cols-3 gap-8">
               <div 
                 className="group relative p-8 bg-base-100 rounded-3xl shadow-xl border border-primary/10 hover:border-primary/30 transition-all duration-300"
               >
@@ -390,12 +406,10 @@ export default function Home() {
             
             <div className="grid md:grid-cols-2 gap-12">
               <div className="relative">
-                <Image
+                <img
                   src="/tips.png"
                   alt="Conseils CV"
-                  width={600}
-                  height={400}
-                  className="rounded-3xl shadow-xl"
+                  className="rounded-3xl shadow-xl w-full h-auto object-cover"
                 />
               </div>
 
@@ -577,6 +591,55 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* Section Transparence */}
+        <div className="bg-gradient-to-r from-purple-50 to-blue-50 py-6 px-4 text-center">
+          <div className="max-w-4xl mx-auto flex flex-col items-center">
+            <div className="flex items-center mb-4">
+              <Heart className="w-6 h-6 text-red-500 mr-2" />
+              <Coffee className="w-6 h-6 text-brown-500 mr-2" />
+              <Sparkles className="w-6 h-6 text-purple-500" />
+            </div>
+            <h2 className="text-2xl font-bold mb-4 text-gray-800">
+              Un projet 100% communautaire et gratuit
+            </h2>
+            <p className="text-gray-700 max-w-3xl mx-auto mb-4">
+              CVDiali est un projet développé par passion, entièrement gratuit et maintenu par une seule personne. 
+              Ma mission : democratiser l'accès aux outils de carrière et d'immigration.
+            </p>
+            <div className="flex flex-wrap justify-center gap-4 mb-4">
+              <div className="flex items-center bg-white rounded-lg shadow-sm p-3">
+                <ShieldCheck className="w-5 h-5 text-green-500 mr-2" />
+                <span className="text-sm text-gray-700">Toujours gratuit</span>
+              </div>
+              <div className="flex items-center bg-white rounded-lg shadow-sm p-3">
+                <Rocket className="w-5 h-5 text-purple-500 mr-2" />
+                <span className="text-sm text-gray-700">Développement continu</span>
+              </div>
+              <div className="flex items-center bg-white rounded-lg shadow-sm p-3">
+                <Users className="w-5 h-5 text-blue-500 mr-2" />
+                <span className="text-sm text-gray-700">Soutenu par la communauté</span>
+              </div>
+            </div>
+            <p className="text-sm text-gray-600 italic mb-4">
+              Si ce projet vous aide, considérez faire un don ou contribuer avec des idees.
+            </p>
+            <div className="flex justify-center gap-4">
+              <Link 
+                href="/boite-a-idees" 
+                className={cn(buttonVariants({ variant: 'outline' }), 'flex items-center')}
+              >
+                <Users className="w-4 h-4 mr-2" /> Boite a idées
+              </Link>
+              <Link 
+                href="/donate" 
+                className={cn(buttonVariants({ variant: 'default' }), 'flex items-center text-white')}
+              >
+                <Coffee className="w-4 h-4 mr-2" /> Offrir un café
+              </Link>
+            </div>
+          </div>
+        </div>
       </main>
     </>
   )
