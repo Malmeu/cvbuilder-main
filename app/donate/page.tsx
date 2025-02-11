@@ -108,7 +108,7 @@ export default function DonatePage() {
             </div>
 
             <div className="bg-gray-50 p-6 rounded-xl">
-              <h3 className="font-semibold text-lg mb-4">CCP Algérie</h3>
+              <h3 className="font-semibold text-lg mb-4">Wise</h3>
               <p className="text-gray-600 mb-4">
                 Numéro de compte : <strong>YYYY YYYY YYYY YYYY</strong>
               </p>
