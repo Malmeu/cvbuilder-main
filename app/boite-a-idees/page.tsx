@@ -13,16 +13,22 @@ import {
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useToast } from '@/hooks/use-toast'
+import emailjs from '@emailjs/browser'
+
+// Configuration EmailJS
+emailjs.init("yH4zvsKc755StyHmP");
 
 export default function BoiteAIdees() {
   const [nom, setNom] = useState('')
   const [email, setEmail] = useState('')
   const [idee, setIdee] = useState('')
   const [categorie, setCategorie] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const { toast } = useToast()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setIsSubmitting(true)
 
     // Validation de base
     if (!nom || !email || !idee) {
@@ -31,44 +37,43 @@ export default function BoiteAIdees() {
         description: 'Veuillez remplir tous les champs obligatoires',
         variant: 'destructive'
       })
+      setIsSubmitting(false)
       return
     }
 
     try {
-      const response = await fetch('/api/boite-a-idees', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          nom,
-          email,
-          idee,
-          categorie
-        })
+      await emailjs.send(
+        'service_zmzh45f', 
+        'template_1g0gq9p', 
+        {
+          from_name: nom,
+          from_email: email,
+          message: idee,
+          categorie: categorie || 'Non spécifiée',
+          to_email: 'cvdiali.contact@gmail.com'
+        }
+      )
+
+      toast({
+        title: 'Idée soumise !',
+        description: 'Merci pour votre contribution. Nous étudierons votre suggestion.',
+        variant: 'default'
       })
 
-      if (response.ok) {
-        toast({
-          title: 'Idée soumise !',
-          description: 'Merci pour votre contribution. Nous étudierons votre suggestion.',
-          variant: 'default'
-        })
-
-        // Réinitialiser le formulaire
-        setNom('')
-        setEmail('')
-        setIdee('')
-        setCategorie('')
-      } else {
-        throw new Error('Erreur lors de l\'envoi')
-      }
+      // Réinitialiser le formulaire
+      setNom('')
+      setEmail('')
+      setIdee('')
+      setCategorie('')
     } catch (error) {
+      console.error('Erreur lors de l\'envoi:', error)
       toast({
         title: 'Erreur',
         description: 'Un problème est survenu. Veuillez réessayer.',
         variant: 'destructive'
       })
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -182,12 +187,15 @@ export default function BoiteAIdees() {
 
               <button
                 type="submit"
+                disabled={isSubmitting}
                 className={cn(
                   buttonVariants({ variant: 'default', size: 'lg' }), 
-                  'w-full flex items-center justify-center'
+                  'w-full flex items-center justify-center',
+                  isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
                 )}
               >
-                <Send className="w-5 h-5 mr-2" /> Envoyer ma Suggestion
+                <Send className="w-5 h-5 mr-2" /> 
+                {isSubmitting ? 'Envoi en cours...' : 'Envoyer ma Suggestion'}
               </button>
             </form>
           </div>
