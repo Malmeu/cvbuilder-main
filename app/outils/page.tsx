@@ -29,7 +29,7 @@ const outils = [
     color: "from-emerald-500 to-emerald-600"
   },
   {
-    titre: "Planificateur d'Entretiens",
+    titre: "Préparer mon entretien",
     description: "Préparez vos entretiens avec des questions types, des conseils et des stratégies de négociation.",
     icon: Users,
     href: "/outils/entretien",

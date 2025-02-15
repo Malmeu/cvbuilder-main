@@ -103,7 +103,7 @@ export default function Entretien() {
 
           <div className="text-center mb-12">
             <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-purple-600 to-blue-600 text-transparent bg-clip-text">
-              Planificateur d'Entretiens
+              Préparer mon entretien
             </h1>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Préparez-vous efficacement pour vos entretiens d'embauche avec notre assistant IA
