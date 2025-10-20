@@ -1,4 +1,7 @@
-import { NextResponse } from 'next/server'
+import { NextResponse } from 'next/server';
+import { queryDeepseekViaOllama, checkOllamaAvailability } from '@/app/lib/ollama';
+
+const USE_OLLAMA = process.env.USE_OLLAMA === 'true';
 
 export async function POST(req: Request) {
   try {
@@ -11,8 +14,9 @@ export async function POST(req: Request) {
       )
     }
 
-    const prompt = `En tant qu'expert en rédaction d'articles de blog sur l'emploi et l'immigration au Canada, 
-    génère un article complet et professionnel à partir du titre suivant : "${title}".
+    const systemPrompt = 'Tu es un expert en rédaction d\'articles de blog sur l\'emploi et l\'immigration au Canada.';
+    
+    const userPrompt = `Génère un article complet et professionnel à partir du titre suivant : "${title}".
     
     Réponds UNIQUEMENT avec un objet JSON valide sans backticks ni formatage Markdown, dans ce format exact :
     {
@@ -33,41 +37,63 @@ export async function POST(req: Request) {
     - Avoir un ton professionnel mais accessible
     - Être optimisé pour le SEO
     
-    IMPORTANT : Renvoie UNIQUEMENT l'objet JSON, sans aucun texte avant ou après, sans backticks ni formatage Markdown.`
+    IMPORTANT : Renvoie UNIQUEMENT l'objet JSON, sans aucun texte avant ou après, sans backticks ni formatage Markdown.`;
 
-    const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.DEEPSEEK_API_KEY}`
-      },
-      body: JSON.stringify({
-        model: "deepseek-chat",
-        messages: [{ role: "user", content: prompt }],
+    let content: string;
+
+    // Utiliser Ollama si activé, sinon fallback sur l'API Deepseek
+    if (USE_OLLAMA) {
+      console.log('Utilisation d\'Ollama (local - gratuit) pour génération d\'article blog');
+      
+      const isAvailable = await checkOllamaAvailability();
+      if (!isAvailable) {
+        throw new Error('Ollama n\'est pas disponible. Lance Ollama ou désactive USE_OLLAMA dans .env.local');
+      }
+
+      content = await queryDeepseekViaOllama(systemPrompt, userPrompt, {
         temperature: 0.7,
-        max_tokens: 2000
-      })
-    })
+        format: 'json'
+      });
+    } else {
+      console.log('Utilisation de l\'API Deepseek Cloud (payant) pour génération d\'article blog');
+      
+      const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${process.env.DEEPSEEK_API_KEY}`
+        },
+        body: JSON.stringify({
+          model: "deepseek-chat",
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: userPrompt }
+          ],
+          temperature: 0.7,
+          max_tokens: 2000
+        })
+      });
 
-    const data = await response.json()
-    
-    if (data.error) {
-      throw new Error(data.error.message)
+      const data = await response.json();
+      
+      if (data.error) {
+        throw new Error(data.error.message);
+      }
+
+      content = data.choices[0].message.content;
     }
-
-    let content = data.choices[0].message.content
     
     // Nettoyer la réponse des backticks et du formatage Markdown
-    content = content.replace(/^\`\`\`json\n/, '') // Enlever ```json au début
-    content = content.replace(/\`\`\`$/, '') // Enlever ``` à la fin
-    content = content.trim() // Enlever les espaces superflus
+    content = content.replace(/^\`\`\`json\n/, ''); // Enlever ```json au début
+    content = content.replace(/\`\`\`$/, ''); // Enlever ``` à la fin
+    content = content.trim(); // Enlever les espaces superflus
 
     try {
-      const articleData = JSON.parse(content)
-      return NextResponse.json(articleData)
+      const articleData = JSON.parse(content);
+      return NextResponse.json(articleData);
     } catch (parseError) {
-      console.error('Erreur de parsing JSON:', content)
-      throw new Error('La réponse de l\'IA n\'est pas un JSON valide')
+      console.error('Erreur de parsing JSON:', content);
+      throw new Error('La réponse de l\'IA n\'est pas un JSON valide');
     }
   } catch (error) {
     console.error('Erreur lors de la génération:', error)

@@ -1,9 +1,12 @@
 import { NextResponse } from 'next/server';
+import { queryDeepseekViaOllama, checkOllamaAvailability } from '@/app/lib/ollama';
 
 export const maxDuration = 60;
 export const dynamic = 'force-dynamic';
 
 type LanguageType = 'fr' | 'en';
+
+const USE_OLLAMA = process.env.USE_OLLAMA === 'true';
 
 export async function POST(request: Request) {
   let userLang: LanguageType = 'fr';
@@ -28,57 +31,94 @@ export async function POST(request: Request) {
     const maxLength = 4000;
     const truncatedContent = cvContent.slice(0, maxLength);
 
-    const apiKey = process.env.DEEPSEEK_API_KEY;
-    if (!apiKey) {
-      console.error('Clé API Deepseek manquante');
-      throw new Error('Configuration API manquante');
-    }
+    let analysis: string;
 
-    const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-      },
-      body: JSON.stringify({
-        model: 'deepseek-chat',
-        messages: [
-          {
-            role: 'system',
-            content: langue === 'fr'
-              ? 'Tu es un expert en recrutement qui analyse des CV.'
-              : 'You are a recruitment expert who analyzes resumes.'
-          },
-          {
-            role: 'user',
-            content: langue === 'fr'
-              ? `Analyse ce CV et fournis :
-                 1. Un score sur 100
-                 2. Une liste de recommandations pour l'améliorer
+    // Utiliser Ollama si activé, sinon fallback sur l'API Deepseek
+    if (USE_OLLAMA) {
+      console.log('Utilisation d\'Ollama (local - gratuit)');
+      
+      const isAvailable = await checkOllamaAvailability();
+      if (!isAvailable) {
+        throw new Error('Ollama n\'est pas disponible. Lance Ollama ou désactive USE_OLLAMA dans .env.local');
+      }
 
-                 CV à analyser :
-                 ${truncatedContent}`
-              : `Analyze this resume and provide:
-                 1. A score out of 100
-                 2. A list of recommendations for improvement
+      const systemPrompt = langue === 'fr'
+        ? 'Tu es un expert en recrutement qui analyse des CV.'
+        : 'You are a recruitment expert who analyzes resumes.';
 
-                 Resume to analyze:
-                 ${truncatedContent}`
-          }
-        ],
+      const userPrompt = langue === 'fr'
+        ? `Analyse ce CV et fournis :
+           1. Un score sur 100
+           2. Une liste de recommandations pour l'améliorer
+
+           CV à analyser :
+           ${truncatedContent}`
+        : `Analyze this resume and provide:
+           1. A score out of 100
+           2. A list of recommendations for improvement
+
+           Resume to analyze:
+           ${truncatedContent}`;
+
+      analysis = await queryDeepseekViaOllama(systemPrompt, userPrompt, {
         temperature: 0.7,
-        max_tokens: 800
-      })
-    });
+        maxTokens: 800
+      });
+    } else {
+      console.log('Utilisation de l\'API Deepseek Cloud (payant)');
+      
+      const apiKey = process.env.DEEPSEEK_API_KEY;
+      if (!apiKey) {
+        console.error('Clé API Deepseek manquante');
+        throw new Error('Configuration API manquante');
+      }
 
-    if (!response.ok) {
-      const text = await response.text();
-      console.error('Réponse erreur Deepseek:', text);
-      throw new Error(text);
+      const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model: 'deepseek-chat',
+          messages: [
+            {
+              role: 'system',
+              content: langue === 'fr'
+                ? 'Tu es un expert en recrutement qui analyse des CV.'
+                : 'You are a recruitment expert who analyzes resumes.'
+            },
+            {
+              role: 'user',
+              content: langue === 'fr'
+                ? `Analyse ce CV et fournis :
+                   1. Un score sur 100
+                   2. Une liste de recommandations pour l'améliorer
+
+                   CV à analyser :
+                   ${truncatedContent}`
+                : `Analyze this resume and provide:
+                   1. A score out of 100
+                   2. A list of recommendations for improvement
+
+                   Resume to analyze:
+                   ${truncatedContent}`
+            }
+          ],
+          temperature: 0.7,
+          max_tokens: 800
+        })
+      });
+
+      if (!response.ok) {
+        const text = await response.text();
+        console.error('Réponse erreur Deepseek:', text);
+        throw new Error(text);
+      }
+
+      const data = await response.json();
+      analysis = data.choices[0].message.content;
     }
-
-    const data = await response.json();
-    const analysis = data.choices[0].message.content;
 
     // Extraire le score et les recommandations
     const scoreMatch = analysis.match(/(\d+)\/100/);

@@ -1,3 +1,7 @@
+import { queryDeepseekViaOllama, checkOllamaAvailability } from './ollama';
+
+const USE_OLLAMA = process.env.USE_OLLAMA === 'true';
+
 interface AIResponse {
   content: string;
   error?: string;
@@ -38,54 +42,28 @@ export async function generateCoverLetter(
   langue: 'fr' | 'en' = 'fr'
 ): Promise<AIResponse> {
   try {
-    const prompt = langue === 'fr' 
-      ? `Écris une lettre de motivation professionnelle pour un poste de ${poste} chez ${entreprise}. 
-         Le candidat a ${experience} d'expérience dans le secteur ${secteur}.
-         La lettre doit être formelle, persuasive et bien structurée.
-         Structure la lettre avec :
-         - Une introduction accrocheuse
-         - 2-3 paragraphes détaillant l'expérience et les motivations
-         - Une conclusion avec appel à l'action`
-      : `Write a professional cover letter for a ${poste} position at ${entreprise}. 
-         The candidate has ${experience} of experience in the ${secteur} sector.
-         The letter should be formal, persuasive and well structured.
-         Structure the letter with:
-         - A compelling introduction
-         - 2-3 paragraphs detailing experience and motivations
-         - A conclusion with call to action`;
-
-    const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
+    console.log('Envoi de la requête à /api/generate-cover-letter');
+    const response = await fetch('/api/generate-cover-letter', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.NEXT_PUBLIC_AI_API_KEY}`
       },
       body: JSON.stringify({
-        model: 'deepseek-chat',
-        messages: [
-          {
-            role: 'system',
-            content: langue === 'fr' 
-              ? 'Tu es un expert en rédaction de lettres de motivation professionnelles.'
-              : 'You are an expert in writing professional cover letters.'
-          },
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
-        temperature: 0.7,
-        max_tokens: 1000
+        secteur,
+        experience,
+        entreprise,
+        poste,
+        langue
       })
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error?.message || 'Erreur lors de la génération de la lettre');
+      const data = await response.json();
+      throw new Error(data.error || 'Erreur lors de la génération de la lettre');
     }
 
     const data = await response.json();
-    return { content: data.choices[0].message.content };
+    return { content: data.content };
   } catch (error) {
     console.error('Erreur AI:', error);
     return { 
